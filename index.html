@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenClaw에서 대화(세션)가 섞이는 이유와 해결 설정</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Arial, sans-serif; line-height: 1.55; margin: 24px; max-width: 920px; }
+    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    pre { background: #f6f8fa; padding: 12px; border-radius: 8px; overflow-x: auto; }
+    .box { border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px; margin: 14px 0; }
+    .ok { border-color: #86efac; background: #f0fdf4; }
+    .warn { border-color: #fca5a5; background: #fef2f2; }
+    h1,h2,h3 { margin: 18px 0 10px; }
+    ul, ol { margin: 6px 0 10px 18px; }
+    .small { color: #6b7280; font-size: 0.92rem; }
+  </style>
+</head>
+<body>
+  <h1>OpenClaw에서 “대화가 섞이는” 이유 + 지금 “안 섞이게” 만든 설정</h1>
+
+  <div class="box">
+    <strong>핵심 요약</strong>
+    <ul>
+      <li>대화가 섞였던 근본 원인: <b>서로 다른 텔레그램 봇(accountId 2개)</b>에서 온 DM이 <b>같은 세션(session)</b>으로 붙었기 때문</li>
+      <li>해결의 핵심 설정: DM 세션 키를 <b>(accountId + channel + peer)</b>로 분리하도록 변경</li>
+    </ul>
+  </div>
+
+  <h2>1) OpenClaw에서 꼭 알아야 하는 4가지 용어</h2>
+
+  <h3>1-1. channel (채널)</h3>
+  <div class="box">
+    <p>메시지가 오가는 플랫폼입니다.</p>
+    <ul>
+      <li>예: <code>telegram</code>, <code>discord</code>, <code>slack</code></li>
+      <li>현재 상황: <code>channel = telegram</code></li>
+    </ul>
+  </div>
+
+  <h3>1-2. accountId (계정/봇)</h3>
+  <div class="box">
+    <p>같은 채널(telegram) 안에서도 “연결 단위”를 여러 개 둘 수 있는데, 텔레그램에서는 보통 <b>봇 토큰 1개 = 봇 1개 = account 1개</b>로 생각하면 됩니다.</p>
+    <p>현재 설정에는 텔레그램 봇이 2개 있습니다:</p>
+    <ul>
+      <li><code>accountId=default</code> (메인 봇)</li>
+      <li><code>accountId=paper-review</code> (논문 리뷰 봇)</li>
+    </ul>
+  </div>
+
+  <h3>1-3. peer (상대/대화 대상)</h3>
+  <div class="box">
+    <p>메시지를 주고받는 “상대” 식별자입니다.</p>
+    <ul>
+      <li>DM에서는 보통 <b>사용자 Telegram ID</b>가 peer가 됩니다.</li>
+      <li>현재 DM 상대(Seho)의 peer 예시: <code>5866509962</code></li>
+      <li>그룹에서는 group chat id가 peer 역할을 합니다.</li>
+    </ul>
+  </div>
+
+  <h3>1-4. session (세션 = 대화 기억 단위)</h3>
+  <div class="box">
+    <p><b>세션(session)</b>은 “대화의 기억(컨텍스트)”이 누적되는 단위입니다.</p>
+    <ul>
+      <li>같은 세션에 들어온 메시지들은 이전 대화 내용(컨텍스트)을 공유합니다.</li>
+      <li>따라서 서로 다른 목적의 대화가 같은 세션에 붙으면 <b>기억이 섞여서</b> 답변이 엉킬 수 있습니다.</li>
+    </ul>
+  </div>
+
+  <h2>2) 메시지가 들어오면 내부에서 어떤 순서로 처리되는가</h2>
+  <div class="box">
+    <ol>
+      <li>텔레그램에서 메시지가 옴</li>
+      <li>OpenClaw가 메시지의 <b>channel(telegram)</b>과 <b>accountId(어떤 봇인지)</b>를 확인</li>
+      <li>DM/그룹 여부를 보고 <b>peer(상대 id)</b>를 결정</li>
+      <li>이 메시지를 붙일 <b>세션(session)</b>을 결정 (여기서 “섞임/분리”가 갈림)</li>
+      <li>그 세션에 연결된 <b>agent</b>가 답변을 생성</li>
+    </ol>
+    <p class="small">문제의 대부분은 4번(세션 결정)에서 발생합니다.</p>
+  </div>
+
+  <h2>3) “왜 섞였는가”를 가장 구체적으로: 세션 키(session key) 관점</h2>
+
+  <h3>3-1. 섞일 때(문제 상황): 세션 키가 너무 넓게 잡힌 경우</h3>
+  <div class="box warn">
+    <p>예전에(또는 잘못된 설정/기본값에서) DM 세션을 이런 식으로 구분했다고 가정하면:</p>
+    <pre><code>sessionKey = (channel + peer)
+예: (telegram + 5866509962)</code></pre>
+    <p>이 경우:</p>
+    <ul>
+      <li><code>default</code> 봇 DM → <code>(telegram + 5866509962)</code> 세션</li>
+      <li><code>paper-review</code> 봇 DM → <code>(telegram + 5866509962)</code> 세션</li>
+    </ul>
+    <p>즉, 서로 다른 봇(서로 다른 용도)의 대화가 <b>같은 세션</b>에 누적되어 “대화가 섞입니다”.</p>
+  </div>
+
+  <h3>3-2. 안 섞일 때(해결 상황): 세션 키에 accountId를 포함</h3>
+  <div class="box ok">
+    <p>지금처럼 DM 세션을 아래처럼 구분하면:</p>
+    <pre><code>sessionKey = (accountId + channel + peer)
+
+예:
+- (telegram/default + 5866509962)
+- (telegram/paper-review + 5866509962)</code></pre>
+    <p>같은 사람(Seho)이 DM을 보내더라도 <b>어느 봇(accountId)로 보냈는지</b>가 세션 키에 포함되기 때문에, 두 대화가 같은 세션으로 합쳐지지 않습니다.</p>
+  </div>
+
+  <h2>4) 실제로 바뀐 설정(너의 openclaw.json 기준)</h2>
+
+  <h3>4-1. DM 세션 분리 규칙: dmScope</h3>
+  <div class="box ok">
+    <pre><code>"session": {
+  "dmScope": "per-account-channel-peer"
+}</code></pre>
+    <p>의미:</p>
+    <ul>
+      <li><b>DM 세션을</b> (accountId + channel + peer) 기준으로 분리한다</li>
+      <li>그래서 두 봇의 DM이 섞이지 않는다</li>
+    </ul>
+  </div>
+
+  <h3>4-2. 어떤 봇 메시지를 어떤 에이전트가 처리할지: bindings</h3>
+  <div class="box">
+    <pre><code>"bindings": [
+  {
+    "agentId": "paper-review",
+    "match": {
+      "channel": "telegram",
+      "accountId": "paper-review"
+    }
+  }
+]</code></pre>
+    <p>효과:</p>
+    <ul>
+      <li><code>paper-review</code> 봇 메시지 → <code>paper-review</code> 에이전트가 처리</li>
+      <li><code>default</code> 봇 메시지 → 기본(main) 에이전트 흐름</li>
+    </ul>
+  </div>
+
+  <h2>5) 네트워크는 어디까지 알아야 하나? (로컬 기준 최소 지식)</h2>
+  <div class="box">
+    <p>현재 설정이 <code>gateway.mode=local</code>, <code>bind=loopback</code>라서 OpenClaw는 <b>네 Mac mini 안에서</b> 동작합니다.</p>
+    <ul>
+      <li>텔레그램 서버 ↔ (봇 API) ↔ 네 컴퓨터(OpenClaw)</li>
+      <li>중요한 건 <b>메시지가 어떤 accountId로 들어왔고, 어떤 session으로 붙는지</b></li>
+    </ul>
+  </div>
+
+  <hr />
+  <p class="small">문서 파일: openclaw-session-explainer.html</p>
+</body>
+</html>
