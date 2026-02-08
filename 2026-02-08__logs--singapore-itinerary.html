@@ -16,17 +16,17 @@
       background:var(--bg);
       color:var(--fg);
       font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif;
-      line-height:1.65;
+      line-height:1.6;
     }
-    a{ color:var(--link); text-decoration:none; word-break:break-all; }
+    a{ color:var(--link); text-decoration:none; }
     a:hover{ text-decoration:underline; }
 
-    .wrap{ max-width:980px; margin:0 auto; padding:18px 14px 40px; }
+    .wrap{ max-width:980px; margin:0 auto; padding:18px 14px 44px; }
 
     .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0 4px; }
-    .crumb{ font-size:0.95rem; color:var(--muted); }
+    .crumb{ font-size:0.92rem; color:var(--muted); }
 
-    h1{ margin:10px 0 6px; font-size:1.55rem; line-height:1.25; }
+    h1{ margin:10px 0 6px; font-size:1.45rem; line-height:1.25; }
     .sub{ margin:0 0 12px; color:var(--muted); font-size:0.95rem; }
 
     .card{ border:1px solid var(--border); background:var(--card); border-radius:var(--radius); padding:14px 14px; margin:12px 0; }
@@ -36,35 +36,45 @@
     ul{ margin:6px 0 0 18px; padding:0; }
     li{ margin:4px 0; }
 
-    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
-    .chip{ display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); background:#fff; border-radius:999px; padding:6px 10px; font-size:0.9rem; color:#374151; }
-    .chip a{ word-break:normal; }
-
-    /* Mobile-friendly key-value list */
-    .kv{ display:grid; gap:10px; }
-    .row{ display:grid; grid-template-columns: 110px 1fr; gap:12px; padding:10px 10px; border:1px solid var(--border); background:#fff; border-radius:12px; }
-    .k{ font-size:0.9rem; color:var(--muted); }
-    .v{ font-size:1rem; }
-
-    /* small screens: stack */
-    @media (max-width: 420px){
-      .row{ grid-template-columns: 1fr; }
-      .k{ font-size:0.85rem; }
-      h1{ font-size:1.35rem; }
-      .wrap{ padding:16px 12px 36px; }
-    }
-
-    /* iOS tap targets */
-    .btnline{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 12px; border-radius:12px; border:1px solid var(--border);
-      background:#fff; color:var(--fg); font-size:0.95rem;
-    }
-    .btn.primary{ background:#eff6ff; border-color:#bfdbfe; }
-
     .muted{ color:var(--muted); }
     .hr{ height:1px; background:var(--border); margin:14px 0; }
+
+    /* Better mobile key-value: no table-like grid */
+    .kv{ display:grid; gap:10px; }
+    .row{
+      padding:12px 12px;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:12px;
+    }
+    .k{ font-size:0.85rem; color:var(--muted); margin:0 0 6px; }
+    .v{ font-size:1rem; margin:0; }
+
+    /* Links: show as buttons/chips instead of long raw URL */
+    .links{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--fg);
+      font-size:0.95rem;
+    }
+    .btn.primary{ background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
+
+    details{ border:1px solid var(--border); background:#fff; border-radius:12px; padding:10px 12px; }
+    details > summary{ cursor:pointer; font-weight:600; }
+    details[open]{ padding-bottom:12px; }
+
+    /* tighten on small screens */
+    @media (max-width: 420px){
+      .wrap{ padding:16px 12px 40px; }
+      h1{ font-size:1.32rem; }
+      .card{ padding:12px 12px; }
+      ul{ margin-left:16px; }
+      .btn{ padding:10px 10px; }
+    }
   </style>
 </head>
 <body>
@@ -75,7 +85,7 @@
     </div>
 
     <h1>싱가포르 4일 일정</h1>
-    <p class="sub">모바일에서 읽기 쉽게 카드 형태로 정리했습니다.</p>
+    <p class="sub">모바일에서 읽기 쉽게 정리했습니다.</p>
 
     <div class="card">
       <h2>한눈에 보기</h2>
@@ -90,10 +100,10 @@
     <div class="card" id="day1">
       <h2>DAY1</h2>
       <div class="kv">
-        <div class="row"><div class="k">도착</div><div class="v">06:20</div></div>
-        <div class="row"><div class="k">입국/짐</div><div class="v">07:30 완료</div></div>
-        <div class="row"><div class="k">숙소 이동</div><div class="v">지하철 약 1시간 20분 / 우버 약 25분 → 우버 이용</div></div>
-        <div class="row"><div class="k">식사</div><div class="v">
+        <div class="row"><p class="k">도착</p><p class="v">06:20</p></div>
+        <div class="row"><p class="k">입국/짐</p><p class="v">07:30 완료</p></div>
+        <div class="row"><p class="k">숙소 이동</p><p class="v">지하철 약 1시간 20분 / 우버 약 25분 → 우버 이용</p></div>
+        <div class="row"><p class="k">식사</p><div class="v">
           <div><b>Newton Food Centre</b> (호커센터)</div>
           <ul>
             <li>숙소 → Newton: 우버 5분 또는 도보 20분</li>
@@ -101,7 +111,7 @@
             <li>칠리크랩: 27번, 31번 가게 후보(점보시푸드 대비 저렴)</li>
           </ul>
         </div></div>
-        <div class="row"><div class="k">이후</div><div class="v">식사 후 휴식</div></div>
+        <div class="row"><p class="k">이후</p><p class="v">식사 후 휴식</p></div>
       </div>
     </div>
 
@@ -134,18 +144,20 @@
 
       <h3>저녁 후보</h3>
       <ul>
-        <li>참고 링크: <a href="https://blog.naver.com/gofl92/224016068375" target="_blank" rel="noopener noreferrer">blog.naver.com/gofl92/224016068375</a></li>
         <li>미쉐린 1스타 언급. 저녁 딤섬 제공 여부는 사전 확인 필요</li>
         <li>마리나 베이까지 도보 약 15분</li>
       </ul>
+      <div class="links">
+        <a class="btn primary" href="https://blog.naver.com/gofl92/224016068375" target="_blank" rel="noopener noreferrer">참고 링크 열기</a>
+      </div>
 
       <div class="hr"></div>
 
       <h3>야경: Marina Bay Sands 57층 바</h3>
-      <div class="chips">
-        <span class="chip">타워 1: <a href="https://blog.naver.com/zzwlals20/223731389253" target="_blank" rel="noopener noreferrer">링크</a></span>
-        <span class="chip">타워 2: 레스토랑 중심</span>
-        <span class="chip">타워 3: <a href="https://blog.naver.com/sinnasbored/223822434989" target="_blank" rel="noopener noreferrer">링크</a></span>
+      <div class="links">
+        <a class="btn" href="https://blog.naver.com/zzwlals20/223731389253" target="_blank" rel="noopener noreferrer">타워 1 안내</a>
+        <span class="btn" aria-disabled="true">타워 2 (레스토랑)</span>
+        <a class="btn" href="https://blog.naver.com/sinnasbored/223822434989" target="_blank" rel="noopener noreferrer">타워 3 안내</a>
       </div>
     </div>
 
@@ -172,29 +184,34 @@
       <h3>야경 옵션: 리버 크루즈 + 슬링샷</h3>
       <ul>
         <li>크루즈: 약 40분</li>
-        <li>예약 링크: <a href="https://www.myrealtrip.com/offers/126840?utm_source=mktpartner&t_scope=86400&mylink_id=788370" target="_blank" rel="noopener noreferrer">myrealtrip.com/offers/126840</a></li>
       </ul>
+      <div class="links">
+        <a class="btn primary" href="https://www.myrealtrip.com/offers/126840?utm_source=mktpartner&t_scope=86400&mylink_id=788370" target="_blank" rel="noopener noreferrer">크루즈 예약 링크</a>
+      </div>
     </div>
 
     <div class="card" id="day4">
       <h2>DAY4</h2>
       <div class="kv">
-        <div class="row"><div class="k">비행기</div><div class="v">14:35</div></div>
-        <div class="row"><div class="k">공항 목표</div><div class="v">11:30 도착 (출발 3시간 전 가정)</div></div>
-        <div class="row"><div class="k">이동</div><div class="v">택시 약 30분 → <b>11:00 숙소 출발</b></div></div>
+        <div class="row"><p class="k">비행기</p><p class="v">14:35</p></div>
+        <div class="row"><p class="k">공항 목표</p><p class="v">11:30 도착 (출발 3시간 전 가정)</p></div>
+        <div class="row"><p class="k">이동</p><p class="v">택시 약 30분 → <b>11:00 숙소 출발</b></p></div>
       </div>
     </div>
 
     <div class="card" id="extras">
       <h2>추가 후보</h2>
-      <p class="muted">평점/영업시간/동선 적합성은 지도 앱에서 확인 후 일정에 반영 권장.</p>
-      <ul>
-        <li>Queenstown McDonald's</li>
-        <li>Abode (야간)</li>
-        <li>Kafe Utu</li>
-        <li>DILL</li>
-        <li>Magpie</li>
-      </ul>
+      <p class="muted">평점/영업시간/동선 적합성은 지도 앱에서 확인 후 반영 권장.</p>
+      <details>
+        <summary>후보 리스트 보기</summary>
+        <ul>
+          <li>Queenstown McDonald's</li>
+          <li>Abode (야간)</li>
+          <li>Kafe Utu</li>
+          <li>DILL</li>
+          <li>Magpie</li>
+        </ul>
+      </details>
     </div>
   </div>
 </body>
