@@ -1,0 +1,16 @@
+{
+  "site": {
+    "title": "OpenClaw Pages",
+    "subtitle": "문서/정리 HTML 모음. 공유할 때는 이 사이트의 URL만 보내면 됨.",
+    "repo": "https://github.com/samdasuu/openclaw-pages",
+    "baseUrl": "https://samdasuu.github.io/openclaw-pages/"
+  },
+  "pages": [
+    {
+      "title": "OpenClaw 대화(세션) 섞임 원인/해결",
+      "href": "./openclaw-session-explainer.html",
+      "desc": "텔레그램 봇 2개(accountId 2개) 쓸 때 세션이 섞이는 이유와 dmScope 설정으로 분리하는 방법.",
+      "tags": ["openclaw", "telegram", "session", "config"]
+    }
+  ]
+}
