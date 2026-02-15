@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OpenClaw 슬래시 커맨드 레퍼런스 (역할/예시/주의점)</title>
+  <meta name="description" content="OpenClaw에서 사용 가능한 /커맨드들을 목적별로 정리하고, 각 커맨드의 역할/인자/예시/주의점을 한 페이지로 정리." />
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--fg:#1f2937;--muted:#64748b;--border:#e2e8f0;--accent:#2563eb;--warn:#b45309;--ok:#065f46;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;--maxw:900px;}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif;line-height:1.65;}
+    a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;}
+    main{max-width:var(--maxw);margin:24px auto;padding:0 16px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+    header.card{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+    .back{display:inline-block;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
+    h1{margin:0 0 6px;font-size:22px;}
+    h2{margin:22px 0 10px;padding-top:14px;border-top:1px solid var(--border);font-size:18px;}
+    h3{margin:16px 0 8px;font-size:15px;}
+    h4{margin:14px 0 6px;font-size:14px;}
+    p{margin:8px 0;}
+    ul{margin:8px 0 8px 20px;} li{margin:6px 0;}
+    .meta{color:var(--muted);font-size:13px;}
+    .pill{display:inline-block;border:1px solid var(--border);background:#fff;border-radius:999px;padding:2px 10px;font-size:12px;color:var(--muted);margin-right:6px;}
+    .box{margin-top:12px;}
+    .note{border-left:4px solid var(--accent);padding:10px 12px;background:#eff6ff;border-radius:10px;}
+    .warn{border-left:4px solid var(--warn);padding:10px 12px;background:#fff7ed;border-radius:10px;}
+    .ok{border-left:4px solid var(--ok);padding:10px 12px;background:#ecfdf5;border-radius:10px;}
+    code{font-family:var(--mono);font-size:0.95em;background:#f1f5f9;border:1px solid var(--border);padding:1px 6px;border-radius:8px;}
+    pre{margin:10px 0;background:#0b1020;color:#e5e7eb;border-radius:12px;padding:14px;overflow-x:auto;border:1px solid #111827;}
+    pre code{background:transparent;border:0;padding:0;color:inherit;}
+    table{width:100%;border-collapse:separate;border-spacing:0;margin:10px 0;overflow:hidden;border-radius:12px;border:1px solid var(--border);}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+    th{background:#f1f5f9;text-align:left;font-size:13px;color:#0f172a;}
+    tr:last-child td{border-bottom:0;}
+    .k{white-space:nowrap;font-family:var(--mono);}
+  </style>
+</head>
+<body>
+  <main>
+    <header class="card">
+      <div><a class="back" href="./">← 목록으로</a></div>
+      <div style="flex:1">
+        <h1>OpenClaw 슬래시 커맨드 레퍼런스</h1>
+        <div class="meta">작성일: 2026-02-15 · 대상: 전문 개발자(가독성 우선) · 범위: OpenClaw Gateway slash commands</div>
+        <div style="margin-top:10px">
+          <span class="pill">/status</span>
+          <span class="pill">/model</span>
+          <span class="pill">/think</span>
+          <span class="pill">/reasoning</span>
+          <span class="pill">/subagents</span>
+          <span class="pill">/context</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="box">
+      <div class="card">
+        <h2>요약</h2>
+        <ul>
+          <li>OpenClaw의 <strong>슬래시 커맨드</strong>는 Gateway가 처리한다. (대부분 <strong>단독 메시지</strong>로 <code>/...</code>를 보내면 즉시 실행)</li>
+          <li><strong>Directives</strong>(예: <code>/think</code>, <code>/model</code>)는 모델 호출 전에 해석되어 세션 설정을 바꾼다.</li>
+          <li>일부 기능은 기본 비활성/권한 제한(예: <code>/restart</code>, <code>/config</code>, <code>/debug</code>, <code>/bash</code>)이 있을 수 있다.</li>
+        </ul>
+        <div class="warn" style="margin-top:12px">
+          <strong>주의</strong>: 그룹 채팅에서 <code>/reasoning</code>, <code>/verbose</code>는 내부 출력/도구 로그가 노출될 수 있어 위험하다. 필요할 때만 켜고, 기본은 끄는 편이 안전.
+        </div>
+      </div>
+    </section>
+
+    <section class="box">
+      <div class="card">
+        <h2>0) 공통 규칙 / 실행 방식</h2>
+        <h3>커맨드 vs 디렉티브</h3>
+        <ul>
+          <li><strong>Commands</strong>: <code>/status</code>, <code>/help</code> 같은 “기능 호출”.</li>
+          <li><strong>Directives</strong>: <code>/think</code>, <code>/model</code>, <code>/exec</code> 같은 “세션/모델 실행 옵션”.</li>
+        </ul>
+
+        <h3>지속성(persist) 규칙</h3>
+        <ul>
+          <li><strong>디렉티브만 있는 메시지</strong>로 보내면 세션에 지속된다. (예: <code>/think high</code>만 보내기)</li>
+          <li>일반 문장 속에 섞어 쓰면 “힌트”로만 처리되고 지속되지 않을 수 있다. (예: <code>이거 요약해줘 /think high</code>)</li>
+        </ul>
+
+        <h3>구문</h3>
+        <ul>
+          <li><code>/cmd arg1 arg2</code></li>
+          <li><code>/cmd: arg</code> (콜론 허용)</li>
+        </ul>
+
+        <h3>빠른 확인</h3>
+        <div class="ok">
+          실제로 “지금 텔레그램에서 등록된 커맨드 목록”은 <code>/commands</code>로 확인하는 게 가장 확실하다.
+        </div>
+      </div>
+    </section>
+
+    <section class="box">
+      <div class="card">
+        <h2>1) 도움말/상태/정체성</h2>
+
+        <table>
+          <tr><th style="width:180px">커맨드</th><th>역할(무슨 문제를 해결?)</th><th style="width:330px">예시</th></tr>
+          <tr>
+            <td class="k">/help</td>
+            <td>도움말(핵심 커맨드/사용법) 출력.</td>
+            <td><pre><code>/help</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/commands</td>
+            <td>현재 환경에서 사용 가능한 커맨드 목록(기본 + 스킬)을 출력. “정답 목록” 확인용.</td>
+            <td><pre><code>/commands</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/status</td>
+            <td>
+              현재 세션 상태(모델/설정/사용량 등)를 요약해서 보여줌. 디버깅과 비용/토큰 확인에 유용.
+              <ul>
+                <li>응답이 느려졌을 때: 큐/모델/연결 상태 점검</li>
+                <li>모델이 바뀌었나? thinking/verbose가 켜졌나? 확인</li>
+              </ul>
+            </td>
+            <td><pre><code>/status</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/whoami<br><span class="meta">(alias: /id)</span></td>
+            <td>현재 사용자의 sender id(식별자) 출력. allowlist 설정/권한 문제 디버깅에 필수.</td>
+            <td><pre><code>/whoami
+/id</code></pre></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="box">
+      <div class="card">
+        <h2>2) 세션/대화 흐름 제어</h2>
+
+        <table>
+          <tr><th style="width:180px">커맨드</th><th>역할</th><th style="width:330px">예시</th></tr>
+          <tr>
+            <td class="k">/stop</td>
+            <td>현재 진행 중인 작업(모델 응답/툴 실행 등)을 중단 요청.</td>
+            <td><pre><code>/stop</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/reset<br><span class="meta">또는 /new [model]</span></td>
+            <td>
+              새 대화처럼 컨텍스트를 리셋(세션 초기화). <code>/new</code>는 모델 힌트를 같이 줄 수 있음.
+              <div class="note" style="margin-top:8px">모델 힌트는 “지정”이 아니라 “선호”로 동작할 수 있음(설정/가용 모델에 따라).</div>
+            </td>
+            <td><pre><code>/reset
+/new
+/new openai/gpt-5.2</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/send on|off|inherit</td>
+            <td>메시지 전달(발송) 정책 제어. (owner-only일 수 있음)</td>
+            <td><pre><code>/send off</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/activation mention|always</td>
+            <td>그룹 채팅에서 “멘션 필요 여부” 같은 반응 조건 제어(그룹용).</td>
+            <td><pre><code>/activation mention</code></pre></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="box">
+      <div class="card">
+        <h2>3) 모델/추론/출력 제어 (Directives)</h2>
+        <p class="meta">Directives는 모델 호출 전에 해석되어, “어떻게 답할지”를 바꾼다.</p>
+
+        <table>
+          <tr><th style="width:200px">디렉티브</th><th>역할</th><th style="width:310px">예시</th></tr>
+          <tr>
+            <td class="k">/think off|minimal|low|medium|high|xhigh<br><span class="meta">aliases: /thinking, /t</span></td>
+            <td>
+              모델의 사고(추론) 강도를 조절. 복잡한 문제/코드/설계는 올리고, 단순 질의는 낮추는 게 비용-효율적.
+              <div class="note" style="margin-top:8px">“세션에 지속”시키려면 단독 메시지로 보내는 게 안전.</div>
+            </td>
+            <td><pre><code>/think low
+/think high</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/reasoning on|off|stream<br><span class="meta">alias: /reason</span></td>
+            <td>
+              reasoning(추론 과정)을 별도 메시지로 노출(또는 텔레그램 드래프트 스트리밍). 디버깅용.
+              <div class="warn" style="margin-top:8px"><strong>그룹에서 위험</strong>: 내부 정보/도구 출력이 섞일 수 있어 기본 off 권장.</div>
+            </td>
+            <td><pre><code>/reasoning on
+/reasoning off
+/reasoning stream</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/verbose on|full|off<br><span class="meta">alias: /v</span></td>
+            <td>도구 호출/진행 상황 등 “자세한 출력”을 늘림. 디버깅할 때만 켜는 편이 안전.</td>
+            <td><pre><code>/verbose on
+/verbose off</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/model &lt;name&gt;<br><span class="meta">alias: /models</span></td>
+            <td>
+              사용할 모델을 선택/변경. <code>/model</code>만 치면 picker/list가 뜰 수 있음.
+              <ul>
+                <li>품질/가격/속도 튜닝</li>
+                <li>특정 작업에 강한 모델로 스위치</li>
+              </ul>
+            </td>
+            <td><pre><code>/model
+/model list
+/model openai/gpt-5.2</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/queue &lt;mode&gt;</td>
+            <td>
+              메시지 처리 큐 정책 설정(디바운스/캡/드랍 전략 등). 입력이 몰릴 때 UX 조절.
+              <div class="note" style="margin-top:8px">상세 옵션은 환경/버전에 따라 다르므로 <code>/queue</code> 단독 실행으로 현재 설정 확인 권장.</div>
+            </td>
+            <td><pre><code>/queue
+/queue debounce:2s cap:25 drop:summarize</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/usage off|tokens|full|cost</td>
+            <td>응답 하단에 토큰/비용/사용량 표시를 켜거나 끔. 비용 민감하면 on.</td>
+            <td><pre><code>/usage tokens
+/usage off</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/tts ...</td>
+            <td>TTS(음성 출력) 정책 설정. (off/always/inbound/tagged 등)</td>
+            <td><pre><code>/tts status
+/tts off</code></pre></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="box">
+      <div class="card">
+        <h2>4) 도구 실행/권한 (고급)</h2>
+
+        <table>
+          <tr><th style="width:200px">커맨드</th><th>역할</th><th style="width:310px">예시</th></tr>
+          <tr>
+            <td class="k">/elevated on|off|ask|full<br><span class="meta">alias: /elev</span></td>
+            <td>
+              위험한 exec/외부작업 승인 정책을 조절. <code>full</code>은 승인 없이 실행할 수 있어 위험.
+              <div class="warn" style="margin-top:8px">보안상 기본은 <code>ask</code> 또는 <code>off</code> 권장.</div>
+            </td>
+            <td><pre><code>/elevated ask
+/elevated off</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/exec host=... security=... ask=... node=...</td>
+            <td>
+              exec 실행 대상/보안 모드 설정. 보통은 현재 설정 조회용으로도 씀.
+              <div class="note" style="margin-top:8px">예: sandbox/host/node 어디에서 쉘을 실행할지, allowlist/full 같은 보안 레벨.</div>
+            </td>
+            <td><pre><code>/exec
+/exec host=gateway security=allowlist ask=on-miss</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/approve &lt;id&gt; allow-once|allow-always|deny</td>
+            <td>
+              exec 승인 프롬프트(approval) 처리. “어떤 명령을 허용할지” 명시적으로 결정.
+            </td>
+            <td><pre><code>/approve 123 allow-once
+/approve 123 deny</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/allowlist</td>
+            <td>허용 목록 조회/추가/삭제. 커맨드/exec 권한 문제 해결에 사용.</td>
+            <td><pre><code>/allowlist</code></pre></td>
+          </tr>
+        </table>
+
+        <h3>bash 실행 (옵션/권한 필요)</h3>
+        <div class="warn">
+          아래는 환경 설정에 따라 <strong>비활성</strong>일 수 있다. (<code>commands.bash: true</code> + elevated allowlist 등)
+        </div>
+        <table>
+          <tr><th style="width:200px">커맨드</th><th>역할</th><th style="width:310px">예시</th></tr>
+          <tr>
+            <td class="k">/bash &lt;command&gt;<br><span class="meta">alias: ! &lt;command&gt;</span></td>
+            <td>호스트에서 쉘 커맨드를 실행. 빠른 진단/파일 조작/스크립트 실행.</td>
+            <td><pre><code>/bash ls -la
+! ls -la</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">!poll</td>
+            <td>백그라운드로 돌고 있는 bash 작업의 출력/상태를 확인.</td>
+            <td><pre><code>!poll</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">!stop</td>
+            <td>실행 중인 bash 작업을 중지.</td>
+            <td><pre><code>!stop</code></pre></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="box">
+      <div class="card">
+        <h2>5) 컨텍스트/서브에이전트/스킬 실행</h2>
+
+        <h3>/context</h3>
+        <ul>
+          <li><code>/context list</code>: 현재 컨텍스트 구성(파일/도구/스킬) 요약</li>
+          <li><code>/context detail</code>: 각 항목별 크기/구성 등 상세(토큰 소비 분석용)</li>
+          <li><code>/context json</code>: 기계가 읽기 쉬운 형태(자동화/로그용)</li>
+        </ul>
+        <pre><code>/context
+/context detail</code></pre>
+
+        <h3>/subagents</h3>
+        <p>서브에이전트(백그라운드 작업)를 점검/제어.</p>
+        <ul>
+          <li><code>/subagents list</code>: 실행 중/최근 서브에이전트 목록</li>
+          <li><code>/subagents log ...</code>: 로그 확인</li>
+          <li><code>/subagents send ...</code>: 서브에이전트에 메시지</li>
+          <li><code>/subagents stop ...</code>: 중지</li>
+        </ul>
+        <pre><code>/subagents list</code></pre>
+
+        <h3>/skill &lt;name&gt; [input]</h3>
+        <p>스킬을 이름으로 실행. (개별 스킬이 슬래시로 노출되지 않는 환경에서 특히 유용)</p>
+        <pre><code>/skill weather 서울
+/skill pdf-workflow &lt;...&gt;</code></pre>
+
+        <div class="note">
+          스킬이 “슬래시 명령어로 바로 노출”되는지는 설정(<code>nativeSkills</code>) 및 스킬 메타(<code>user-invocable</code>)에 좌우된다.
+        </div>
+      </div>
+    </section>
+
+    <section class="box">
+      <div class="card">
+        <h2>6) 설정/디버그/재시작 (owner-only 또는 비활성일 수 있음)</h2>
+        <p class="meta">보통 운영자(Owner)만 쓰거나, config에서 기능을 켜야 동작한다.</p>
+
+        <table>
+          <tr><th style="width:200px">커맨드</th><th>역할</th><th style="width:310px">예시</th></tr>
+          <tr>
+            <td class="k">/config show|get|set|unset</td>
+            <td>
+              on-disk config(openclaw.json)를 조회/수정. 잘못 건드리면 장애가 날 수 있으므로 신중.
+              <div class="note" style="margin-top:8px">기본 비활성일 수 있음: <code>commands.config: true</code></div>
+            </td>
+            <td><pre><code>/config show
+/config get messages.responsePrefix</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/debug show|set|unset|reset</td>
+            <td>
+              런타임 오버라이드(메모리) 설정. 디스크에는 안 쓰고 즉시 적용(실험/진단용).
+              <div class="note" style="margin-top:8px">기본 비활성일 수 있음: <code>commands.debug: true</code></div>
+            </td>
+            <td><pre><code>/debug show
+/debug set messages.responsePrefix="[openclaw]"</code></pre></td>
+          </tr>
+          <tr>
+            <td class="k">/restart</td>
+            <td>
+              Gateway/런타임 재시작. 기본 비활성일 수 있으며 운영 환경에서는 영향이 큼.
+              <div class="warn" style="margin-top:8px">기본 비활성일 수 있음: <code>commands.restart: true</code></div>
+            </td>
+            <td><pre><code>/restart</code></pre></td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <section class="box">
+      <footer class="card">
+        <div>Project: OpenClaw Pages</div>
+        <div>Repo: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">https://github.com/samdasuu/openclaw-pages</a></div>
+        <div class="meta" style="margin-top:8px">참고: OpenClaw docs (slash commands) 기반으로 정리. 버전에 따라 일부 커맨드/옵션은 다를 수 있음.</div>
+      </footer>
+    </section>
+  </main>
+</body>
+</html>
