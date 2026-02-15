@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>리포트: 코딩 에이전트가 프레임워크를 대체한다 — news.hada.io 요약 + 추가</title>
+  <meta name="description" content="자동화 프로그래밍(코딩 에이전트)이 프레임워크가 약속하던 자동화를 흡수하며, 엔지니어를 ‘운영자’가 아니라 설계자로 되돌린다는 주장 요약." />
+  <style>
+    :root { --bg:#f8fafc; --card:#ffffff; --fg:#1f2937; --muted:#64748b; --border:#e2e8f0; --accent:#2563eb; --maxw:900px; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif; line-height:1.65; }
+    a { color: var(--accent); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    main { max-width: var(--maxw); margin: 24px auto; padding: 0 16px; }
+    .card { background: var(--card); border:1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+    header.card { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+    .back { display:inline-block; padding:8px 10px; border:1px solid var(--border); border-radius: 10px; background:#fff; font-size: 14px; }
+    h1 { margin: 0 0 4px; font-size: 22px; }
+    .meta { color: var(--muted); font-size: 13px; }
+    .tags { margin-top: 10px; display:flex; gap:6px; flex-wrap:wrap; }
+    .tag { border:1px solid var(--border); background:#fff; border-radius: 999px; padding:2px 9px; font-size: 12px; color: var(--muted); }
+
+    .summary { margin-top: 14px; }
+    .summary .card { border-left: 4px solid var(--accent); }
+    .summary p { margin: 6px 0; }
+
+    .content { margin-top: 14px; }
+    .content h2 { margin: 22px 0 10px; padding-top: 14px; border-top:1px solid var(--border); font-size: 18px; }
+    .content h3 { margin: 16px 0 8px; font-size: 15px; }
+    .content p { margin: 8px 0; }
+
+    .code { margin-top: 14px; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    pre { margin:0; background:#0b1020; color:#e5e7eb; border-radius: 12px; padding: 14px; overflow-x:auto; border:1px solid #111827; }
+
+    footer.card { margin-top: 14px; color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="card">
+      <div><a class="back" href="./">← 목록으로</a></div>
+      <div style="flex:1">
+        <h1>코딩 에이전트가 프레임워크를 대체한다 — news.hada.io 요약 + 추가</h1>
+        <div class="meta">작성일: 2026-02-15 · 출처: <a href="https://news.hada.io/topic?id=26502" target="_blank" rel="noreferrer">topic?id=26502</a></div>
+        <div class="tags">
+          <span class="tag">analysis</span>
+          <span class="tag">software</span>
+          <span class="tag">agents</span>
+          <span class="tag">frameworks</span>
+          <span class="tag">automation</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="summary">
+      <div class="card">
+        <strong>요약 (3줄)</strong>
+        <p>글의 핵심은 “프레임워크가 약속하던 자동화(보일러플레이트 제거)는 이제 코딩 에이전트가 더 잘/더 싸게 대체한다”는 주장이다.</p>
+        <p>그래서 엔지니어는 특정 스택의 ‘운영자’가 아니라, 다시 <strong>설계·트레이드오프·제품 결정</strong>에 집중하는 ‘소프트웨어 엔지니어링’으로 돌아가야 한다.</p>
+        <p>불필요한 추상화/툴링을 줄이고 기본 도구(Bash/Makefile) + 에이전트 루프 조합이 오히려 미래에 더 견고하다고 본다.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="card">
+        <h2>본문</h2>
+
+        <h3>원문 요지 정리</h3>
+        <ul>
+          <li><strong>자동화 프로그래밍</strong>(automated programming)이 본질을 더 잘 설명한다: ‘vibe coding’보다 정확한 프레이밍.</li>
+          <li>작년 말(12월) 이후 모델/도구 성숙도가 급상승했고, 잘 구성된 환경에서는 “벽돌을 직접 쌓지 않고” 아키텍트처럼 일하는 작업 방식이 가능.</li>
+          <li>프레임워크가 주장하는 가치(단순화/자동화/인건비 절감) 중, 진짜 의미 있었던 건 <strong>자동화</strong>였는데 AI가 그 자동화를 흡수한다.</li>
+          <li>과도한 추상화는 문제를 줄이지 못하고 새로운 문제를 만든다(“부러진 다리를 비단으로 감싼다”).</li>
+          <li>하이퍼스케일러의 설계 철학에 종속되어 “React 개발자” 같은 교체 가능한 운영자(cog)가 되지 말고, 스스로 도구/제품/미학을 신뢰하라.</li>
+        </ul>
+
+        <h3>추가 내용(해석/보완)</h3>
+        <p>이 글은 프레임워크 비판이지만, 실제로는 “프레임워크 vs 노프레임워크”가 아니라 <strong>‘복잡성을 어디에 둘 것인가’</strong> 문제로 읽는 게 생산적이다.</p>
+        <ul>
+          <li><strong>프레임워크가 여전히 유리한 경우</strong>: 팀 규모가 크고, 온보딩/일관성/보안 패치/표준화 비용이 더 중요할 때.</li>
+          <li><strong>에이전트 기반이 유리한 경우</strong>: 문제 정의가 자주 바뀌고, 빠른 프로토타입/특화 도구가 필요하며, “딱 맞는 최소 구조”를 계속 재조립할 때.</li>
+          <li><strong>현실적 절충</strong>: 프레임워크를 ‘표준 운영체제’로 쓰되, 에이전트가 반복 작업(코드 생성/리팩터/문서화/테스트)을 흡수하게 하여 프레임워크 의존 비용을 낮추는 방식.</li>
+        </ul>
+
+        <h3>Seho에게 적용(체크리스트)</h3>
+        <ul>
+          <li>지금 작업이 “새 기능 개발”인지 “반복/정리/자동화”인지 먼저 분리하기</li>
+          <li>반복 파트는 에이전트/스크립트로 흡수하고, 핵심 설계/결정만 사람이 잡기</li>
+          <li>도구 선택 기준을 “유행”이 아니라 “내가 실제로 쓰는 10% 기능 vs 유지비”로 계산하기</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="code">
+      <div class="card">
+        <h2>Code / Data</h2>
+        <pre><code># 원문 읽기 (OpenClaw)
+web_fetch("https://news.hada.io/topic?id=26502")
+
+# 리포트 파일
+# - 2026-02-15__hadaio--frameworks-replaced-by-coding-agents.html
+# pages.json v2 schema:
+#   id/title/description/category/date/href
+</code></pre>
+      </div>
+    </section>
+
+    <footer class="card">
+      <div>Project: OpenClaw Pages</div>
+      <div>Repo: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">https://github.com/samdasuu/openclaw-pages</a></div>
+    </footer>
+  </main>
+</body>
+</html>
