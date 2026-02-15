@@ -4,22 +4,68 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>OpenClaw에서 대화(세션)가 섞이는 이유와 해결 설정</title>
+  <meta name="description" content="OpenClaw에서 대화(세션)가 섞이는 이유와 해결 설정" />
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Arial, sans-serif; line-height: 1.55; margin: 24px; max-width: 920px; }
-    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
-    pre { background: #f6f8fa; padding: 12px; border-radius: 8px; overflow-x: auto; }
-    .box { border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px; margin: 14px 0; }
-    .ok { border-color: #86efac; background: #f0fdf4; }
-    .warn { border-color: #fca5a5; background: #fef2f2; }
-    h1,h2,h3 { margin: 18px 0 10px; }
-    ul, ol { margin: 6px 0 10px 18px; }
-    .small { color: #6b7280; font-size: 0.92rem; }
-    a { color: #2563eb; text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --fg: #1f2937;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --maxw: 900px;
+    }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif; line-height:1.65; }
+    a { color: var(--accent); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    main { max-width: var(--maxw); margin: 24px auto; padding: 0 16px; }
+    .card { background: var(--card); border:1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+    header.card { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+    .back { display:inline-block; padding:8px 10px; border:1px solid var(--border); border-radius: 10px; background:#fff; font-size: 14px; }
+    h1 { margin: 0 0 4px; font-size: 22px; }
+    .meta { color: var(--muted); font-size: 13px; }
+    .tags { margin-top: 10px; display:flex; gap:6px; flex-wrap:wrap; }
+    .tag { border:1px solid var(--border); background:#fff; border-radius: 999px; padding:2px 9px; font-size: 12px; color: var(--muted); }
+
+    .summary { margin-top: 14px; }
+    .summary .card { border-left: 4px solid var(--accent); }
+    .summary p { margin: 6px 0; }
+
+    .content { margin-top: 14px; }
+    .content h2 { margin: 22px 0 10px; padding-top: 14px; border-top:1px solid var(--border); font-size: 18px; }
+    .content h3 { margin: 16px 0 8px; font-size: 15px; }
+
+    .code { margin-top: 14px; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    pre { margin:0; background:#0b1020; color:#e5e7eb; border-radius: 12px; padding: 14px; overflow-x:auto; border:1px solid #111827; }
+
+    footer.card { margin-top: 14px; color: var(--muted); font-size: 13px; }
   </style>
 </head>
 <body>
-  <p class="small"><a href="./">← 홈</a></p>
+  <main>
+    <header class="card">
+      <div>
+        <a class="back" href="./">← 목록으로</a>
+      </div>
+      <div style="flex:1">
+        <h1>OpenClaw에서 대화(세션)가 섞이는 이유와 해결 설정</h1>
+        <div class="meta">작성일: 2026-02-15</div>
+        <div class="tags"><span class="tag">openclaw</span><span class="tag">telegram</span><span class="tag">session</span><span class="tag">config</span></div>
+      </div>
+    </header>
+
+    <section class="summary">
+      <div class="card">
+        <strong>요약</strong>
+        <p>텔레그램 봇 2개(accountId 2개) 쓸 때 세션이 섞이는 이유와 dmScope 설정으로 분리하는 방법.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="card">
+        <h2>본문</h2>
+        <p class="small"><a href="./">← 홈</a></p>
 
   <h1>OpenClaw에서 “대화가 섞이는” 이유 + 지금 “안 섞이게” 만든 설정</h1>
 
@@ -152,5 +198,20 @@
 
   <hr />
   <p class="small">문서: openclaw-session-explainer.html</p>
+      </div>
+    </section>
+
+    <section class="code">
+      <div class="card">
+        <h2>Code / Data</h2>
+        <pre><code><!-- 필요 시 프롬프트/명령/데이터를 여기에 추가 --></code></pre>
+      </div>
+    </section>
+
+    <footer class="card">
+      <div>Project: OpenClaw Pages</div>
+      <div>Repo: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">https://github.com/samdasuu/openclaw-pages</a></div>
+    </footer>
+  </main>
 </body>
 </html>

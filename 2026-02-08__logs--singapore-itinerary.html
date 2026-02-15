@@ -4,81 +4,68 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>싱가포르 4일 일정 (모바일용)</title>
-  <meta name="description" content="싱가포르 4일 일정(이동/식사/관광/야경)을 모바일에서 보기 좋게 정리" />
+  <meta name="description" content="싱가포르 4일 일정 (모바일용)" />
   <style>
-    :root{
-      --bg:#ffffff; --fg:#111827; --muted:#6b7280; --card:#f9fafb; --border:#e5e7eb; --link:#2563eb;
-      --radius:14px;
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --fg: #1f2937;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --accent: #2563eb;
+      --maxw: 900px;
     }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--fg);
-      font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif;
-      line-height:1.6;
-    }
-    a{ color:var(--link); text-decoration:none; }
-    a:hover{ text-decoration:underline; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif; line-height:1.65; }
+    a { color: var(--accent); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    main { max-width: var(--maxw); margin: 24px auto; padding: 0 16px; }
+    .card { background: var(--card); border:1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+    header.card { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+    .back { display:inline-block; padding:8px 10px; border:1px solid var(--border); border-radius: 10px; background:#fff; font-size: 14px; }
+    h1 { margin: 0 0 4px; font-size: 22px; }
+    .meta { color: var(--muted); font-size: 13px; }
+    .tags { margin-top: 10px; display:flex; gap:6px; flex-wrap:wrap; }
+    .tag { border:1px solid var(--border); background:#fff; border-radius: 999px; padding:2px 9px; font-size: 12px; color: var(--muted); }
 
-    .wrap{ max-width:980px; margin:0 auto; padding:18px 14px 44px; }
+    .summary { margin-top: 14px; }
+    .summary .card { border-left: 4px solid var(--accent); }
+    .summary p { margin: 6px 0; }
 
-    .topbar{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 0 4px; }
-    .crumb{ font-size:0.92rem; color:var(--muted); }
+    .content { margin-top: 14px; }
+    .content h2 { margin: 22px 0 10px; padding-top: 14px; border-top:1px solid var(--border); font-size: 18px; }
+    .content h3 { margin: 16px 0 8px; font-size: 15px; }
 
-    h1{ margin:10px 0 6px; font-size:1.45rem; line-height:1.25; }
-    .sub{ margin:0 0 12px; color:var(--muted); font-size:0.95rem; }
+    .code { margin-top: 14px; }
+    pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    pre { margin:0; background:#0b1020; color:#e5e7eb; border-radius: 12px; padding: 14px; overflow-x:auto; border:1px solid #111827; }
 
-    .card{ border:1px solid var(--border); background:var(--card); border-radius:var(--radius); padding:14px 14px; margin:12px 0; }
-    .card h2{ margin:0 0 10px; font-size:1.15rem; }
-    .card h3{ margin:12px 0 8px; font-size:1.02rem; }
-
-    ul{ margin:6px 0 0 18px; padding:0; }
-    li{ margin:4px 0; }
-
-    .muted{ color:var(--muted); }
-    .hr{ height:1px; background:var(--border); margin:14px 0; }
-
-    /* Better mobile key-value: no table-like grid */
-    .kv{ display:grid; gap:10px; }
-    .row{
-      padding:12px 12px;
-      border:1px solid var(--border);
-      background:#fff;
-      border-radius:12px;
-    }
-    .k{ font-size:0.85rem; color:var(--muted); margin:0 0 6px; }
-    .v{ font-size:1rem; margin:0; }
-
-    /* Links: show as buttons/chips instead of long raw URL */
-    .links{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
-    .btn{
-      display:inline-flex; align-items:center; justify-content:center;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:#fff;
-      color:var(--fg);
-      font-size:0.95rem;
-    }
-    .btn.primary{ background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8; }
-
-    details{ border:1px solid var(--border); background:#fff; border-radius:12px; padding:10px 12px; }
-    details > summary{ cursor:pointer; font-weight:600; }
-    details[open]{ padding-bottom:12px; }
-
-    /* tighten on small screens */
-    @media (max-width: 420px){
-      .wrap{ padding:16px 12px 40px; }
-      h1{ font-size:1.32rem; }
-      .card{ padding:12px 12px; }
-      ul{ margin-left:16px; }
-      .btn{ padding:10px 10px; }
-    }
+    footer.card { margin-top: 14px; color: var(--muted); font-size: 13px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <main>
+    <header class="card">
+      <div>
+        <a class="back" href="./">← 목록으로</a>
+      </div>
+      <div style="flex:1">
+        <h1>싱가포르 4일 일정 (모바일용)</h1>
+        <div class="meta">작성일: 2026-02-08</div>
+        <div class="tags"><span class="tag">logs</span><span class="tag">travel</span><span class="tag">singapore</span><span class="tag">itinerary</span></div>
+      </div>
+    </header>
+
+    <section class="summary">
+      <div class="card">
+        <strong>요약</strong>
+        <p>DOCX 메모를 기반으로 4일 일정(이동/식사/야경/예약 포인트)을 읽기 쉽게 정리.</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="card">
+        <h2>본문</h2>
+        <div class="wrap">
     <div class="topbar">
       <div class="crumb"><a href="./">← 홈</a></div>
       <div class="crumb">Singapore · 4 days</div>
@@ -251,5 +238,20 @@
       </details>
     </div>
   </div>
+      </div>
+    </section>
+
+    <section class="code">
+      <div class="card">
+        <h2>Code / Data</h2>
+        <pre><code><!-- 필요 시 프롬프트/명령/데이터를 여기에 추가 --></code></pre>
+      </div>
+    </section>
+
+    <footer class="card">
+      <div>Project: OpenClaw Pages</div>
+      <div>Repo: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">https://github.com/samdasuu/openclaw-pages</a></div>
+    </footer>
+  </main>
 </body>
 </html>
