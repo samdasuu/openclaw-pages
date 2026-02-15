@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PR-AUC vs ROC-AUC — 언제 무엇을 써야 하는가 (배경→제1원리→비교→적용→용어 사전)</title>
+  <meta name="description" content="PR-AUC와 ROC-AUC의 배경, 수학적 제1원리, 비교, 실무 적용(특히 불균형 데이터/사기탐지)까지 한 번에 정리." />
+  <style>
+    :root{
+      --bg:#f8fafc;           /* slate-50 */
+      --card:#ffffff;
+      --text:#1f2937;         /* slate-800 */
+      --muted:#64748b;        /* slate-500 */
+      --border:#e2e8f0;       /* slate-200 */
+      --accent:#2563eb;       /* blue-600 */
+      --accent-weak:#dbeafe;  /* blue-100 */
+      --codebg:#0b1220;
+      --codefg:#e5e7eb;
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;line-height:1.65;}
+    a{color:var(--accent);text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    .wrap{max-width:900px;margin:32px auto;padding:0 16px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 1px 2px rgba(15,23,42,0.05);}
+    header{padding:18px 22px 8px 22px;}
+    .topline{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
+    .back{font-size:14px;color:var(--muted);}
+    h1{font-size:24px;margin:10px 0 6px 0;}
+    .meta{display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:13px;margin-top:6px;}
+    .tag{display:inline-block;padding:2px 8px;border-radius:999px;background:var(--accent-weak);color:#1d4ed8;font-weight:700;}
+
+    .summary{margin:0 22px 18px 22px;padding:14px 14px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;}
+    .summary b{display:block;margin-bottom:4px;}
+
+    .content{padding:0 22px 22px 22px;}
+    h2{font-size:18px;margin:26px 0 10px 0;padding-top:18px;border-top:1px solid var(--border);} 
+    h3{font-size:15px;margin:16px 0 6px 0;}
+    ul{margin:8px 0 8px 22px;}
+    li{margin:4px 0;}
+
+    .callout{border:1px solid var(--border);border-radius:12px;padding:12px 12px;background:#fcfcfd;}
+
+    table{width:100%;border-collapse:collapse;margin:10px 0;}
+    th,td{border:1px solid var(--border);padding:10px 10px;vertical-align:top;}
+    th{background:#f1f5f9;text-align:left;font-size:13px;}
+    td{font-size:13.5px;}
+
+    .codebox{margin-top:14px;border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+    .codebox .title{padding:10px 12px;background:#f1f5f9;color:#0f172a;font-weight:800;font-size:13px;border-bottom:1px solid var(--border);}
+    pre{margin:0;padding:12px;background:var(--codebg);color:var(--codefg);overflow:auto;font-size:12.5px;line-height:1.55;}
+
+    footer{padding:14px 22px;color:var(--muted);font-size:12.5px;border-top:1px solid var(--border);}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="topline">
+          <div class="back"><a href="index.html">← Back</a></div>
+          <div class="back">문서 · ML</div>
+        </div>
+        <h1>PR-AUC vs ROC-AUC — 언제 무엇을 써야 하는가</h1>
+        <div class="meta">
+          <span>date: 2026-02-16</span>
+          <span class="tag">Metrics</span>
+          <span class="tag">Imbalanced</span>
+          <span class="tag">PR-AUC</span>
+          <span class="tag">ROC-AUC</span>
+        </div>
+      </header>
+
+      <div class="summary">
+        <b>요약 (3줄)</b>
+        <div><b>ROC-AUC</b>는 “양성과 음성을 얼마나 잘 순서화(rank)하나”를 <b>FPR(거짓양성률)</b> 축에서 본다.</div>
+        <div><b>PR-AUC</b>는 “양성(희귀 클래스)을 잡을 때 <b>정밀도(precision)</b>를 얼마나 유지하나”를 본다.</div>
+        <div><b>불균형(사기탐지, 질병, 이상탐지)</b>에서는 PR-AUC가 더 직접적으로 유의미한 경우가 많고, ROC-AUC는 과대평가처럼 보일 수 있다.</div>
+      </div>
+
+      <div class="content">
+        <h2>1) 배경과 문제의식</h2>
+        <p>
+          이진 분류에서 모델은 보통 <b>점수(score)</b> 또는 <b>확률(probability)</b>을 출력하고, 우리는 임계값(threshold)을 정해 예/아니오로 결정합니다.
+          문제는 현실의 많은 과제가 <b>불균형(imbalanced)</b>이라는 점입니다. 예를 들어 사기 거래는 전체의 0.1% 미만일 수 있고,
+          질병 스크리닝에서도 양성 비율은 매우 낮습니다.
+        </p>
+        <p>
+          이런 상황에서 “정확도(accuracy)”는 거의 쓸모가 없고, 모델을 비교하려면 <b>threshold에 덜 의존하는</b> 요약 지표가 필요합니다.
+          ROC-AUC와 PR-AUC는 바로 그 요구에서 탄생했지만, <b>서로가 보는 세계가 다릅니다</b>.
+          이 차이를 이해하지 못하면, 지표가 높은데도 운영에서는 실패하는 전형적인 함정에 빠집니다.
+        </p>
+
+        <h2>2) 제1원리(First Principles)</h2>
+
+        <h3>정의(Definition): 혼동행렬에서 출발</h3>
+        <ul>
+          <li><b>TP</b>: 진짜 양성을 양성으로 맞춤</li>
+          <li><b>FP</b>: 진짜 음성을 양성으로 잘못 판단</li>
+          <li><b>FN</b>: 진짜 양성을 음성으로 놓침</li>
+          <li><b>TN</b>: 진짜 음성을 음성으로 맞춤</li>
+        </ul>
+
+        <h3>ROC 곡선의 구성 요소</h3>
+        <ul>
+          <li><b>TPR</b> (True Positive Rate, Recall, Sensitivity) = TP / (TP + FN)</li>
+          <li><b>FPR</b> (False Positive Rate) = FP / (FP + TN)</li>
+          <li>ROC curve: threshold를 움직이며 (FPR, TPR) 점들을 이은 곡선</li>
+          <li><b>ROC-AUC</b>: ROC 곡선 아래 면적</li>
+        </ul>
+
+        <div class="callout">
+          <b>직관(Intuition)</b>
+          <div>
+            ROC-AUC는 “무작위로 양성 하나와 음성 하나를 뽑았을 때, 모델이 양성에 더 높은 점수를 줄 확률”로 해석할 수 있다.
+            즉, <b>랭킹 품질</b>을 본다.
+          </div>
+        </div>
+
+        <h3>PR 곡선의 구성 요소</h3>
+        <ul>
+          <li><b>Precision</b> = TP / (TP + FP)</li>
+          <li><b>Recall</b> = TP / (TP + FN) (= TPR)</li>
+          <li>PR curve: threshold를 움직이며 (Recall, Precision) 점들을 이은 곡선</li>
+          <li><b>PR-AUC</b>: PR 곡선 아래 면적(= Average Precision으로 계산하는 경우가 많음)</li>
+        </ul>
+
+        <div class="callout">
+          <b>직관(Intuition)</b>
+          <div>
+            PR-AUC는 “양성을 더 많이 잡기 위해 threshold를 낮출 때, 그 과정에서 <b>오탐(FP)</b>이 얼마나 섞이며 precision이 얼마나 무너지는가”를 직접 본다.
+            불균형에서는 운영의 실제 고통이 FP 폭증으로 나타나는 경우가 많기 때문에 PR 관점이 더 현실적이다.
+          </div>
+        </div>
+
+        <h3>결과(Implication): 클래스 비율이 지표에 미치는 영향</h3>
+        <ul>
+          <li>ROC의 FPR은 분모가 (FP+TN)이다. 음성(TN)이 매우 많으면 FP가 꽤 늘어도 FPR이 작게 유지될 수 있다.</li>
+          <li>PR의 Precision은 분모가 (TP+FP)이다. 불균형에서는 FP가 조금만 늘어도 precision이 크게 떨어질 수 있다.</li>
+          <li>즉, 불균형에서 ROC-AUC는 “좋아 보이기” 쉽고, PR-AUC는 “운영 난이도”를 더 정직하게 드러낸다.</li>
+        </ul>
+
+        <h2>3) 대조와 비교</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>ROC-AUC</th>
+              <th>PR-AUC</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>축</b></td>
+              <td>FPR (x) vs TPR (y)</td>
+              <td>Recall (x) vs Precision (y)</td>
+            </tr>
+            <tr>
+              <td><b>주요 관점</b></td>
+              <td>양성 vs 음성 <b>랭킹 분리</b>가 잘 되는가</td>
+              <td>양성을 잡는 동안 <b>오탐이 얼마나 섞이는가</b></td>
+            </tr>
+            <tr>
+              <td><b>불균형 민감도</b></td>
+              <td>상대적으로 둔감(좋아 보일 수 있음)</td>
+              <td>매우 민감(현실적인 난이도 반영)</td>
+            </tr>
+            <tr>
+              <td><b>베이스라인(랜덤)</b></td>
+              <td>0.5</td>
+              <td>양성 비율(예: 0.001)</td>
+            </tr>
+            <tr>
+              <td><b>언제 유리?</b></td>
+              <td>클래스 비율이 극단적이지 않거나, 랭킹 자체가 목적일 때</td>
+              <td>양성이 희귀하고, FP 비용/처리량이 중요한 운영 문제일 때</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>유사/관련 개념과의 비교</h3>
+        <ul>
+          <li><b>F1-score</b>: 특정 threshold에서의 precision/recall 조화평균. threshold 의존성이 강함.</li>
+          <li><b>LogLoss</b>: 확률 예측의 품질(특히 calibration)에 민감. 운영에서 확률이 중요하면 필수.</li>
+          <li><b>Average Precision (AP)</b>: PR-AUC의 흔한 계산 방식(계단형 근사). 구현에 따라 PR-AUC와 이름이 섞여 쓰임.</li>
+        </ul>
+
+        <h2>4) 맥락적 연결 (실무 적용: 사기 탐지 기준)</h2>
+
+        <h3>상황 1: 사기 비율 0.1%에서 ROC-AUC 0.98인데 망하는 경우</h3>
+        <p>
+          ROC-AUC 0.98은 “양성과 음성을 꽤 잘 분리한다”는 뜻일 수 있습니다. 하지만 운영에서 중요한 건 “상위 N건을 차단/리뷰할 때
+          그 중 사기가 얼마나 섞여 있느냐(precision)”입니다.
+          사기 비율이 0.1%라면, 리뷰팀이 하루 1만 건을 보게 만들었을 때 FP가 조금만 많아도 인력이 터집니다.
+          이때는 PR-AUC, 그리고 더 직접적으로는 <b>precision@k</b> 혹은 <b>비용 기반 threshold</b>가 중요합니다.
+        </p>
+
+        <h3>상황 2: “PR-AUC를 올리는 것”과 “운영 비용을 줄이는 것”의 관계</h3>
+        <ul>
+          <li>PR-AUC는 전반적인 precision-recall trade-off의 요약이고, 실제 운영은 특정 지점(특정 recall 또는 특정 처리량)에 서게 된다.</li>
+          <li>따라서 보고서에는 <b>PR curve</b>뿐 아니라 <b>운영 지점</b>(예: 하루 500건 리뷰 가능한 k)에 대한 precision@k/recall@k를 함께 제시하면 설득력이 커진다.</li>
+        </ul>
+
+        <h3>실전 권장: 지표 세트로 가져가라</h3>
+        <ul>
+          <li><b>ROC-AUC</b>: 랭킹 분리의 상한을 보는 참고 지표(“모델이 분리 자체를 못 하면” 여기서 드러남)</li>
+          <li><b>PR-AUC(AP)</b>: 불균형에서 모델 비교의 주력</li>
+          <li><b>precision@k / recall@k</b>: 운영 용량 기반 KPI</li>
+          <li><b>Expected Cost</b>: FP/FN 비용을 정의하고 threshold를 최적화해 “의사결정”으로 연결</li>
+          <li><b>Calibration(Brier/curve)</b>: 확률을 룰/리스크 모델과 결합하려면 필수</li>
+        </ul>
+
+        <div class="codebox">
+          <div class="title">의사코드: ROC/PR을 계산하는 공통 패턴(개념)</div>
+          <pre><code># 점수 s(x)가 있고, threshold t를 바꿔가며
+# confusion matrix를 업데이트한다.
+
+for t in thresholds:
+  y_hat = (score >= t)
+  TP, FP, FN, TN = confusion(y, y_hat)
+
+  TPR = TP / (TP + FN)
+  FPR = FP / (FP + TN)
+  Precision = TP / (TP + FP)
+  Recall = TPR
+
+# ROC: (FPR, TPR) 점들의 면적
+# PR : (Recall, Precision) 점들의 면적(또는 Average Precision)</code></pre>
+        </div>
+
+        <h2>5) [용어 사전]</h2>
+        <ul>
+          <li><b>ROC curve</b>: threshold를 바꾸며 (FPR, TPR)을 그린 곡선.</li>
+          <li><b>ROC-AUC</b>: ROC curve 아래 면적. 랭킹(분리) 품질을 요약한다.</li>
+          <li><b>PR curve</b>: threshold를 바꾸며 (Recall, Precision)을 그린 곡선.</li>
+          <li><b>PR-AUC</b>: PR curve 아래 면적. 불균형에서 양성 탐지의 실질적 난이도를 더 잘 반영한다.</li>
+          <li><b>TPR (Recall, Sensitivity)</b>: 실제 양성 중 모델이 맞춘 비율.</li>
+          <li><b>FPR</b>: 실제 음성 중 모델이 양성으로 오탐한 비율.</li>
+          <li><b>Precision</b>: 모델이 양성이라고 한 것 중 실제 양성인 비율(오탐이 늘면 급격히 떨어짐).</li>
+          <li><b>Imbalanced data</b>: 양성과 음성의 비율이 크게 다른 데이터(사기/질병/이상탐지 등).</li>
+          <li><b>Threshold</b>: 점수/확률을 이진 결정으로 바꾸는 기준값.</li>
+          <li><b>Average Precision (AP)</b>: PR-AUC를 계산하는 대표 방식. recall이 증가할 때의 precision을 가중 평균하는 형태다.</li>
+          <li><b>precision@k</b>: 점수가 높은 상위 k개를 양성으로 봤을 때의 precision(운영 처리량과 직결).</li>
+          <li><b>Expected Cost</b>: FP/FN에 비용을 두고 전체 기대 손실을 최소화하도록 threshold를 선택하는 접근.</li>
+          <li><b>Calibration</b>: 예측 확률이 실제 발생 빈도와 일치하는 정도(확률을 의사결정에 쓰려면 중요).</li>
+        </ul>
+      </div>
+
+      <footer>
+        Project note: metrics deep-dive for portfolio ML (fraud detection) · Repo: <a href="https://github.com/samdasuu/openclaw-pages">samdasuu/openclaw-pages</a>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
