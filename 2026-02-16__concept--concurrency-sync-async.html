@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>동시성과 동기/비동기 — 구조 vs 제어흐름 (개발자용 정리)</title>
+  <meta name="description" content="동시성(Concurrency)과 동기/비동기(Sync/Async)를 '배경→제1원리→비교→맥락 적용→용어 사전' 구조로 정리. 블로킹/논블로킹, 이벤트 루프, I/O 지연 관점 포함." />
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--fg:#1f2937;--muted:#64748b;--border:#e2e8f0;--accent:#2563eb;--warn:#b45309;--ok:#065f46;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;--maxw:900px;}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif;line-height:1.7;}
+    a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;}
+    main{max-width:var(--maxw);margin:24px auto;padding:0 16px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+    header.card{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+    .back{display:inline-block;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
+    h1{margin:0 0 6px;font-size:22px;}
+    h2{margin:26px 0 10px;padding-top:14px;border-top:1px solid var(--border);font-size:18px;}
+    h3{margin:18px 0 8px;font-size:15px;}
+    p{margin:10px 0;}
+    ul{margin:8px 0 8px 20px;} li{margin:6px 0;}
+    code{font-family:var(--mono);font-size:0.95em;background:#f1f5f9;border:1px solid var(--border);padding:1px 6px;border-radius:8px;}
+    pre{margin:10px 0;background:#0b1020;color:#e5e7eb;border-radius:12px;padding:14px;overflow-x:auto;border:1px solid #111827;}
+    pre code{background:transparent;border:0;padding:0;color:inherit;}
+    .meta{color:var(--muted);font-size:13px;}
+    .note{border-left:4px solid var(--accent);padding:10px 12px;background:#eff6ff;border-radius:10px;}
+    .warn{border-left:4px solid var(--warn);padding:10px 12px;background:#fff7ed;border-radius:10px;}
+    .ok{border-left:4px solid var(--ok);padding:10px 12px;background:#ecfdf5;border-radius:10px;}
+    table{width:100%;border-collapse:separate;border-spacing:0;margin:10px 0;overflow:hidden;border-radius:12px;border:1px solid var(--border);}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+    th{background:#f1f5f9;text-align:left;font-size:13px;color:#0f172a;}
+    tr:last-child td{border-bottom:0;}
+  </style>
+</head>
+<body>
+  <main>
+    <header class="card">
+      <div><a class="back" href="./">← 목록으로</a></div>
+      <div style="flex:1">
+        <h1>동시성과 동기/비동기 — 구조 vs 제어흐름</h1>
+        <div class="meta">작성일: 2026-02-16 · 대상: 전문 개발자(가독성 우선)</div>
+        <div class="note" style="margin-top:12px">
+          한 줄 요약: <strong>동시성은 “여러 일을 겹쳐 다루는 구조”</strong>이고, <strong>동기/비동기는 “완료를 기다리고 통지받는 제어흐름”</strong>이다.
+        </div>
+      </div>
+    </header>
+
+    <section class="card" style="margin-top:14px">
+      <h2>1) 배경과 문제의식</h2>
+      <p><strong>동시성(Concurrency)</strong>, <strong>동기/비동기(Synchronous/Asynchronous)</strong>는 모두 “여러 작업을 다루는 방식”을 설명하지만, 출발점이 다릅니다.</p>
+      <ul>
+        <li><strong>하드웨어/OS 배경</strong>: 단일 CPU에서도 여러 프로그램을 “동시에” 돌리고 싶다. 그러나 CPU는 한 시점에 한 실행 흐름만 실행한다. 그래서 OS는 <strong>시간을 쪼개 번갈아 실행(Time Slicing)</strong>하고, 사용자에게는 동시에 돌아가는 것처럼 보이게 만든다. → “여러 일을 어떻게 겹쳐 처리할 것인가”가 <strong>동시성</strong>의 문제의식.</li>
+        <li><strong>I/O 지연 배경</strong>: 서버/앱은 CPU 계산보다 <strong>I/O 대기(네트워크/디스크/DB)</strong>가 더 큰 경우가 많다. 동기 방식으로 I/O를 기다리면 스레드가 놀고 처리량이 떨어진다. → “기다리는 동안 다른 일을 하자”가 필요해졌고 이를 표현하는 축이 <strong>동기/비동기</strong>.</li>
+      </ul>
+      <div class="ok">
+        정리: 동시성은 <strong>구조/설계</strong>의 문제, 동기/비동기는 <strong>완료 대기/통지 인터페이스</strong>의 문제.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>2) 제1원리(First Principles)</h2>
+      <p>더 이상 쪼개기 어려운 핵심 단위는 아래 3가지입니다.</p>
+
+      <h3>2.1 실행 단위(Execution unit)</h3>
+      <ul>
+        <li>한 코어에서 CPU는 한 순간에 하나의 실행 흐름(스레드/코루틴의 실행 구간)만 실행한다.</li>
+        <li>“동시에 보이는 것”은 대개 (a) <strong>빠른 스위칭</strong> 또는 (b) <strong>여러 코어</strong>의 결과다.</li>
+      </ul>
+
+      <h3>2.2 대기(Blocking) vs 진행(Progress)</h3>
+      <ul>
+        <li>프로그램은 계산뿐 아니라 “대기”를 한다. 특히 I/O는 요청-응답 사이에 긴 공백이 생긴다.</li>
+        <li>동기/비동기 차이는 본질적으로 <strong>대기 상태에서 실행 흐름이 점유(block)되느냐</strong>에 가깝다.</li>
+      </ul>
+
+      <h3>2.3 완료 통지(Completion notification)</h3>
+      <ul>
+        <li><strong>동기</strong>: 호출자가 완료될 때까지 제어권을 잡고, <strong>return이 곧 완료</strong>다.</li>
+        <li><strong>비동기</strong>: 호출은 빨리 반환되고, 완료는 <strong>콜백/이벤트/Promise/Future</strong>로 전달된다.</li>
+      </ul>
+
+      <div class="note">
+        동시성은 “실행 흐름을 어떻게 스케줄링/구조화할 것인가”, 비동기는 “완료 통지를 어떻게 모델링할 것인가”다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>3) 대조와 비교</h2>
+
+      <h3>3.1 동시성 vs 병렬성(Parallelism)</h3>
+      <ul>
+        <li><strong>동시성</strong>: 여러 작업을 겹쳐 다루는 구조(설계/스케줄링). 단일 코어에서도 가능.</li>
+        <li><strong>병렬성</strong>: 여러 작업이 물리적으로 같은 시간에 실행(멀티코어/멀티CPU 자원 필요).</li>
+      </ul>
+
+      <h3>3.2 동기 vs 비동기</h3>
+      <ul>
+        <li><strong>동기</strong>: 완료될 때까지 반환하지 않음. (<strong>completion = return</strong>)</li>
+        <li><strong>비동기</strong>: 호출은 즉시 반환, 완료는 나중에 통지. (<strong>completion ≠ return</strong>)</li>
+      </ul>
+
+      <h3>3.3 (중요) 동기/비동기 vs 블로킹/논블로킹</h3>
+      <div class="warn">
+        흔히 “동기=블로킹, 비동기=논블로킹”으로 말하지만, 실제 구현에서 반드시 1:1로 대응하지는 않는다.
+      </div>
+      <ul>
+        <li><strong>블로킹</strong>: 기다리느라 현재 스레드가 멈춰 점유된다.</li>
+        <li><strong>논블로킹</strong>: 호출이 즉시 반환(지금은 불가/나중에 상태 반환)하여 스레드가 묶이지 않는다.</li>
+      </ul>
+
+      <h3>3.4 동시성 vs 비동기(같은 말 아님)</h3>
+      <ul>
+        <li><strong>동시성</strong>은 구조(여러 작업을 겹치게 다룸)</li>
+        <li><strong>비동기</strong>는 완료 통지 방식(콜백/프라미스 등)</li>
+        <li>비동기는 동시성을 구현하는 강력한 도구지만, 동시성 그 자체와 동일 개념은 아니다.</li>
+      </ul>
+
+      <table>
+        <tr><th>축</th><th>질문</th><th>대표 답</th></tr>
+        <tr><td>동시성</td><td>여러 일을 <strong>어떻게</strong> 겹쳐 다룰까?</td><td>스케줄링, 이벤트 루프, 코루틴, 큐, 워커 모델</td></tr>
+        <tr><td>동기/비동기</td><td>완료를 <strong>어떻게</strong> 기다리고 통지받을까?</td><td>리턴(동기) vs 콜백/Promise/Future(비동기)</td></tr>
+      </table>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>4) 맥락적 연결(실무 적용)</h2>
+      <p>이 질문은 서버 성능, UI 멈춤, Node.js 이벤트 루프, 스레드 모델과 바로 연결됩니다.</p>
+
+      <h3>4.1 상황 1) 웹 서버에서 DB 호출이 많을 때</h3>
+      <ul>
+        <li>동기+블로킹 DB 호출: 요청 스레드가 대기 상태로 묶여 <strong>동시 요청 처리량이 감소</strong>.</li>
+        <li>비동기 I/O: “기다리는 동안 다른 요청 처리”가 쉬워져 동시성 구조가 개선되기 쉽다.</li>
+      </ul>
+
+      <h3>4.2 상황 2) 프론트엔드(UI)에서 무거운 연산</h3>
+      <ul>
+        <li>네트워크는 비동기로 보내도, CPU 바운드 작업이 메인 스레드를 점유하면 UI는 멈춘다.</li>
+        <li>이 경우 해결책은 비동기 I/O가 아니라 <strong>병렬성(Worker/WebWorker/멀티프로세스)</strong>이다.</li>
+      </ul>
+
+      <h3>4.3 간단 코드 예시(JS/TS)</h3>
+      <pre><code class="language-ts">// 비동기: 호출은 즉시 반환하고, 완료는 await 지점에서 이어짐
+async function handle() {
+  const user = await fetch('/api/user').then(r =&gt; r.json()); // I/O 대기
+  // 이 대기 시간 동안 런타임은 다른 작업(다른 요청/이벤트)을 처리할 수 있음(동시성에 유리)
+  return user.name;
+}
+
+// 동기(개념적): 완료될 때까지 반환하지 않는 함수
+function heavyComputeSync() {
+  // CPU를 오래 점유하면(싱글 스레드) 동시성/응답성에 악영향
+}
+</code></pre>
+
+      <div class="note">
+        실무 판단 기준: <strong>I/O 지연</strong>이 문제면 async/event-driven이 효과적이고, <strong>CPU 바운드</strong>가 문제면 worker/process로 병렬성을 가져가야 한다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>[용어 사전]</h2>
+      <ul>
+        <li><strong>동시성(Concurrency)</strong>: 여러 작업을 겹쳐 다루도록 설계하는 성질. “동시에 보이게” 만드는 구조적 개념.</li>
+        <li><strong>병렬성(Parallelism)</strong>: 여러 작업이 물리적으로 같은 시간에 실행되는 상태(멀티코어 등 자원 필요).</li>
+        <li><strong>동기(Synchronous)</strong>: 호출의 반환이 곧 완료를 의미하는 방식(completion = return).</li>
+        <li><strong>비동기(Asynchronous)</strong>: 호출은 빨리 반환되고 완료는 나중에 통지(completion ≠ return).</li>
+        <li><strong>블로킹(Blocking)</strong>: 대기 때문에 현재 스레드가 멈춰(점유돼) 다른 일을 못 하는 상태.</li>
+        <li><strong>논블로킹(Non-blocking)</strong>: 호출이 즉시 반환되며 대기 때문에 스레드가 묶이지 않는 방식.</li>
+        <li><strong>I/O</strong>: 네트워크/디스크/DB처럼 요청-응답 사이에 대기가 큰 작업.</li>
+        <li><strong>타임 슬라이싱(Time Slicing)</strong>: CPU 시간을 짧게 쪼개 여러 작업을 번갈아 실행하는 기법.</li>
+        <li><strong>이벤트 루프(Event Loop)</strong>: 이벤트/콜백 큐를 돌며 완료된 작업을 이어서 실행하는 런타임 구조(Node.js 등).</li>
+        <li><strong>Promise/Future</strong>: 비동기 완료를 값으로 표현하는 추상화(나중에 완료될 결과의 핸들).</li>
+        <li><strong>컨텍스트 스위칭(Context Switch)</strong>: 실행 중인 스레드/프로세스를 바꾸는 비용(저장/복원 및 캐시 영향).</li>
+      </ul>
+    </section>
+
+    <footer class="card" style="margin-top:14px">
+      <div>Project: OpenClaw Pages</div>
+      <div>Repo: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">https://github.com/samdasuu/openclaw-pages</a></div>
+    </footer>
+  </main>
+</body>
+</html>
