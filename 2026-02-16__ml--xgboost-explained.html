@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>XGBoost 완전 정리 (원리·튜닝·실무 체크리스트)</title>
+  <meta name="description" content="XGBoost를 배경→제1원리→비교→실무 적용(코드/튜닝/평가)→오해/실수→용어 사전 순으로, 빠짐없이 이해하기 쉽게 정리." />
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--fg:#1f2937;--muted:#64748b;--border:#e2e8f0;--accent:#2563eb;--warn:#b45309;--ok:#065f46;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;--maxw:960px;}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif;line-height:1.75;}
+    a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;}
+    main{max-width:var(--maxw);margin:24px auto;padding:0 16px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+    header.card{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+    .back{display:inline-block;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
+    h1{margin:0 0 6px;font-size:22px;}
+    h2{margin:28px 0 10px;padding-top:14px;border-top:1px solid var(--border);font-size:18px;}
+    h3{margin:18px 0 8px;font-size:15px;}
+    h4{margin:14px 0 6px;font-size:14px;}
+    p{margin:10px 0;}
+    ul{margin:8px 0 8px 20px;} li{margin:6px 0;}
+    code{font-family:var(--mono);font-size:0.95em;background:#f1f5f9;border:1px solid var(--border);padding:1px 6px;border-radius:8px;}
+    pre{margin:10px 0;background:#0b1020;color:#e5e7eb;border-radius:12px;padding:14px;overflow-x:auto;border:1px solid #111827;}
+    pre code{background:transparent;border:0;padding:0;color:inherit;}
+    .meta{color:var(--muted);font-size:13px;}
+    .note{border-left:4px solid var(--accent);padding:10px 12px;background:#eff6ff;border-radius:10px;}
+    .warn{border-left:4px solid var(--warn);padding:10px 12px;background:#fff7ed;border-radius:10px;}
+    .ok{border-left:4px solid var(--ok);padding:10px 12px;background:#ecfdf5;border-radius:10px;}
+    table{width:100%;border-collapse:separate;border-spacing:0;margin:10px 0;overflow:hidden;border-radius:12px;border:1px solid var(--border);}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+    th{background:#f1f5f9;text-align:left;font-size:13px;color:#0f172a;}
+    tr:last-child td{border-bottom:0;}
+    .k{white-space:nowrap;font-family:var(--mono);}
+  </style>
+</head>
+<body>
+  <main>
+    <header class="card">
+      <div><a class="back" href="./">← 목록으로</a></div>
+      <div style="flex:1">
+        <h1>XGBoost 완전 정리 (원리·튜닝·실무 체크리스트)</h1>
+        <div class="meta">작성일: 2026-02-16 · 대상: 개발자/데이터 실무자 · 형식: 배경→제1원리→비교→적용→오해→용어 사전</div>
+        <div class="note" style="margin-top:12px">
+          한 줄 요약: <strong>XGBoost는 “정규화가 포함된 Gradient Boosted Trees”를 대용량·희소·결측·병렬 환경에서 잘 돌도록 만든 실전형 구현</strong>이다.
+        </div>
+      </div>
+    </header>
+
+    <section class="card" style="margin-top:14px">
+      <h2>1) 배경과 문제의식</h2>
+      <p>XGBoost는 정형(tabular) 데이터에서 “딥러닝 없이도” 매우 강력한 성능을 내는 대표 모델로 자리 잡았습니다. 등장 배경은 대략 다음 3가지로 정리됩니다.</p>
+      <ul>
+        <li><strong>정형 데이터의 현실</strong>: 결측치, 희소(sparse) 피처, 범주형 인코딩(원-핫 등), 이상치/분포 왜곡, 클래스 불균형이 흔하다.</li>
+        <li><strong>성능 요구</strong>: 단일 트리는 과적합/불안정하고, Random Forest는 안정적이지만 부스팅만큼 편향을 줄이기 어려운 경우가 있다.</li>
+        <li><strong>엔지니어링 요구</strong>: Gradient Boosting은 성능이 좋지만 느리기 쉬웠고, 대규모/희소/결측에서 최적화된 구현이 필요했다.</li>
+      </ul>
+      <div class="ok">
+        XGBoost는 “부스팅의 알고리즘적 강점 + 실전 엔지니어링(정규화/근사/병렬/희소/결측 처리)”을 한 패키지로 묶었다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>2) 제1원리(First Principles)</h2>
+
+      <h3>2.1 앙상블(Ensemble)로서의 기본 형태</h3>
+      <p>XGBoost는 예측을 여러 개의 결정트리(Decision Trees)를 더해서 만든다.</p>
+      <pre><code>예측값 = tree_1(x) + tree_2(x) + ... + tree_T(x)</code></pre>
+
+      <h3>2.2 부스팅(Boosting): “다음 트리는 이전 오차를 보정”</h3>
+      <ul>
+        <li>t번째 트리는 “이전까지의 모델이 못 맞춘 부분(잔차/그레이디언트)”을 줄이도록 학습한다.</li>
+        <li>즉, 트리들이 독립이 아니라 <strong>순차적으로 의존</strong>한다.</li>
+      </ul>
+
+      <h3>2.3 목적함수(Objective) = 손실(Loss) + 정규화(Regularization)</h3>
+      <p>XGBoost는 단순히 손실만 최소화하지 않고, 트리 복잡도를 벌점으로 준다.</p>
+      <ul>
+        <li><strong>손실</strong>: 분류면 logloss, 회귀면 MSE/MAE 등</li>
+        <li><strong>정규화</strong>: 리프(leaf) 개수/리프 가중치 크기 등에 페널티를 줘 과적합을 억제</li>
+      </ul>
+      <div class="note">실무 감각: “성능 좋은데 흔들림/과적합”이면 정규화(깊이, min_child_weight, reg_lambda/alpha, subsample/colsample)를 먼저 본다.</div>
+
+      <h3>2.4 Split 선택: “이 분할이 손실을 얼마나 줄이나?”</h3>
+      <p>각 노드에서 후보 split을 평가해 gain(개선량)이 큰 분할을 채택한다. gain이 작으면 분할을 하지 않거나 가지치기(pruning)한다.</p>
+
+      <h3>2.5 실전 최적화 포인트</h3>
+      <ul>
+        <li><strong>희소/결측 처리</strong>: 결측치를 한쪽으로 보내는 방향을 학습 과정에서 최적화(“missing direction”).</li>
+        <li><strong>근사/히스토그램</strong>: 연속값을 구간화(hist)하여 빠르게 학습(대규모에서 중요).</li>
+        <li><strong>병렬화</strong>: split 후보 평가를 병렬로 처리(버전/설정에 따라 방식 차이).</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>3) 대조와 비교(언제 무엇을 쓰나)</h2>
+
+      <table>
+        <tr><th>모델</th><th>핵심 아이디어</th><th>장점</th><th>단점/주의</th><th>언제 유리?</th></tr>
+        <tr>
+          <td><strong>Decision Tree</strong></td>
+          <td>단일 규칙 기반 분할</td>
+          <td>해석 쉬움</td>
+          <td>과적합/불안정</td>
+          <td>간단 베이스라인/설명 목적</td>
+        </tr>
+        <tr>
+          <td><strong>Random Forest</strong></td>
+          <td>배깅(bagging) + 랜덤 특성</td>
+          <td>튜닝 덜 민감, 안정</td>
+          <td>부스팅 대비 성능 상한</td>
+          <td>빠른 안정적 베이스라인</td>
+        </tr>
+        <tr>
+          <td><strong>XGBoost</strong></td>
+          <td>정규화 포함 GBDT + 실전 최적화</td>
+          <td>정형 데이터 강자, 성능/속도 균형</td>
+          <td>튜닝 민감 가능, 누설/검증 설계 중요</td>
+          <td>정형 데이터의 강력한 기본 선택지</td>
+        </tr>
+        <tr>
+          <td><strong>LightGBM</strong></td>
+          <td>히스토그램 + leaf-wise 성장 등</td>
+          <td>대규모에서 매우 빠름</td>
+          <td>leaf-wise 특성상 과적합 주의</td>
+          <td>큰 데이터/속도 중요</td>
+        </tr>
+        <tr>
+          <td><strong>CatBoost</strong></td>
+          <td>범주형 처리(누설 방지 포함)</td>
+          <td>범주형 피처 많은 경우 강함</td>
+          <td>학습 시간/환경 따라 차이</td>
+          <td>카테고리 피처 비중 큼</td>
+        </tr>
+      </table>
+
+      <div class="note">결론: “XGBoost가 항상 1등”이 아니라, 데이터 성격(규모/범주형/희소성)에 따라 3자 비교가 정석.</div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>4) 맥락적 연결(실무 적용)</h2>
+
+      <h3>4.1 대표 사용처</h3>
+      <ul>
+        <li><strong>금융/리스크</strong>: 연체/부도, 이상거래, 신용평가(정형 + 누설 방지 중요)</li>
+        <li><strong>마케팅</strong>: CTR/CVR, LTV 예측(희소 + 불균형)</li>
+        <li><strong>제조/운영</strong>: 품질/고장 예측(수치 + 파생 피처)</li>
+      </ul>
+
+      <h3>4.2 최소 코드(분류)</h3>
+      <pre><code class="language-python">from xgboost import XGBClassifier
+
+model = XGBClassifier(
+    n_estimators=2000,
+    learning_rate=0.03,
+    max_depth=4,
+    subsample=0.8,
+    colsample_bytree=0.8,
+    reg_lambda=1.0,
+    reg_alpha=0.0,
+    min_child_weight=1.0,
+    tree_method="hist",
+    eval_metric="logloss",
+)
+
+model.fit(
+    X_train, y_train,
+    eval_set=[(X_valid, y_valid)],
+    verbose=100,
+)
+</code></pre>
+
+      <h3>4.3 실무 체크리스트(빠뜨리기 쉬운 핵심)</h3>
+      <ul>
+        <li><strong>데이터 누설(leakage)</strong>: 시간축/집계 피처/타깃 통계 등에서 누설이 가장 흔한 실패 요인.</li>
+        <li><strong>검증 전략</strong>: 시계열이면 time split, 유저 단위면 group split, 불균형이면 stratify.</li>
+        <li><strong>early stopping</strong>: (라이브러리 API에 따라 방식 다름) 과적합 방지에 매우 중요.</li>
+        <li><strong>평가지표 선택</strong>: AUC/PR-AUC/logloss 등 문제 목적과 일치시켜야 함.</li>
+      </ul>
+
+      <h3>4.4 튜닝 우선순위(실전)</h3>
+      <table>
+        <tr><th style="width:180px">목표</th><th>우선 조절</th><th>설명</th></tr>
+        <tr>
+          <td><strong>과적합 줄이기</strong></td>
+          <td class="k">max_depth ↓, min_child_weight ↑, subsample/colsample ↓, reg_lambda ↑</td>
+          <td>트리 복잡도와 샘플링으로 분산을 줄인다.</td>
+        </tr>
+        <tr>
+          <td><strong>성능 끌어올리기</strong></td>
+          <td class="k">n_estimators ↑ + learning_rate ↓ (세트로), max_depth/ min_child_weight 미세조정</td>
+          <td>학습률을 낮추고 트리를 더 쌓아 일반화 성능을 확보(시간은 증가).</td>
+        </tr>
+        <tr>
+          <td><strong>학습 속도</strong></td>
+          <td class="k">tree_method=hist, max_depth 제한, feature 수 축소, 샘플링 적용</td>
+          <td>대용량은 hist가 사실상 필수인 경우가 많다.</td>
+        </tr>
+      </table>
+
+      <div class="warn">
+        실무에서 “빼먹는 내용” 1순위는 하이퍼파라미터가 아니라 <strong>검증 설계(누설/분할/지표)</strong>다. 모델이 강할수록 누설을 더 잘 학습해 “검증만 좋아 보이는” 함정이 커진다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>5) 자주 생기는 오해와 그 이유</h2>
+      <ul>
+        <li><strong>오해 1: “정형 데이터는 무조건 XGBoost가 최고”</strong> → 데이터 규모/범주형 비중/노이즈 구조에 따라 LightGBM/CatBoost가 이기는 케이스가 많다.</li>
+        <li><strong>오해 2: “비선형 모델이니까 피처 엔지니어링은 필요 없다”</strong> → 누설 방지/집계 피처/도메인 변환은 여전히 성능의 핵심.</li>
+        <li><strong>오해 3: “n_estimators만 늘리면 된다”</strong> → learning_rate와 세트로 보지 않으면 과적합/불안정이 커진다.</li>
+        <li><strong>오해 4: “스케일링이 필요 없다 = 전처리 불필요”</strong> → 스케일링은 덜 중요하지만 결측/인코딩/분할/지표는 필수다.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>[용어 사전]</h2>
+      <ul>
+        <li><strong>XGBoost</strong>: eXtreme Gradient Boosting. 정규화가 포함된 GBDT를 실전 최적화한 라이브러리/알고리즘 계열.</li>
+        <li><strong>GBDT</strong>: Gradient Boosted Decision Trees. 트리를 순차적으로 더해 오차를 줄이는 앙상블.</li>
+        <li><strong>Boosting</strong>: 이전 모델의 오차를 다음 모델이 보정하도록 순차 학습하는 방식.</li>
+        <li><strong>Objective</strong>: 손실 + 정규화로 구성된 최적화 대상 함수.</li>
+        <li><strong>Regularization</strong>: 모델 복잡도 페널티(L1/L2, 리프 수/가중치 페널티 등)로 과적합 완화.</li>
+        <li><strong>Split / Gain</strong>: 트리 분할 후보 중 손실 개선량이 큰 분할을 선택하는 기준.</li>
+        <li><strong>Leaf</strong>: 트리의 최종 노드. 예측값(가중치)이 저장됨.</li>
+        <li><strong>subsample / colsample_bytree</strong>: 행/열 샘플링으로 분산 감소 및 일반화 개선.</li>
+        <li><strong>min_child_weight</strong>: 노드가 분할되기 위한 최소 가중치(또는 샘플) 제약(과적합 억제에 자주 사용).</li>
+        <li><strong>tree_method=hist</strong>: 연속값을 구간화해 split 평가를 빠르게 하는 구현 옵션.</li>
+        <li><strong>Data leakage</strong>: 학습 시점에 알 수 없는 정보가 피처에 섞여 검증이 과대평가되는 현상.</li>
+      </ul>
+    </section>
+
+    <footer class="card" style="margin-top:14px">
+      <div>Project: OpenClaw Pages</div>
+      <div>Repo: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">https://github.com/samdasuu/openclaw-pages</a></div>
+      <div class="meta" style="margin-top:8px">메모: XGBoost API는 버전별로 early stopping/콜백 방식이 다를 수 있음. 현재 프로젝트 스택에 맞춰 예시를 맞추려면 사용 라이브러리 버전을 알려줘.</div>
+    </footer>
+  </main>
+</body>
+</html>
