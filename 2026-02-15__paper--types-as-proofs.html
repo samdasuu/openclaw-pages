@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타입 시스템과 증명 (초보자용 해설)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2, h3 { color: #111; margin-top: 1.5em; }
+        h1 { border-bottom: 2px solid #eaeaea; padding-bottom: 10px; }
+        code {
+            background-color: #eee;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, "Andale Mono", monospace;
+            font-size: 0.9em;
+        }
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+        pre code {
+            background-color: transparent;
+            color: inherit;
+        }
+        blockquote {
+            border-left: 4px solid #ddd;
+            margin: 0;
+            padding-left: 15px;
+            color: #666;
+        }
+        .explanation {
+            background-color: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .explanation h4 {
+            margin-top: 0;
+            color: #1565c0;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+        }
+        .explanation h4::before {
+            content: "💡";
+            margin-right: 8px;
+        }
+        img { max-width: 100%; height: auto; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<h1>타입 시스템은 왜 증명처럼 동작하는가 (초보자용 해설)</h1>
+<p><em>원문: <a href="https://evan-moon.github.io/2026/01/25/types-as-proofs-typescript-hidden-math/">Evan Moon - 타입 시스템은 왜 증명처럼 동작하는가</a></em></p>
+
+<div class="explanation">
+    <h4>들어가며: 이 글을 읽는 방법</h4>
+    <p>이 글은 프로그래밍의 '타입(Type)'이 사실은 수학의 '증명(Proof)'과 같다는 아주 흥미로운(하지만 조금 어려운) 주제를 다룹니다. 어려운 용어가 나올 때마다 제가 이 파란 박스 안에서 쉬운 비유로 설명해 드릴게요!</p>
+</div>
+
+<p>우리는 매일 타입을 사용하며, 무수한 타입 에러를 마주합니다. 그때마다 에러 메시지를 읽고 구글링해서 해결하긴 하지만, 정작 “타입 시스템이 왜 이렇게 동작하는지”를 깊게 생각하며 문제를 해결하는 경우는 드뭅니다.</p>
+
+<p>타입을 쓸 줄 아는 것이 문법을 이해하는 것이라면, 타입 시스템을 이해하는 것은 그 문법이 왜 그렇게 설계되었는지에 대한 본질을 이해하는 것에 가깝습니다.</p>
+
+<h2>타입 검사는 정말 “검사”일 뿐일까?</h2>
+
+<p>TypeScript를 처음 배울 때 대부분의 개발자는 타입 시스템을 일종의 <strong>린터(linter)</strong>처럼 받아들입니다. 마치 린터처럼 잘못된 타입을 넣으면 빨간 줄이 그어지고, 올바른 타입을 넣으면 통과하기 때문입니다.</p>
+
+<pre><code>function add(a: number, b: number): number {
+ return a + b;
+}
+
+// Error: Argument of type 'string' is not assignable to parameter of type 'number'
+add(1, "2");</code></pre>
+
+<p>틀린 말은 아니지만 이 관점에는 한 가지 빠진 것이 있습니다.</p>
+
+<p>타입 시스템은 단순히 에러를 잡는 도구가 아닙니다. 그 뒤에는 수학적 구조가 있고, <strong>타입 검사를 통과한다는 것은 단순히 에러가 없다는 것 이상의 의미를 가집니다.</strong> 타입은 논리학의 명제에 대응하고, 그 타입을 만족하는 코드는 그 명제의 증명에 대응합니다.</p>
+
+<div class="explanation">
+    <h4>💡 초보자용 해설: 명제와 증명?</h4>
+    <p>어렵게 들리죠? 쉽게 비유해 볼게요.</p>
+    <ul>
+        <li><strong>명제(타입):</strong> "이 자판기에 500원을 넣으면 콜라가 나온다"라는 <strong>주장</strong>입니다.</li>
+        <li><strong>증명(코드):</strong> 실제로 500원을 넣었을 때 콜라가 툭 튀어나오는 <strong>기계 장치(구현)</strong>입니다.</li>
+    </ul>
+    <p>타입 검사기가 "OK"라고 하는 건, "네가 만든 이 기계 장치가 아까 그 주장대로 잘 작동하네!"라고 <strong>증명</strong>해주는 과정인 셈입니다.</p>
+</div>
+
+<h2>타입 시스템의 세 기둥</h2>
+
+<p>타입 시스템은 세 가지 수학적 아이디어 위에 서 있습니다. 갑자기 수학에 대한 이야기가 나와서 어렵게 느껴질 수 있지만 걱정할 필요 없습니다.</p>
+
+<h3>1. 형식 논리학: “참이다”를 증명한다는 것</h3>
+<p>형식 논리학은 "A이고 B이다", "A이거나 B이다" 같은 논리를 다룹니다. 핵심은 <strong>“참이라고 주장하려면, 그것을 증명해야 한다”</strong>는 것입니다.</p>
+
+<ul>
+    <li><strong>A ∧ B (AND):</strong> "우산도 있고 장화도 있다" (둘 다 있어야 함)</li>
+    <li><strong>A ∨ B (OR):</strong> "버스를 타거나 지하철을 탄다" (둘 중 하나는 꼭 있어야 함)</li>
+    <li><strong>A → B (Implication):</strong> "비가 오면 땅이 젖는다" (인과 관계)</li>
+</ul>
+
+<div class="explanation">
+    <h4>💡 초보자용 해설: 논리학 기호</h4>
+    <p>개발자에게는 익숙한 개념입니다.</p>
+    <ul>
+        <li><code>A ∧ B</code>는 코드의 <code>AND (&&)</code>와 비슷하고, 타입스크립트의 <code>Tuple</code>이나 <code>Object</code>와 같습니다.</li>
+        <li><code>A ∨ B</code>는 코드의 <code>OR (||)</code>와 비슷하고, <code>Union Type (string | number)</code>과 같습니다.</li>
+    </ul>
+</div>
+
+<h3>2. 집합론: 타입은 원소들의 모임이다</h3>
+<p>집합은 비슷한 것들을 모아놓은 주머니라고 생각하면 됩니다.</p>
+<ul>
+    <li><code>number</code> 타입: 모든 숫자를 담은 주머니</li>
+    <li><code>string</code> 타입: 모든 문자열을 담은 주머니</li>
+    <li><code>number | string</code>: 두 주머니를 합친 것</li>
+    <li><code>never</code>: <strong>빈 주머니</strong> (아무것도 들어있지 않음)</li>
+    <li><code>unknown</code>: <strong>모든 것</strong>이 들어있는 주머니</li>
+</ul>
+
+<h3>3. 람다 대수: 함수, 그 이상의 의미</h3>
+<p>람다 대수는 "계산이란 무엇인가?"를 정의하기 위해 만든 개념입니다. 화살표 함수(<code>=></code>)가 바로 여기서 왔습니다.</p>
+
+<pre><code>// 람다 대수: λx.x
+const identity = x => x;</code></pre>
+
+<h2>세 세계가 만나는 지점: Curry-Howard 대응</h2>
+
+<p>이 어려운 이름의 <strong>Curry-Howard 대응</strong>은 사실 아주 단순한 매칭 게임입니다.</p>
+
+<div class="explanation">
+    <h4>💡 초보자용 해설: Curry-Howard 대응이 뭐죠?</h4>
+    <p>프로그래밍의 <strong>타입</strong>과 논리학의 <strong>명제</strong>가 사실은 <strong>쌍둥이</strong>라는 이론입니다.</p>
+    <ul>
+        <li>논리학자가 "A이면 B이다 (A → B)"라고 쓰는 걸,</li>
+        <li>프로그래머는 "A를 받아서 B를 리턴하는 함수 (A => B)"라고 씁니다.</li>
+    </ul>
+    <p>즉, <strong>"함수를 구현하는 것" = "논리를 증명하는 것"</strong>과 같다는 뜻입니다.</p>
+</div>
+
+<table border="1" style="border-collapse: collapse; width: 100%; margin: 20px 0;">
+    <tr style="background-color: #eee;">
+        <th style="padding: 10px;">논리학</th>
+        <th style="padding: 10px;">프로그래밍 (TypeScript)</th>
+    </tr>
+    <tr>
+        <td style="padding: 10px;">명제 (주장)</td>
+        <td style="padding: 10px;">타입 (Type)</td>
+    </tr>
+    <tr>
+        <td style="padding: 10px;">증명 (증거)</td>
+        <td style="padding: 10px;">프로그램 (구현 코드)</td>
+    </tr>
+    <tr>
+        <td style="padding: 10px;">A이면 B이다 (A → B)</td>
+        <td style="padding: 10px;">함수 <code>(a: A) => B</code></td>
+    </tr>
+    <tr>
+        <td style="padding: 10px;">A 그리고 B (AND)</td>
+        <td style="padding: 10px;">튜플/객체 <code>[A, B]</code> 또는 <code>{ a: A, b: B }</code></td>
+    </tr>
+    <tr>
+        <td style="padding: 10px;">A 또는 B (OR)</td>
+        <td style="padding: 10px;">유니온 <code>A | B</code></td>
+    </tr>
+    <tr>
+        <td style="padding: 10px;">거짓 (불가능)</td>
+        <td style="padding: 10px;"><code>never</code></td>
+    </tr>
+</table>
+
+<h2>타입으로 보는 논리적 구조</h2>
+
+<h3>1. 함수: "A이면 B"의 증거</h3>
+<p>친구와 약속을 합니다. "밀가루를 주면 빵을 만들어줄게." (밀가루 → 빵)</p>
+<pre><code>function makeBread(flour: Flour): Bread {
+    // 밀가루로 빵을 만드는 과정...
+    return bread;
+}</code></pre>
+<p>이 함수가 에러 없이 컴파일된다면, "밀가루로 빵을 만들 수 있다"는 사실이 <strong>증명</strong>된 것입니다. 만약 빵 대신 밀가루를 그대로 돌려준다면? 약속(타입)을 어긴 것이니 에러가 납니다.</p>
+
+<h3>2. 튜플: "그리고(AND)"의 증거</h3>
+<p>"해외여행을 가려면 여권(A)과 티켓(B)이 모두 있어야 한다."</p>
+<pre><code>type CanTravel = [Passport, Ticket];
+const proof: CanTravel = [myPassport, myTicket];</code></pre>
+<p>두 가지를 모두 가지고 있다는 것을 <strong>튜플</strong>로 증명합니다.</p>
+
+<h3>3. 유니온: "또는(OR)"의 증거</h3>
+<p>"결제 수단은 카드(A) 또는 계좌이체(B)다."</p>
+<pre><code>type PaymentMethod = CreditCard | BankTransfer;</code></pre>
+<p>여기서 중요한 점! "둘 중 하나"라는 건 알지만, 지금 내 손에 있는 게 카드인지 계좌인지 모르면 사용할 수 없습니다. 그래서 <strong>반드시 확인(타입 좁히기)</strong>을 해야 합니다.</p>
+<pre><code>function process(method: PaymentMethod) {
+    if (method.type === 'credit') { ... } // 카드인 경우 증명
+    else { ... } // 계좌인 경우 증명
+}</code></pre>
+
+<div class="explanation">
+    <h4>💡 초보자용 해설: Exhaustiveness Check</h4>
+    <p>논리학에서는 "A 또는 B"라고 해놓고 C가 튀어나오면 안 됩니다. 코드에서도 마찬가지입니다. <code>switch</code> 문에서 모든 케이스를 다 다뤘는지 확인하는 것(Exhaustiveness Check)은, 논리적으로 "빠진 구멍이 없는지" 확인하는 과정입니다.</p>
+</div>
+
+<h3>4. never: "불가능"의 표현</h3>
+<p><code>never</code>는 <strong>절대 일어날 수 없는 일</strong>을 의미합니다. 논리학에서는 <strong>'거짓(False)'</strong>이나 <strong>'모순'</strong>에 해당합니다.</p>
+<pre><code>function throwError(): never {
+    throw new Error("끝나지 않음");
+}</code></pre>
+<p>이 함수는 값을 리턴하지 않습니다(끝나지 않거나 에러를 뿜으니까요). 즉, "리턴값이 존재한다"는 것 자체가 거짓말이 되는 상황입니다.</p>
+
+<h3>5. 제네릭: "모든 경우에 통하는" 계약</h3>
+<p>제네릭 <code>&lt;T&gt;</code>는 "모든 T에 대해서"라는 뜻입니다.</p>
+<pre><code>function identity&lt;T&gt;(x: T): T {
+    return x;
+}</code></pre>
+<p>이 함수는 "어떤 타입 T를 주든, 반드시 똑같은 T를 돌려준다"는 약속입니다. 만약 <code>x + 1</code>을 하려고 하면 에러가 납니다. 왜냐? T가 숫자가 아닐 수도 있으니까요. "모든 T"에 대해 성립해야 하므로, 특정 타입만의 기능(더하기 등)은 쓸 수 없습니다.</p>
+
+<h2>합성과 변환</h2>
+
+<h3>함수 합성 (삼단논법)</h3>
+<p><strong>"밥을 먹으면 배부르다(A→B)"</strong>가 참이고, <strong>"배부르면 잠이 온다(B→C)"</strong>가 참이라면? 당연히 <strong>"밥을 먹으면 잠이 온다(A→C)"</strong>도 참입니다.</p>
+<p>이것이 프로그래밍에서는 <strong>함수의 합성(Composition)</strong>이 됩니다.</p>
+<pre><code>const A_to_C = compose(A_to_B, B_to_C);</code></pre>
+
+<h3>커링 (Currying)</h3>
+<p>"밀가루와 물이 있으면 반죽이 된다"라는 말과, "밀가루가 있을 때, 물을 가져오면 반죽이 된다"라는 말은 같습니다.</p>
+<ul>
+    <li><code>(A, B) => C</code> : A와 B를 한꺼번에 받기</li>
+    <li><code>A => (B => C)</code> : A를 먼저 받고, 나중에 B를 받기 (커링)</li>
+</ul>
+<p>이 둘은 논리적으로 완전히 똑같습니다(동치).</p>
+
+<h2>타입 대수: 덧셈과 곱셈</h2>
+<p>타입도 숫자처럼 더하고 곱할 수 있습니다.</p>
+<ul>
+    <li><strong>합(Sum) 타입 (+):</strong> 유니온 (<code>A | B</code>). 경우의 수가 더해집니다. (2가지 + 3가지 = 5가지)</li>
+    <li><strong>곱(Product) 타입 (*):</strong> 튜플/객체 (<code>[A, B]</code>). 경우의 수가 곱해집니다. (티셔츠 3종 * 바지 2종 = 코디 6종)</li>
+</ul>
+
+<div class="explanation">
+    <h4>💡 초보자용 해설: 분배 법칙</h4>
+    <p>수학시간에 배운 <code>A * (B + C) = A*B + A*C</code> 기억나시나요?</p>
+    <p>타입에서도 똑같습니다.<br>
+    <code>Pair&lt;string, number | boolean&gt;</code>은<br>
+    <code>[string, number] | [string, boolean]</code>과 같습니다.</p>
+    <p>타입스크립트가 내부적으로 이런 계산을 해서 타입을 추론해 줍니다.</p>
+</div>
+
+<h2>TypeScript는 100% 논리적이지 않다</h2>
+<p>하지만 TypeScript는 현실적인 언어라서, 완벽한 수학적 순수함을 포기하고 <strong>타협</strong>한 부분들이 있습니다.</p>
+<ol>
+    <li><strong>any / as:</strong> "묻지마 통과". 논리적으로는 반칙이지만, 급할 때 쓰라고 만들어 둔 비상구입니다.</li>
+    <li><strong>배열 접근:</strong> <code>scores["없는사람"]</code>을 해도 타입은 <code>number</code>라고 거짓말을 합니다(실제론 undefined).</li>
+</ol>
+
+<h2>마치며</h2>
+<p>타입 에러가 났을 때 "아 왜 안 돼!"라고 짜증내기보다는, <strong>"아, 내가 세운 논리적 계약(증명)이 어디서 틀렸구나"</strong>라고 생각해보면 어떨까요?</p>
+<p>타입 시스템은 단순한 에러 검사기가 아니라, 여러분의 코드가 논리적으로 완벽한지 증명해주는 든든한 수학적 동료입니다.</p>
+
+<hr>
+<p style="font-size: 0.9em; color: #888; text-align: center;">
+    Created with OpenClaw 🤖 | <a href="https://evan-moon.github.io/2026/01/25/types-as-proofs-typescript-hidden-math/">Original Post</a>
+</p>
+
+</body>
+</html>
