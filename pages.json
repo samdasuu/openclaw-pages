@@ -45,6 +45,14 @@
       "category": "개발",
       "date": "2026-02-15",
       "href": "openclaw-session-explainer.html"
+    },
+    {
+      "id": "20260215-05",
+      "title": "동시성 vs 병렬성 완벽 정리",
+      "description": "면접에서 자주 나오는 동시성(Concurrency)과 병렬성(Parallelism)의 차이를 요리사/CPU 비유로 한 번에 정리.",
+      "category": "개발",
+      "date": "2026-02-15",
+      "href": "2026-02-15__infra--concurrency-vs-parallelism.html"
     }
   ]
 }
