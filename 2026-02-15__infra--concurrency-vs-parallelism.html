@@ -135,6 +135,30 @@
     <li>"즉, <strong>동시성은 구조(Structure)</strong>에 관한 것이고, <strong>병렬성은 실행(Execution)</strong>에 관한 것입니다."</li>
 </ol>
 
+<h2>4. 더 알면 좋은 토픽 3가지</h2>
+
+<h3>토픽 1) 경쟁 상태(Race Condition)와 동기화(Synchronization)</h3>
+<ul>
+    <li><strong>병렬성</strong>이 생기면(여러 코어/스레드가 진짜로 동시에 실행) 같은 데이터(공유 변수, 파일, DB)를 동시에 건드릴 수 있습니다.</li>
+    <li>그 결과가 실행 순서에 따라 달라지는 문제를 <strong>Race Condition</strong>이라고 합니다.</li>
+    <li>해결책은 <strong>락(mutex), 세마포어, 원자적 연산(atomic), 메시지 패싱</strong> 같은 동기화 기법입니다.</li>
+    <li>실무 포인트: “병렬로 빠르게 만들자”를 먼저 말하기보다, <strong>공유 상태를 줄이고(불변/분리), 필요한 곳만 동기화</strong>하는 게 안전합니다.</li>
+</ul>
+
+<h3>토픽 2) 비동기(Async I/O)와 멀티스레드의 관계</h3>
+<ul>
+    <li>Node.js 같은 이벤트 루프 기반 모델은 주로 <strong>I/O(네트워크/디스크 대기)</strong>를 효율적으로 겹쳐 처리하는 <strong>동시성</strong>의 대표 사례입니다.</li>
+    <li>여기서 중요한 구분: <strong>비동기 = 병렬</strong>이 아닙니다. (싱글 스레드에서도 비동기로 “동시 처리처럼” 만들 수 있음)</li>
+    <li>CPU 연산이 무거우면 이벤트 루프가 막히므로, 그때는 <strong>worker thread / 멀티프로세스</strong>로 진짜 병렬성을 가져가야 합니다.</li>
+</ul>
+
+<h3>토픽 3) 성능 오해 3가지: 컨텍스트 스위칭, 오버헤드, 아메달의 법칙</h3>
+<ul>
+    <li><strong>동시성</strong>은 "설계"라서 무조건 빠르게 해주는 게 아닙니다. 스레드/태스크가 많아지면 <strong>컨텍스트 스위칭 비용</strong>이 커질 수 있어요.</li>
+    <li><strong>병렬성</strong>도 "코어를 늘리면 선형으로 빨라진다"가 아닙니다. 병렬화 오버헤드(분할/병합, 락 대기)가 있습니다.</li>
+    <li><strong>아메달의 법칙(Amdahl’s Law):</strong> 전체 작업 중 병렬화 불가능한 구간이 조금만 있어도, 코어를 많이 늘렸을 때의 최대 가속은 제한됩니다.</li>
+</ul>
+
 <footer>
     Created with OpenClaw 🤖 | Based on 코딩하는기술사's Tutorial
 </footer>
