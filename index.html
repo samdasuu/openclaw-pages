@@ -3,189 +3,119 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>OpenClaw Pages (samdasuu/openclaw-pages)</title>
-  <meta name="description" content="Seho용 OpenClaw 문서/정리 페이지 모음 (GitHub Pages)" />
+  <title>OpenClaw Pages</title>
+  <meta name="description" content="문서/정리 HTML 모음. 공유할 때는 이 사이트의 URL만 보내면 됨." />
   <style>
-    :root { --fg:#111827; --muted:#6b7280; --bg:#ffffff; --card:#f9fafb; --border:#e5e7eb; --link:#2563eb; }
-    body { font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif; margin:24px; max-width:980px; color:var(--fg); background:var(--bg); line-height:1.55; }
+    :root { --fg:#1f2937; --muted:#64748b; --bg:#f8fafc; --card:#ffffff; --border:#e2e8f0; --link:#2563eb; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--fg); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif; line-height:1.55; }
+    main { max-width: 980px; margin: 24px auto; padding: 0 16px; }
     a { color:var(--link); text-decoration:none; }
     a:hover { text-decoration:underline; }
-    header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
-    h1 { margin:0 0 6px; font-size:1.65rem; }
-    .sub { color:var(--muted); font-size:0.95rem; margin:0; }
-
-    .toolbar { display:flex; gap:10px; align-items:center; margin-top:14px; flex-wrap:wrap; }
-    .input { border:1px solid var(--border); border-radius:10px; padding:10px 12px; min-width:260px; font-size:0.95rem; }
+    header { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; }
+    h1 { margin:0 0 6px; font-size: 22px; }
+    .sub { margin:0; color:var(--muted); }
+    .toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top: 14px; }
+    .input { border:1px solid var(--border); border-radius:10px; padding:10px 12px; min-width:260px; font-size:0.95rem; background:#fff; }
     .pill { border:1px solid var(--border); background:#fff; padding:6px 10px; border-radius:999px; font-size:0.9rem; cursor:pointer; }
     .pill[aria-pressed="true"] { border-color:#93c5fd; background:#eff6ff; }
-
     .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px; margin-top:14px; }
     .card { border:1px solid var(--border); border-radius:12px; padding:14px 16px; background:var(--card); }
-    .card h2 { margin:0 0 6px; font-size:1.1rem; }
+    .card h2 { margin:0 0 6px; font-size:1.05rem; }
     .card p { margin:0 0 10px; color:var(--muted); }
-    .meta { margin-top:18px; color:var(--muted); font-size:0.92rem; }
-    .tags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
-    .tag { font-size:0.8rem; color:#374151; border:1px solid var(--border); background:#fff; border-radius:999px; padding:2px 8px; }
-    .error { border:1px solid #fca5a5; background:#fef2f2; border-radius:12px; padding:12px 14px; margin-top:14px; }
-
-    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
-    pre { background:#f6f8fa; border:1px solid var(--border); border-radius:10px; padding:12px; overflow-x:auto; }
+    .meta { color:var(--muted); font-size: 13px; }
   </style>
 </head>
 <body>
-  <header>
-    <div>
-      <h1 id="siteTitle">OpenClaw Pages</h1>
-      <p class="sub" id="siteSubtitle">문서/정리 HTML 모음. 공유할 때는 이 사이트의 URL만 보내면 됨.</p>
+  <main>
+    <header>
+      <div>
+        <h1 id="siteTitle">OpenClaw Pages</h1>
+        <p class="sub" id="siteSubtitle">문서/정리 HTML 모음. 공유할 때는 이 사이트의 URL만 보내면 됨.</p>
+      </div>
+      <div class="meta" style="text-align:right;">
+        <div>repo: <a id="repoLink" href="https://github.com/samdasuu/openclaw-pages">https://github.com/samdasuu/openclaw-pages</a></div>
+        <div class="sub">base: <a id="baseLink" href="./">https://samdasuu.github.io/openclaw-pages/</a></div>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <input class="input" id="q" placeholder="검색 (제목/요약/카테고리)" />
+      <div id="catBar" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
     </div>
-    <div class="meta" style="text-align:right;">
-      <div>repo: <a id="repoLink" href="https://github.com/samdasuu/openclaw-pages">samdasuu/openclaw-pages</a></div>
-      <div class="sub">base: <a id="baseLink" href="./">https://samdasuu.github.io/openclaw-pages/</a></div>
-    </div>
-  </header>
 
-  <div class="toolbar">
-    <input class="input" id="q" placeholder="검색 (제목/설명/태그)" />
-    <div id="tagBar" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
-  </div>
+    <div id="status" class="meta" style="margin-top:10px;"></div>
+    <div class="grid" id="grid"></div>
 
-  <noscript>
-    <div class="error">
-      이 페이지는 <code>pages.json</code>을 읽어서 목록을 자동 생성합니다. 자바스크립트를 켜거나,
-      직접 문서를 열어주세요: <a href="./openclaw-session-explainer.html">openclaw-session-explainer.html</a>
-    </div>
-  </noscript>
-
-  <div id="status" class="meta" style="margin-top:10px;"></div>
-  <div class="grid" id="grid"></div>
-
-  <section class="card" style="margin-top:14px;">
-    <h2>새 문서 추가 규칙 (최소)</h2>
-    <p>레포 루트에 HTML 파일을 추가하고, <code>pages.json</code>에 항목 1개만 추가하면 홈(목차)이 자동으로 갱신됨.</p>
-    <pre><code>{
-  "title": "내 문서 제목",
-  "href": "./my-note.html",
-  "desc": "한 줄 설명",
-  "tags": ["tag1", "tag2"]
-}</code></pre>
-  </section>
-
-  <p class="meta">운영 규칙: GitHub Pages 업로드는 <b><code>samdasuu/openclaw-pages</code>에만</b> 한다.</p>
-
-  <script>
-    const $ = (id) => document.getElementById(id);
-
-    function uniq(arr) {
-      return [...new Set(arr)].sort((a,b) => a.localeCompare(b));
-    }
-
-    function norm(s) {
-      return (s || "").toString().toLowerCase();
-    }
-
-    function card(page) {
-      const el = document.createElement('section');
-      el.className = 'card';
-
-      const h2 = document.createElement('h2');
-      const a = document.createElement('a');
-      a.href = page.href;
-      a.textContent = page.title || page.href;
-      h2.appendChild(a);
-
-      const p = document.createElement('p');
-      p.textContent = page.desc || '';
-
-      const tags = document.createElement('div');
-      tags.className = 'tags';
-      (page.tags || []).forEach(t => {
-        const s = document.createElement('span');
-        s.className = 'tag';
-        s.textContent = t;
-        tags.appendChild(s);
-      });
-
-      el.appendChild(h2);
-      if (page.desc) el.appendChild(p);
-      if ((page.tags || []).length) el.appendChild(tags);
-      return el;
-    }
-
-    function render(data, query, activeTag) {
-      const pages = (data.pages || []).slice();
-      const q = norm(query);
-
-      const filtered = pages.filter(p => {
-        const blob = [p.title, p.desc, ...(p.tags||[])].map(norm).join(' ');
-        if (q && !blob.includes(q)) return false;
-        if (activeTag && !(p.tags || []).includes(activeTag)) return false;
-        return true;
-      });
-
-      $('grid').innerHTML = '';
-      filtered.forEach(p => $('grid').appendChild(card(p)));
-
-      $('status').textContent = `문서 ${filtered.length}개 표시 / 전체 ${(data.pages||[]).length}개` + (activeTag ? ` (tag: ${activeTag})` : '');
-    }
-
-    function renderTagBar(tags, onToggle) {
-      const bar = $('tagBar');
-      bar.innerHTML = '';
-      const all = document.createElement('button');
-      all.className = 'pill';
-      all.textContent = '전체';
-      all.type = 'button';
-      all.setAttribute('aria-pressed', 'true');
-      all.onclick = () => onToggle(null);
-      bar.appendChild(all);
-
-      tags.forEach(t => {
-        const b = document.createElement('button');
-        b.className = 'pill';
-        b.textContent = t;
-        b.type = 'button';
-        b.setAttribute('aria-pressed', 'false');
-        b.onclick = () => onToggle(t);
-        bar.appendChild(b);
-      });
-    }
-
-    (async () => {
-      try {
-        const res = await fetch('./pages.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`pages.json fetch failed: ${res.status}`);
+    <script>
+      async function boot() {
+        const res = await fetch('./pages.json', {cache:'no-store'});
         const data = await res.json();
+        const pages = data.pages || [];
 
-        if (data.site) {
-          if (data.site.title) $('siteTitle').textContent = data.site.title;
-          if (data.site.subtitle) $('siteSubtitle').textContent = data.site.subtitle;
-          if (data.site.repo) { $('repoLink').href = data.site.repo; $('repoLink').textContent = data.site.repo.replace('https://github.com/',''); }
-          if (data.site.baseUrl) { $('baseLink').href = './'; $('baseLink').textContent = data.site.baseUrl; }
+        const q = document.getElementById('q');
+        const grid = document.getElementById('grid');
+        const status = document.getElementById('status');
+        const catBar = document.getElementById('catBar');
+
+        const cats = Array.from(new Set(pages.map(p => p.category).filter(Boolean)));
+        const state = { cat: 'ALL', q: '' };
+
+        function mkPill(label, value) {
+          const b = document.createElement('button');
+          b.className = 'pill';
+          b.textContent = label;
+          b.dataset.value = value;
+          b.setAttribute('aria-pressed', value === state.cat ? 'true' : 'false');
+          b.onclick = () => {
+            state.cat = value;
+            render();
+            for (const el of catBar.querySelectorAll('button')) {
+              el.setAttribute('aria-pressed', el.dataset.value === state.cat ? 'true' : 'false');
+            }
+          };
+          return b;
         }
 
-        const allTags = uniq((data.pages || []).flatMap(p => p.tags || []));
-        let activeTag = null;
+        catBar.appendChild(mkPill('ALL', 'ALL'));
+        for (const c of cats) catBar.appendChild(mkPill(c, c));
 
-        renderTagBar(allTags, (tag) => {
-          activeTag = tag;
-          [...$('tagBar').querySelectorAll('button.pill')].forEach(btn => {
-            const isAll = btn.textContent === '전체';
-            const pressed = (tag === null && isAll) || (tag !== null && btn.textContent === tag);
-            btn.setAttribute('aria-pressed', pressed ? 'true' : 'false');
-          });
-          render(data, $('q').value, activeTag);
-        });
+        q.oninput = () => { state.q = q.value.trim().toLowerCase(); render(); };
 
-        $('q').addEventListener('input', () => render(data, $('q').value, activeTag));
-        render(data, '', null);
-      } catch (e) {
-        const err = document.createElement('div');
-        err.className = 'error';
-        err.innerHTML = `목록을 생성하지 못했습니다. (<code>${String(e).replace(/</g,'&lt;')}</code>)<br/>` +
-          `임시로 직접 문서를 여세요: <a href="./openclaw-session-explainer.html">openclaw-session-explainer.html</a>`;
-        document.body.insertBefore(err, $('status'));
+        function render() {
+          grid.innerHTML = '';
+          let filtered = pages;
+          if (state.cat !== 'ALL') filtered = filtered.filter(p => p.category === state.cat);
+          if (state.q) {
+            filtered = filtered.filter(p => {
+              const hay = `${p.title||''} ${p.description||''} ${p.category||''} ${p.date||''} ${p.id||''}`.toLowerCase();
+              return hay.includes(state.q);
+            });
+          }
+          status.textContent = `${filtered.length} / ${pages.length} 보고서`;
+          for (const p of filtered) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            const h2 = document.createElement('h2');
+            const a = document.createElement('a');
+            a.href = `./${p.href}`;
+            a.textContent = p.title;
+            h2.appendChild(a);
+            const desc = document.createElement('p');
+            desc.textContent = p.description || '';
+            const meta = document.createElement('div');
+            meta.className = 'meta';
+            meta.textContent = `${p.category || ''} · ${p.date || ''} · ${p.id || ''}`;
+            card.appendChild(h2);
+            card.appendChild(desc);
+            card.appendChild(meta);
+            grid.appendChild(card);
+          }
+        }
+
+        render();
       }
-    })();
-  </script>
+      boot();
+    </script>
+  </main>
 </body>
 </html>

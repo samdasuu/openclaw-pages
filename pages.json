@@ -7,36 +7,28 @@
   },
   "pages": [
     {
+      "id": "20260215-01",
       "title": "요약: 배운 사람들이 창업하면 망하는 이유 (이오플래닛)",
-      "href": "./2026-02-15__eopla--why-smart-founders-fail-summary.html",
-      "desc": "Published via OpenClaw",
-      "tags": [
-        "eopla",
-        "startup",
-        "summary"
-      ]
+      "description": "요약: 배운 사람들이 창업하면 망하는 이유 (이오플래닛)",
+      "category": "분석",
+      "date": "2026-02-15",
+      "href": "2026-02-15__eopla--why-smart-founders-fail-summary.html"
     },
     {
-      "title": "싱가포르 일정 정리 (DAY1~DAY4)",
-      "href": "./2026-02-08__logs--singapore-itinerary.html",
-      "desc": "DOCX 메모를 기반으로 4일 일정(이동/식사/야경/예약 포인트)을 읽기 쉽게 정리.",
-      "tags": [
-        "logs",
-        "travel",
-        "singapore",
-        "itinerary"
-      ]
+      "id": "20260208-01",
+      "title": "싱가포르 4일 일정 (모바일용)",
+      "description": "DOCX 메모를 기반으로 4일 일정(이동/식사/야경/예약 포인트)을 읽기 쉽게 정리.",
+      "category": "분석",
+      "date": "2026-02-08",
+      "href": "2026-02-08__logs--singapore-itinerary.html"
     },
     {
-      "title": "OpenClaw 대화(세션) 섞임 원인/해결",
-      "href": "./openclaw-session-explainer.html",
-      "desc": "텔레그램 봇 2개(accountId 2개) 쓸 때 세션이 섞이는 이유와 dmScope 설정으로 분리하는 방법.",
-      "tags": [
-        "openclaw",
-        "telegram",
-        "session",
-        "config"
-      ]
+      "id": "20260215-02",
+      "title": "OpenClaw에서 대화(세션)가 섞이는 이유와 해결 설정",
+      "description": "텔레그램 봇 2개(accountId 2개) 쓸 때 세션이 섞이는 이유와 dmScope 설정으로 분리하는 방법.",
+      "category": "개발",
+      "date": "2026-02-15",
+      "href": "openclaw-session-explainer.html"
     }
   ]
 }
