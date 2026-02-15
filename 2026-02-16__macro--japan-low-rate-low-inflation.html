@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>일본은 왜 초저금리에도 인플레이션이 약했나 — 구조적 요인 해설</title>
+  <meta name="description" content="일본의 초저금리·양적완화에도 장기간 저물가/저인플레이션이 이어진 이유를 배경→제1원리→비교→맥락 적용→용어 사전 구조로 정리." />
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--fg:#1f2937;--muted:#64748b;--border:#e2e8f0;--accent:#2563eb;--warn:#b45309;--ok:#065f46;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;--maxw:900px;}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif;line-height:1.75;}
+    a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;}
+    main{max-width:var(--maxw);margin:24px auto;padding:0 16px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+    header.card{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+    .back{display:inline-block;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
+    h1{margin:0 0 6px;font-size:22px;}
+    h2{margin:26px 0 10px;padding-top:14px;border-top:1px solid var(--border);font-size:18px;}
+    h3{margin:18px 0 8px;font-size:15px;}
+    h4{margin:14px 0 6px;font-size:14px;}
+    p{margin:10px 0;}
+    ul{margin:8px 0 8px 20px;} li{margin:6px 0;}
+    code{font-family:var(--mono);font-size:0.95em;background:#f1f5f9;border:1px solid var(--border);padding:1px 6px;border-radius:8px;}
+    .meta{color:var(--muted);font-size:13px;}
+    .note{border-left:4px solid var(--accent);padding:10px 12px;background:#eff6ff;border-radius:10px;}
+    .warn{border-left:4px solid var(--warn);padding:10px 12px;background:#fff7ed;border-radius:10px;}
+    .ok{border-left:4px solid var(--ok);padding:10px 12px;background:#ecfdf5;border-radius:10px;}
+    table{width:100%;border-collapse:separate;border-spacing:0;margin:10px 0;overflow:hidden;border-radius:12px;border:1px solid var(--border);}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+    th{background:#f1f5f9;text-align:left;font-size:13px;color:#0f172a;}
+    tr:last-child td{border-bottom:0;}
+  </style>
+</head>
+<body>
+  <main>
+    <header class="card">
+      <div><a class="back" href="./">← 목록으로</a></div>
+      <div style="flex:1">
+        <h1>일본은 왜 초저금리에도 인플레이션이 약했나</h1>
+        <div class="meta">작성일: 2026-02-16 · 페르소나: 거시/통화정책 분야 멘토 · 형식: 배경→제1원리→비교→맥락 적용→용어 사전</div>
+        <div class="note" style="margin-top:12px">
+          결론 요약: 일본은 장기간 <strong>총수요가 구조적으로 약했고</strong>(인구·임금·기대·부채조정), 통화완화가 <strong>신용창출/임금상승</strong>으로 충분히 전달되지 못했으며, <strong>디플레이션 기대</strong>가 가격/임금 결정을 묶어 저물가가 지속됐다.
+        </div>
+      </div>
+    </header>
+
+    <section class="card" style="margin-top:14px">
+      <h2>1) 배경과 문제의식</h2>
+      <p>“금리가 낮으면 돈이 풀려서 인플레이션이 생긴다”는 직관은 대체로 맞지만, 일본의 1990년대 이후는 예외처럼 보였습니다. 일본은행(BOJ)은 <strong>제로금리(ZIRP)</strong>, <strong>양적완화(QE)</strong>, <strong>장단기금리조작(YCC)</strong> 등 매우 공격적인 완화정책을 오랫동안 지속했는데도, 상당 기간 <strong>저물가/저인플레이션</strong>이 이어졌습니다.</p>
+
+      <p>이 현상이 중요했던 이유는 두 가지입니다.</p>
+      <ul>
+        <li><strong>정책 퍼즐</strong>: 통화정책의 대표적 수단(금리 인하, 자산 매입)이 물가를 끌어올리는 메커니즘이 “왜 작동이 약했나?”</li>
+        <li><strong>글로벌 함의</strong>: 선진국이 고령화·저성장에 들어가면 비슷한 <strong>저물가 함정</strong>에 빠질 수 있다는 경고.</li>
+      </ul>
+
+      <div class="warn">
+        전제: 이 글은 “항상 일본이 인플레를 덜 받았다”가 아니라, <strong>특히 1990s~2010s의 장기 저물가 국면</strong>을 설명한다. 2022~2024에는 일본도 수입물가/엔화 약세/에너지 요인으로 물가가 상승했고, 그 이후 구조 변화가 논의된다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>2) 제1원리(First Principles)</h2>
+
+      <h3>2.1 인플레이션은 ‘통화량’만이 아니라 ‘지출/임금/기대’의 함수다</h3>
+      <ul>
+        <li>통화완화가 물가로 이어지려면, 중앙은행의 조치가 <strong>실물 총수요(aggregate demand)</strong>를 끌어올려야 한다.</li>
+        <li>총수요가 늘려면 대체로 <strong>가계 소비</strong>, <strong>기업 투자</strong>, <strong>정부 지출</strong>, <strong>순수출</strong> 중 하나가 강하게 증가해야 한다.</li>
+      </ul>
+
+      <h3>2.2 전달경로(Transmission Mechanism): 금리 인하 → 신용창출 → 지출 → 임금 → 물가</h3>
+      <p>금리 인하/QE가 인플레이션으로 이어지는 표준 경로는 대략 아래 사슬입니다.</p>
+      <ul>
+        <li><strong>금리 하락</strong> → 차입 비용 감소</li>
+        <li><strong>대출/신용 증가</strong>(은행의 신용창출) → 가계/기업 지출 증가</li>
+        <li><strong>노동시장 타이트닝</strong> → 임금 상승</li>
+        <li><strong>가격 결정</strong>(기업이 가격 인상) + <strong>기대인플레이션</strong> 상향 → 인플레이션 정착</li>
+      </ul>
+      <p>일본의 핵심은 이 사슬에서 여러 고리가 약해졌다는 점입니다.</p>
+
+      <h3>2.3 기대(Expectations)는 ‘자기실현적’ 성격을 갖는다</h3>
+      <ul>
+        <li>사람들이 “내년에도 물가가 오르지 않을 것”이라고 믿으면, <strong>가격 인상·임금 인상·선구매</strong> 동기가 약해진다.</li>
+        <li>이 기대는 물가를 실제로 낮추는 방향으로 작동해 <strong>디플레이션 관성</strong>을 만든다.</li>
+      </ul>
+
+      <div class="note">
+        요약하면: 통화완화는 필요조건일 수 있으나, 충분조건은 아니다. <strong>총수요/임금/기대</strong>가 같이 움직여야 “지속적 인플레이션”이 된다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>3) 대조와 비교</h2>
+
+      <h3>3.1 일본 vs 미국(또는 일부 선진국)의 차이 (1990s~2010s)</h3>
+      <table>
+        <tr><th>축</th><th>일본(저물가 지속에 유리한 조건)</th><th>미국/일부국가(인플레로 이어지기 쉬운 조건)</th></tr>
+        <tr>
+          <td>부채조정</td>
+          <td>버블 붕괴 이후 <strong>대차대조표 불황(balance sheet recession)</strong> 장기화 → 민간이 “차입”보다 “상환” 선호</td>
+          <td>민간 신용 사이클이 회복되면 차입/투자 증가가 상대적으로 빠름</td>
+        </tr>
+        <tr>
+          <td>임금/노동시장</td>
+          <td>임금 협상력 약화, 장기 고용/비정규 구조 등으로 <strong>임금-물가 연동</strong>이 약함</td>
+          <td>노동시장 타이트 시 임금이 빠르게 반응하는 구간이 존재</td>
+        </tr>
+        <tr>
+          <td>인구/성장</td>
+          <td><strong>고령화/인구 감소</strong> → 장기 수요 성장률 낮음</td>
+          <td>인구·생산성 성장률이 상대적으로 높으면 수요가 더 탄력적</td>
+        </tr>
+        <tr>
+          <td>기대 형성</td>
+          <td>장기간 디플레 경험 → <strong>기대인플레이션이 낮게 고착</strong></td>
+          <td>정책 신뢰/경기 확장 구간에서 기대가 상향되기 쉬움</td>
+        </tr>
+        <tr>
+          <td>정책 조합</td>
+          <td>통화완화는 강했지만, 시기별로 <strong>재정/구조개혁/임금정책</strong>과의 결합이 약했던 구간이 많음</td>
+          <td>대규모 재정지출이 결합되면 총수요가 직접적으로 올라가 물가 압력 확대</td>
+        </tr>
+      </table>
+
+      <h3>3.2 “낮은 금리”와 “높은 인플레이션”을 동일시하는 오해</h3>
+      <ul>
+        <li>낮은 금리는 대개 <strong>경기 부진/저성장/저물가</strong>의 결과이기도 하다(자연이자율 r* 하락).</li>
+        <li>즉 “금리가 낮아서 인플레가 낮다/높다”가 아니라, <strong>근본 수요/성장 구조</strong>가 금리와 물가 둘 다를 결정하는 경우가 많다.</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>4) 맥락적 연결</h2>
+      <p>질문을 실무적으로 읽으면 “<strong>금리만으로 물가를 설명하면 왜 틀리기 쉬운가</strong>”와 연결됩니다. 특히 투자/리서치/정책 논의에서 아래 포인트가 중요합니다.</p>
+
+      <h3>4.1 실무 적용 사례 1 — ‘통화정책의 한계’ 진단 프레임</h3>
+      <ul>
+        <li>금리 인하/QE를 했는데도 물가가 안 오르면, 먼저 <strong>전달경로가 막혔는지</strong>를 체크한다.</li>
+        <li>체크리스트(대표):
+          <ul>
+            <li>은행이 대출을 늘리고 있는가? (credit growth)</li>
+            <li>기업이 투자하려는가? (capex)</li>
+            <li>가계가 소비를 늘릴 소득/임금이 있는가?</li>
+            <li>기대인플레이션이 움직였는가?</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3>4.2 실무 적용 사례 2 — 일본형 저물가의 ‘구조적 요인’ 분해</h3>
+      <ul>
+        <li><strong>고령화</strong>: 소비 성향(MPC) 변화 + 주거/내구재 수요 감소 → 장기 총수요 둔화</li>
+        <li><strong>임금 동학</strong>: 임금 상승이 약하면 서비스 물가(내수 물가)가 잘 안 오른다</li>
+        <li><strong>대차대조표 불황</strong>: 민간이 레버리지 확대 대신 부채 축소에 집중하면 신용창출이 둔화</li>
+        <li><strong>기대의 관성</strong>: “물가가 안 오른다”는 믿음이 가격/임금 결정에 내재</li>
+      </ul>
+
+      <h3>4.3 흔히 놓치는 포인트 — ‘수입 인플레이션’ vs ‘내수 인플레이션’</h3>
+      <ul>
+        <li>엔화 약세/에너지 가격 상승으로 <strong>수입물가</strong>가 오르면 단기 CPI는 뛸 수 있다.</li>
+        <li>하지만 임금 상승이 따라주지 않으면 실질소득이 깎여 <strong>수요가 다시 약해지고</strong>, 인플레가 지속되기 어렵다.</li>
+      </ul>
+
+      <div class="ok">
+        실무적 결론: “일본은 금리가 낮아도 인플레가 없었다”는 말은, 사실상 <strong>총수요/임금/기대/신용창출</strong>이라는 4요소가 장기간 약했던 거시구조를 요약한 문장에 가깝다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>[용어 사전]</h2>
+      <ul>
+        <li><strong>인플레이션(Inflation)</strong>: 일반적인 물가 수준이 지속적으로 상승하는 현상.</li>
+        <li><strong>초저금리/제로금리(ZIRP)</strong>: 정책금리가 0% 근처까지 내려간 상태.</li>
+        <li><strong>양적완화(QE)</strong>: 중앙은행이 국채 등 자산을 대규모 매입해 금융여건을 완화하는 정책.</li>
+        <li><strong>장단기금리조작(YCC)</strong>: 단기금리뿐 아니라 장기국채 금리 목표를 두고 수익률곡선을 관리하는 정책.</li>
+        <li><strong>총수요(Aggregate Demand)</strong>: 경제 전체의 지출 수요(소비+투자+정부지출+순수출).</li>
+        <li><strong>전달경로(Transmission Mechanism)</strong>: 통화정책 변화가 실물경제·물가로 전달되는 과정.</li>
+        <li><strong>신용창출(Credit Creation)</strong>: 은행 대출 확대를 통해 민간의 구매력/지출 여력이 늘어나는 과정.</li>
+        <li><strong>기대인플레이션(Inflation Expectations)</strong>: 사람들이 예상하는 미래 물가 상승률.</li>
+        <li><strong>자연이자율(r*)</strong>: 경기 과열/침체를 유발하지 않는 균형 실질금리(추정치).</li>
+        <li><strong>대차대조표 불황(Balance Sheet Recession)</strong>: 자산가격 붕괴 이후 민간이 부채 축소에 집중해 수요가 장기간 약해지는 현상.</li>
+        <li><strong>MPC(한계소비성향)</strong>: 추가 소득 1단위가 소비로 이어지는 비율.</li>
+        <li><strong>수입 인플레이션(Imported Inflation)</strong>: 환율/원자재 가격으로 수입물가가 올라 국내 물가에 전이되는 인플레.</li>
+      </ul>
+    </section>
+
+    <footer class="card" style="margin-top:14px">
+      <div>Project: OpenClaw Pages</div>
+      <div>Repo: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">https://github.com/samdasuu/openclaw-pages</a></div>
+      <div class="meta" style="margin-top:8px">메모: 거시경제는 시기/정의(헤드라인 vs 코어)/국가별 제도에 따라 결론이 달라질 수 있음. 필요하면 기간(예: 1995~2019)과 지표(CPI, Core CPI, GDP deflator)를 지정해 더 엄밀히 확장 가능.</div>
+    </footer>
+  </main>
+</body>
+</html>
