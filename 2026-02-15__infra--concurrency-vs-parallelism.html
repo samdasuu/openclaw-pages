@@ -135,28 +135,181 @@
     <li>"즉, <strong>동시성은 구조(Structure)</strong>에 관한 것이고, <strong>병렬성은 실행(Execution)</strong>에 관한 것입니다."</li>
 </ol>
 
-<h2>4. 더 알면 좋은 토픽 3가지</h2>
+<h2>4. 더 알면 좋은 토픽 3가지 (실무/면접 확장)</h2>
 
-<h3>토픽 1) 경쟁 상태(Race Condition)와 동기화(Synchronization)</h3>
+<h3>[경쟁 상태(Race Condition) & 동기화(Synchronization)]</h3>
+
+<h4>1) 핵심 개념 정의</h4>
 <ul>
-    <li><strong>병렬성</strong>이 생기면(여러 코어/스레드가 진짜로 동시에 실행) 같은 데이터(공유 변수, 파일, DB)를 동시에 건드릴 수 있습니다.</li>
-    <li>그 결과가 실행 순서에 따라 달라지는 문제를 <strong>Race Condition</strong>이라고 합니다.</li>
-    <li>해결책은 <strong>락(mutex), 세마포어, 원자적 연산(atomic), 메시지 패싱</strong> 같은 동기화 기법입니다.</li>
-    <li>실무 포인트: “병렬로 빠르게 만들자”를 먼저 말하기보다, <strong>공유 상태를 줄이고(불변/분리), 필요한 곳만 동기화</strong>하는 게 안전합니다.</li>
+  <li><strong>Race Condition</strong>: 여러 실행 흐름(스레드/프로세스/코루틴 등)이 <strong>공유 상태(shared state)</strong>를 동시에(또는 겹치는 타이밍에) 접근/수정할 때, <strong>실행 순서에 따라 결과가 달라지는</strong> 현상.</li>
+  <li><strong>Synchronization</strong>: 위 현상을 제어하기 위해, 임계 구역(critical section)의 접근을 <strong>순서화/제한</strong>하는 기법(락, 원자적 연산, 트랜잭션, 메시지 패싱 등).</li>
 </ul>
 
-<h3>토픽 2) 비동기(Async I/O)와 멀티스레드의 관계</h3>
+<h4>2) 왜 문제가 발생하는가 (원리)</h4>
 <ul>
-    <li>Node.js 같은 이벤트 루프 기반 모델은 주로 <strong>I/O(네트워크/디스크 대기)</strong>를 효율적으로 겹쳐 처리하는 <strong>동시성</strong>의 대표 사례입니다.</li>
-    <li>여기서 중요한 구분: <strong>비동기 = 병렬</strong>이 아닙니다. (싱글 스레드에서도 비동기로 “동시 처리처럼” 만들 수 있음)</li>
-    <li>CPU 연산이 무거우면 이벤트 루프가 막히므로, 그때는 <strong>worker thread / 멀티프로세스</strong>로 진짜 병렬성을 가져가야 합니다.</li>
+  <li>대부분의 읽기/쓰기 연산은 “한 줄”처럼 보여도 내부적으로는 <strong>여러 단계(로드 → 계산 → 스토어)</strong>로 구성됩니다.</li>
+  <li>두 실행 흐름이 이 단계 사이에 <strong>끼어들기(interleaving)</strong>를 하면, 한 쪽의 업데이트가 다른 쪽에 의해 <strong>덮어써지거나(lost update)</strong> 중간 상태를 읽게 됩니다.</li>
 </ul>
 
-<h3>토픽 3) 성능 오해 3가지: 컨텍스트 스위칭, 오버헤드, 아메달의 법칙</h3>
+<h4>3) 간단한 예시</h4>
+<pre><code>// 예: 두 스레드가 같은 카운터를 1씩 증가
+// 기대: 0에서 시작해서 최종 2
+// 현실: interleaving 때문에 최종 1이 나올 수 있음
+
+let count = 0;
+
+function inc() {
+  // count++ 는 원자적(atomic) 연산이 아님
+  // (read count) -> (add 1) -> (write count)
+  count++;
+}
+
+// Thread A: read 0
+// Thread B: read 0
+// Thread A: write 1
+// Thread B: write 1  // A의 업데이트가 사라짐
+</code></pre>
+
+<h4>4) 해결 방법(종류별 비교)</h4>
 <ul>
-    <li><strong>동시성</strong>은 "설계"라서 무조건 빠르게 해주는 게 아닙니다. 스레드/태스크가 많아지면 <strong>컨텍스트 스위칭 비용</strong>이 커질 수 있어요.</li>
-    <li><strong>병렬성</strong>도 "코어를 늘리면 선형으로 빨라진다"가 아닙니다. 병렬화 오버헤드(분할/병합, 락 대기)가 있습니다.</li>
-    <li><strong>아메달의 법칙(Amdahl’s Law):</strong> 전체 작업 중 병렬화 불가능한 구간이 조금만 있어도, 코어를 많이 늘렸을 때의 최대 가속은 제한됩니다.</li>
+  <li><strong>Mutex/Lock</strong>: 가장 직관적. 임계 구역을 한 번에 한 실행 흐름만 통과.
+    <ul>
+      <li>장점: 이해/적용 쉬움</li>
+      <li>단점: 락 경합, 데드락 위험, 성능 저하(특히 락 범위가 클 때)</li>
+    </ul>
+  </li>
+  <li><strong>Atomic 연산(CAS, atomic increment 등)</strong>: 카운터/플래그 같은 단순 상태에 매우 강력.
+    <ul>
+      <li>장점: 락보다 보통 가벼움</li>
+      <li>단점: 복잡한 구조(여러 필드의 불변식 유지)에는 적용이 어려움</li>
+    </ul>
+  </li>
+  <li><strong>메시지 패싱(Actor 모델, 채널)</strong>: 공유 상태를 없애고, 소유자만 상태를 변경.
+    <ul>
+      <li>장점: race 자체를 구조적으로 줄임</li>
+      <li>단점: 설계가 바뀜(큐/백프레셔/지연 고려), 디버깅 패턴이 달라짐</li>
+    </ul>
+  </li>
+  <li><strong>DB 트랜잭션/격리 수준</strong>: “공유 상태”가 DB라면 트랜잭션과 락(낙관/비관)을 활용.
+    <ul>
+      <li>장점: 일관성 보장, 재시도 전략과 결합 가능</li>
+      <li>단점: 격리 수준에 따른 성능/교착 상태 고려 필요</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>5) 실무에서 고려할 점 / 흔한 실수</h4>
+<ul>
+  <li><strong>락 범위 과대</strong>: “일단 전체를 락”은 쉽게 병목이 됨. 가능한 <strong>임계 구역 최소화</strong>.</li>
+  <li><strong>데드락</strong>: 여러 락을 잡는 순서가 흐트러지면 발생. 락 순서 규칙/타임아웃/락 계층화 고려.</li>
+  <li><strong>공유 상태 최소화</strong>: 가장 강력한 동기화는 “동기화를 안 해도 되게 만드는 설계”(불변/분리/샤딩).</li>
+</ul>
+
+<h4>핵심 요약</h4>
+<ul>
+  <li>Race Condition은 “동시(겹침) + 공유 상태”에서 발생한다.</li>
+  <li>해결의 1순위는 <strong>공유 상태를 줄이는 구조</strong>, 2순위가 락/atomic/메시지 패싱 같은 동기화.</li>
+</ul>
+
+<hr />
+
+<h3>[비동기(Async I/O) vs 멀티스레드/병렬 실행의 관계]</h3>
+
+<h4>1) 핵심 개념 정의</h4>
+<ul>
+  <li><strong>Async I/O</strong>: I/O 요청(네트워크/디스크)을 “요청만 해두고” 완료되면 콜백/이벤트/프라미스로 이어서 처리하는 방식. 주 목적은 <strong>대기 시간(latency) 숨기기</strong>.</li>
+  <li><strong>멀티스레드/병렬성</strong>: CPU 코어/스레드가 실제로 동시에 연산을 수행하는 것. 주 목적은 <strong>CPU 처리량(throughput) 증가</strong>.</li>
+</ul>
+
+<h4>2) 왜 오해가 생기는가 (원리)</h4>
+<ul>
+  <li>둘 다 “여러 일을 동시에 하는 느낌”을 주지만, <strong>Async는 설계/구조(동시성)</strong>, <strong>Thread는 실행/자원(병렬성)</strong>이라는 축이 다릅니다.</li>
+  <li>특히 이벤트 루프는 I/O 대기 동안 다른 작업을 처리해서 “동시에” 보이게 하지만, <strong>CPU 연산 자체는 한 번에 하나</strong>일 수 있습니다(싱글 스레드 모델).</li>
+</ul>
+
+<h4>3) 간단한 예시(상황)</h4>
+<ul>
+  <li><strong>Async가 유리</strong>: 웹 서버가 DB/외부 API 호출을 수천 개 기다리는 상황 → 대기 시간 동안 다른 요청을 처리.</li>
+  <li><strong>병렬이 필요</strong>: 이미지 리사이즈/암호화/ML 추론처럼 CPU를 오래 쓰는 작업 → 이벤트 루프가 막히면 전체가 느려짐.</li>
+</ul>
+
+<h4>4) 해결 방법(종류별 비교)</h4>
+<ul>
+  <li><strong>Async I/O + Event Loop</strong>
+    <ul>
+      <li>장점: I/O 바운드에서 효율적, 스레드 수 폭증을 피함</li>
+      <li>단점: CPU 바운드에서는 단일 스레드 병목이 생김(응답 지연/타임아웃)</li>
+    </ul>
+  </li>
+  <li><strong>Worker Thread / Thread Pool</strong>
+    <ul>
+      <li>장점: CPU 바운드 작업을 병렬 처리 가능</li>
+      <li>단점: 공유 상태 동기화 필요, 컨텍스트 스위칭/메모리 비용 발생</li>
+    </ul>
+  </li>
+  <li><strong>Multi-Process</strong>
+    <ul>
+      <li>장점: 프로세스 격리(안전), 런타임 제약(GIL 등) 회피 가능</li>
+      <li>단점: IPC 비용, 운영/배포 복잡도 증가</li>
+    </ul>
+  </li>
+</ul>
+
+<h4>5) 실무에서 고려할 점 / 흔한 실수</h4>
+<ul>
+  <li><strong>CPU 작업을 async로 감추려는 실수</strong>: CPU는 “기다림”이 아니라 “계산”이라 async로 해결되지 않음.</li>
+  <li><strong>블로킹 호출 혼입</strong>: 이벤트 루프(싱글 스레드)에서 블로킹 I/O/CPU 작업이 섞이면 전체 지연.</li>
+  <li><strong>워크 큐/백프레셔</strong>: worker에 무한히 던지면 메모리 폭발. 큐 제한/우선순위/리트라이 전략 필요.</li>
+</ul>
+
+<h4>핵심 요약</h4>
+<ul>
+  <li>Async는 I/O 대기를 겹쳐 처리하는 <strong>동시성 전략</strong>이고,</li>
+  <li>병렬성은 CPU 자원을 늘려 <strong>실제로 동시에 계산</strong>하는 전략이다.</li>
+</ul>
+
+<hr />
+
+<h3>[성능 오해 3가지: 컨텍스트 스위칭 · 오버헤드 · 아메달의 법칙]</h3>
+
+<h4>1) 핵심 개념 정의</h4>
+<ul>
+  <li><strong>Context Switching</strong>: CPU가 실행 중인 스레드/프로세스를 바꾸는 비용(레지스터 저장/복원, 캐시 영향 등).</li>
+  <li><strong>병렬화 오버헤드</strong>: 작업 분할/스케줄링/동기화/병합의 추가 비용.</li>
+  <li><strong>Amdahl’s Law</strong>: 병렬화 가능한 비율이 p일 때, 무한 코어에서도 최대 가속은 <code>1 / (1 - p)</code>로 제한됨.</li>
+</ul>
+
+<h4>2) 왜 문제가 발생하는가 (원리)</h4>
+<ul>
+  <li>스레드/태스크를 늘리면 “일”만 늘어나는 게 아니라, <strong>조율 비용</strong>도 함께 증가합니다.</li>
+  <li>특히 공유 상태를 보호하기 위한 락/큐는 경합을 만들고, 그 자체가 병목이 됩니다.</li>
+</ul>
+
+<h4>3) 간단한 예시(상황)</h4>
+<ul>
+  <li>웹 서버에서 요청마다 스레드를 무한 생성 → 스레드 수가 많아질수록 컨텍스트 스위칭이 늘어 오히려 느려짐.</li>
+  <li>병렬로 처리하려고 락을 자주 잡는 구조 → 코어가 많아도 락 대기로 실제 병렬 실행이 줄어듦.</li>
+</ul>
+
+<h4>4) 해결 방법(종류별 비교)</h4>
+<ul>
+  <li><strong>적절한 동시성 모델 선택</strong>: I/O 바운드면 이벤트 루프/async, CPU 바운드면 워커/프로세스 병렬.</li>
+  <li><strong>워크 분할 전략</strong>: 너무 작은 작업은 오버헤드가 지배. 너무 큰 작업은 로드 밸런싱 실패. “적당한 그레인(grain size)” 찾기.</li>
+  <li><strong>락 경합 줄이기</strong>: 샤딩, lock-free/atomic, 불변 데이터 구조, per-core 데이터 등.</li>
+  <li><strong>측정 기반 튜닝</strong>: 추측 최적화 금지. 프로파일링/트레이싱으로 병목 지점 확인 후 개선.</li>
+</ul>
+
+<h4>5) 실무에서 고려할 점 / 흔한 실수</h4>
+<ul>
+  <li><strong>코어 수만 믿는 실수</strong>: 병렬화 가능한 구간이 작으면 코어를 늘려도 효과가 제한됨(Amdahl).</li>
+  <li><strong>Throughput vs Latency 혼동</strong>: 처리량이 늘어도 개별 요청 지연이 커질 수 있음(큐 대기).</li>
+  <li><strong>벤치마크 부재</strong>: “빨라질 것 같아서”는 항상 실패 확률이 높음. 기준(현재) 측정 → 변경 → 재측정.</li>
+</ul>
+
+<h4>핵심 요약</h4>
+<ul>
+  <li>동시성/병렬성은 공짜 성능이 아니다. 조율 비용이 존재한다.</li>
+  <li>아메달의 법칙 + 오버헤드 때문에, 설계/측정 없이 병렬화를 밀어붙이면 역효과가 날 수 있다.</li>
 </ul>
 
 <footer>
