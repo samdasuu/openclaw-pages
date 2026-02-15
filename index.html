@@ -50,7 +50,6 @@
         <span aria-hidden="true">★</span>
         <span>즐겨찾기</span>
       </button>
-      <button class="pill" id="favSync" title="즐겨찾기 동기화(깃 저장) 설정">동기화</button>
       <div id="catBar" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
     </div>
 
@@ -69,82 +68,17 @@
         const catBar = document.getElementById('catBar');
         const favToggle = document.getElementById('favToggle');
 
-        // Favorites sync:
-        // - default: localStorage
-        // - optional: GitHub repo file favorites.json (requires a GitHub Fine-grained PAT)
         const FAV_KEY = 'openclaw_pages_favorites_v1';
-        const GH_TOKEN_KEY = 'openclaw_pages_github_token_v1';
-        const GH_OWNER = 'samdasuu';
-        const GH_REPO = 'openclaw-pages';
-        const GH_PATH = 'favorites.json';
-
-        const readLocalFavs = () => {
+        const readFavs = () => {
           try { return new Set(JSON.parse(localStorage.getItem(FAV_KEY) || '[]')); }
           catch { return new Set(); }
         };
-        const writeLocalFavs = (set) => {
+        const writeFavs = (set) => {
           localStorage.setItem(FAV_KEY, JSON.stringify(Array.from(set)));
         };
-        const getToken = () => localStorage.getItem(GH_TOKEN_KEY) || '';
-
-        async function loadRepoFavs() {
-          // Try GitHub Pages-served favorites.json first (no auth). Fallback to local.
-          try {
-            const r = await fetch('./favorites.json', { cache: 'no-store' });
-            if (!r.ok) throw new Error('favorites.json not found');
-            const arr = await r.json();
-            if (!Array.isArray(arr)) throw new Error('invalid favorites.json');
-            return new Set(arr);
-          } catch {
-            return readLocalFavs();
-          }
-        }
-
-        async function saveRepoFavs(set) {
-          const token = getToken();
-          if (!token) {
-            // No token → local only
-            writeLocalFavs(set);
-            return { ok: true, mode: 'local' };
-          }
-
-          // Update in GitHub repo via Contents API
-          const api = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_PATH}`;
-
-          const headers = {
-            'Accept': 'application/vnd.github+json',
-            'Authorization': `Bearer ${token}`
-          };
-
-          // 1) read current sha
-          const getRes = await fetch(api, { headers });
-          if (!getRes.ok) {
-            // token invalid or permission issue
-            writeLocalFavs(set);
-            return { ok: false, mode: 'local', error: `GitHub GET failed: ${getRes.status}` };
-          }
-          const current = await getRes.json();
-          const sha = current.sha;
-
-          // 2) PUT new content
-          const body = {
-            message: 'Update favorites',
-            content: btoa(unescape(encodeURIComponent(JSON.stringify(Array.from(set), null, 0) + '\n'))),
-            sha
-          };
-          const putRes = await fetch(api, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-          if (!putRes.ok) {
-            writeLocalFavs(set);
-            return { ok: false, mode: 'local', error: `GitHub PUT failed: ${putRes.status}` };
-          }
-
-          // Keep local as cache too
-          writeLocalFavs(set);
-          return { ok: true, mode: 'git' };
-        }
 
         const cats = Array.from(new Set(pages.map(p => p.category).filter(Boolean)));
-        const state = { cat: 'ALL', q: '', favOnly: false, favs: await loadRepoFavs() };
+        const state = { cat: 'ALL', q: '', favOnly: false, favs: readFavs() };
 
         function mkPill(label, value) {
           const b = document.createElement('button');
@@ -171,21 +105,6 @@
           state.favOnly = !state.favOnly;
           favToggle.setAttribute('aria-pressed', state.favOnly ? 'true' : 'false');
           render();
-        };
-
-        document.getElementById('favSync').onclick = async () => {
-          const cur = getToken() ? '설정됨' : '미설정';
-          const token = prompt(
-            `GitHub에 즐겨찾기를 저장하면 기기 간 동기화가 됩니다.\n\n` +
-            `현재 토큰: ${cur}\n\n` +
-            `Fine-grained PAT 권장 (repo: samdasuu/openclaw-pages, Contents read/write).\n` +
-            `토큰을 입력(또는 빈 값으로 삭제)하세요.`
-          );
-          if (token === null) return;
-          const t = token.trim();
-          if (!t) localStorage.removeItem(GH_TOKEN_KEY);
-          else localStorage.setItem(GH_TOKEN_KEY, t);
-          alert('저장했습니다. 이제 즐겨찾기 변경 시 GitHub에 커밋됩니다.');
         };
 
         function render() {
@@ -225,8 +144,7 @@
               ev.stopPropagation();
               if (state.favs.has(p.href)) state.favs.delete(p.href);
               else state.favs.add(p.href);
-              const r = await saveRepoFavs(state.favs);
-              if (!r.ok) console.warn('favorites sync failed; fell back to local', r.error);
+              writeFavs(state.favs);
               render();
             };
 
