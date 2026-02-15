@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>클로드 코드 200% 활용하기</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fcfcfc;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 15px;
+            margin-top: 40px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            border-left: 5px solid #3498db;
+            padding-left: 10px;
+        }
+        h3 {
+            color: #2980b9;
+            margin-top: 25px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        code {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, monospace;
+            color: #c7254e;
+        }
+        .concept-box {
+            background-color: #e8f6f3;
+            border: 1px solid #1abc9c;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .concept-title {
+            font-weight: bold;
+            color: #16a085;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .explanation {
+            background-color: #e3f2fd;
+            border-left: 5px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .explanation h4 {
+            margin-top: 0;
+            color: #1565c0;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+        }
+        .explanation h4::before {
+            content: "💡";
+            margin-right: 8px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>클로드 코드 200% 활용하기: 서브 에이전트, 스킬, 커맨드 완벽 정리</h1>
+<p><em>출처: 유튜브 '코딩알려주는누나' - <a href="https://www.youtube.com/watch?v=2eqPBLgVH0U" target="_blank">영상 보기</a></em></p>
+
+<p>안녕하세요! AI로 코딩하다 보면 "아, 내가 일일이 다 지시하고 검사해야 하나? 너무 귀찮은데..."라고 느끼신 적 있으시죠? 
+오늘은 여러분을 <strong>단순 작업자에서 'CEO'로 승진시켜 줄</strong> 클로드 코드(Claude Code)의 핵심 기능 3가지를 정리해 드립니다.</p>
+
+<div class="explanation">
+    <h4>왜 이 기능들을 써야 하나요?</h4>
+    <p>AI에게 매번 "이거 해줘, 저거 해줘" 시키는 건 비효율적입니다. (마치 사장님이 대리점 청소부터 회계까지 다 하는 꼴이죠.)<br>
+    대신 <strong>유능한 직원(서브 에이전트)</strong>을 고용하고, <strong>업무 매뉴얼(스킬)</strong>을 주고, <strong>간단한 결재(커맨드)</strong>만 하면 일이 훨씬 빨라집니다.</p>
+</div>
+
+<h2>1. 서브 에이전트 (Sub-Agent): 나만의 전문가 직원들</h2>
+
+<div class="concept-box">
+    <span class="concept-title">🏢 비유: 각 분야별 전문가 직원</span>
+    <p>내가 모든 걸 다 하는 '1인 기업'에서 벗어나세요. 기획팀장, 개발팀장, QA팀장을 따로 두는 겁니다.</p>
+</div>
+
+<p>서브 에이전트는 특정 역할에 특화된 AI입니다. 예를 들어, 어떤 에이전트는 "창의적인 기획"만 잘하고, 어떤 에이전트는 "버그 없이 코드 짜기"만 잘하도록 설정할 수 있습니다.</p>
+
+<ul>
+    <li><strong>사용법:</strong> <code>/agent create</code> 명령어로 생성</li>
+    <li><strong>활용 예시:</strong>
+        <ul>
+            <li><code>Planner Agent</code>: 요구사항을 듣고 꼼꼼한 기획서를 작성하는 직원</li>
+            <li><code>Coder Agent</code>: 기획서를 보고 실제 코드를 구현하는 직원</li>
+            <li><code>Tester Agent</code>: 코드를 보고 버그가 없는지 깐깐하게 검사하는 직원</li>
+        </ul>
+    </li>
+</ul>
+
+<p>이렇게 역할을 나누면, AI가 서로의 결과물을 검토(크로스 체크)하게 되어 코드 퀄리티가 훨씬 좋아집니다.</p>
+
+<h2>2. 스킬 (Skills): 우리 회사의 업무 매뉴얼</h2>
+
+<div class="concept-box">
+    <span class="concept-title">📘 비유: 사내 규정 / 업무 매뉴얼</span>
+    <p>"우리 회사는 보고서 쓸 때 꼭 결론부터 씁니다." 처럼, 직원들이 일을 할 때 지켜야 할 공통 규칙입니다.</p>
+</div>
+
+<p>에이전트들이 작업을 수행할 때 반드시 참고해야 하는 규칙이나 도구들을 정의한 것입니다. <code>.clauderc</code> 파일이나 <code>skills/</code> 폴더에 저장해 두면 됩니다.</p>
+
+<ul>
+    <li><strong>활용 예시:</strong>
+        <ul>
+            <li>"모든 코드에는 반드시 <span class="highlight">한글 주석</span>을 달아라."</li>
+            <li>"변수명은 <code>camelCase</code>로 작성해라."</li>
+            <li>"에러 발생 시 슬랙으로 알림을 보내라."</li>
+        </ul>
+    </li>
+</ul>
+
+<p>매번 "한글 주석 달아줘"라고 말할 필요 없이, 스킬로 등록해두면 알아서 척척 해냅니다.</p>
+
+<h2>3. 커맨드 (Commands): 업무 지시 단축키</h2>
+
+<div class="concept-box">
+    <span class="concept-title">⚡ 비유: 업무 지시 단축키 / 결재 서류 양식</span>
+    <p>사장님이 매번 구구절절 설명하지 않고 "김 대리, [프로젝트 A] 진행시켜!"라고 한 마디만 하면 끝나는 것과 같습니다.</p>
+</div>
+
+<p>자주 사용하는 긴 명령어들을 짧은 단축키 하나로 묶는 기능입니다. 복잡한 과정을 한 번에 실행할 수 있습니다.</p>
+
+<ul>
+    <li><strong>활용 예시:</strong> <code>/develop</code> 이라고 치면?
+        <ol>
+            <li>→ 기획 에이전트가 기획서 작성</li>
+            <li>→ 개발 에이전트가 코드 구현</li>
+            <li>→ 테스트 에이전트가 검수</li>
+        </ol>
+        이 모든 과정이 자동으로 연달아 실행됩니다.
+    </li>
+</ul>
+
+<h2>4. 추천 도구: BKit (비키트)</h2>
+
+<p>영상에서는 <strong>'BKit'</strong>이라는 유용한 패키지를 추천합니다. 이미 잘 만들어진 서브 에이전트와 워크플로우를 모아둔 '종합 선물 세트' 같은 것입니다.</p>
+
+<div class="explanation">
+    <h4>💡 초보자용 해설: PDCA 사이클이란?</h4>
+    <p><strong>P</strong>lan (계획) → <strong>D</strong>o (실행) → <strong>C</strong>heck (검토) → <strong>A</strong>ct (개선)<br>
+    일을 잘하기 위한 4단계 반복 과정입니다. BKit을 쓰면 이 과정을 AI가 알아서 돌려줍니다. (계획 짜고, 만들고, 검사하고, 고치고!)</p>
+</div>
+
+<p>개발자가 아니더라도 이런 도구들을 활용하면, 마치 유능한 개발팀을 거느린 CEO처럼 멋진 결과물을 만들어낼 수 있습니다. 지금 바로 시작해 보세요! 🚀</p>
+
+<footer>
+    Created with OpenClaw 🤖 | Based on CodingNoona's Tutorial
+</footer>
+
+</body>
+</html>
