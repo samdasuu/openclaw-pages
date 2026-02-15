@@ -8,6 +8,14 @@
   "pages": [
     {
       "id": "20260216-04",
+      "title": "Kaggle Credit Card Fraud(불균형 데이터) 노트북 완전 정리 + 주석",
+      "description": "불균형 데이터에서 샘플링/지표/교차검증 누설을 다루는 유명 노트북을 섹션 순서대로 요약하고 어려운 부분을 주석으로 설명.",
+      "category": "개발",
+      "date": "2026-02-16",
+      "href": "2026-02-16__kaggle--credit-fraud-imbalanced-notebook-explained.html"
+    },
+    {
+      "id": "20260216-04",
       "title": "PR-AUC vs ROC-AUC — 언제 무엇을 써야 하는가",
       "description": "불균형 데이터에서 PR-AUC와 ROC-AUC가 무엇을 측정하는지(정의/직관/함정), 언제 어떤 지표를 써야 하는지(사기탐지 맥락)까지 배경→제1원리→비교→적용→용어사전으로 정리.",
       "category": "개발",

@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kaggle Credit Card Fraud(불균형 데이터) 노트북 완전 정리 + 주석</title>
+  <meta name="description" content="Kaggle 노트북 'Credit Fraud || Dealing with Imbalanced Datasets'(Janio Martinez Bachmann) 내용을 섹션 순서 그대로 빠짐없이 요약하고, 어려운 부분(불균형 지표, 언더샘플링, SMOTE, CV 누설)을 주석으로 설명." />
+  <style>
+    :root{--bg:#f8fafc;--card:#fff;--fg:#1f2937;--muted:#64748b;--border:#e2e8f0;--accent:#2563eb;--warn:#b45309;--ok:#065f46;--mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;--maxw:980px;}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",Segoe UI,Roboto,Arial,sans-serif;line-height:1.75;}
+    main{max-width:var(--maxw);margin:24px auto;padding:0 16px;}
+    a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+    header.card{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+    .back{display:inline-block;padding:8px 10px;border:1px solid var(--border);border-radius:10px;background:#fff;font-size:14px;}
+    h1{margin:0 0 6px;font-size:22px;}
+    h2{margin:28px 0 10px;padding-top:14px;border-top:1px solid var(--border);font-size:18px;}
+    h3{margin:18px 0 8px;font-size:15px;}
+    h4{margin:14px 0 6px;font-size:14px;}
+    p{margin:10px 0;}
+    ul{margin:8px 0 8px 20px;} li{margin:6px 0;}
+    .meta{color:var(--muted);font-size:13px;}
+    .note{border-left:4px solid var(--accent);padding:10px 12px;background:#eff6ff;border-radius:10px;}
+    .warn{border-left:4px solid var(--warn);padding:10px 12px;background:#fff7ed;border-radius:10px;}
+    .ok{border-left:4px solid var(--ok);padding:10px 12px;background:#ecfdf5;border-radius:10px;}
+    code{font-family:var(--mono);font-size:0.95em;background:#f1f5f9;border:1px solid var(--border);padding:1px 6px;border-radius:8px;}
+    pre{margin:10px 0;background:#0b1020;color:#e5e7eb;border-radius:12px;padding:14px;overflow-x:auto;border:1px solid #111827;}
+    pre code{background:transparent;border:0;padding:0;color:inherit;}
+    .toc{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:12px;}
+    .toc a{display:block;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff;}
+    table{width:100%;border-collapse:separate;border-spacing:0;margin:10px 0;overflow:hidden;border-radius:12px;border:1px solid var(--border);}
+    th,td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+    th{background:#f1f5f9;text-align:left;font-size:13px;color:#0f172a;}
+    tr:last-child td{border-bottom:0;}
+  </style>
+</head>
+<body>
+  <main>
+    <header class="card">
+      <div><a class="back" href="./">← 목록으로</a></div>
+      <div style="flex:1">
+        <h1>Kaggle Credit Card Fraud(불균형 데이터) 노트북 정리 + 주석</h1>
+        <div class="meta">원문: <a href="https://www.kaggle.com/code/janiobachmann/credit-fraud-dealing-with-imbalanced-datasets" target="_blank" rel="noreferrer">Credit Fraud || Dealing with Imbalanced Datasets</a> (Janio Martinez Bachmann) · 작성일: 2026-02-16</div>
+        <div class="note" style="margin-top:12px">
+          이 노트북의 핵심 메시지: <strong>불균형 데이터에서는 accuracy가 거의 무의미</strong>하고, 샘플링(언더/오버)과 검증(CV)에서 <strong>누설(leakage)을 피하는 절차</strong>가 성패를 가른다.
+        </div>
+      </div>
+    </header>
+
+    <section class="card" style="margin-top:14px">
+      <h2 id="toc">목차(원문 섹션 순서)</h2>
+      <div class="toc">
+        <a href="#s1">1. Credit Fraud Detector (소개/목표/주의사항)</a>
+        <a href="#s2">2. Gather Sense of Our Data (분포/스케일링/분할)</a>
+        <a href="#s3">3. Random Under-Sampling (NearMiss 등)</a>
+        <a href="#s4">4. Equally Distributing and Correlating (균형/상관)</a>
+        <a href="#s5">5. Anomaly Detection (이상치 관점)</a>
+        <a href="#s6">6. Summary (중간 요약)</a>
+        <a href="#s7">7. Learning Curves (학습 곡선)</a>
+        <a href="#s8">8. LogisticRegression Deep Dive</a>
+        <a href="#s9">9. Overfitting during Cross Validation</a>
+        <a href="#s10">10. Test Data with Logistic Regression</a>
+        <a href="#s11">11. Confusion Matrix</a>
+        <a href="#s12">12. Neural Nets: UnderSampling vs SMOTE</a>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s1">
+      <h2>1) Credit Fraud Detector</h2>
+      <h3>노트북 목표</h3>
+      <ul>
+        <li>데이터의 불균형을 이해(사기 거래가 극소수)</li>
+        <li>사기/정상 50:50에 가까운 서브데이터셋을 만들어 비교(언더샘플링)</li>
+        <li>여러 분류기 비교 후, 로지스틱 회귀를 포함한 모델 성능을 평가</li>
+        <li>신경망(Neural Network)도 실험해 언더샘플링 vs 오버샘플링(SMOTE) 비교</li>
+        <li><strong>불균형 데이터에서 흔한 실수</strong>를 명시적으로 교정</li>
+      </ul>
+
+      <div class="warn">
+        원문이 강조하는 “불균형 데이터 실수 3가지”
+        <ol>
+          <li><strong>오버샘플/언더샘플된 데이터로 테스트하면 안 됨</strong> (현실 분포와 다른 데이터로 평가하면 과대평가)</li>
+          <li>교차검증(CV)을 할 때, <strong>샘플링은 CV 바깥에서 미리 하지 말고</strong> fold 내부(학습 파트)에만 적용해야 함</li>
+          <li><strong>Accuracy는 버리고</strong> F1, Precision/Recall, Confusion Matrix 등을 사용</li>
+        </ol>
+      </div>
+
+      <div class="note">
+        💬 주석: 왜 accuracy가 위험하나?
+        <br/>사기(양성)가 0.17%라면, “전부 정상”이라고 예측해도 accuracy는 99.83%가 나올 수 있다. 하지만 사기 탐지는 ‘사기를 놓치는 비용(FN)’이 핵심이라 precision/recall/F1, PR-AUC 같은 지표가 필요하다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s2">
+      <h2>2) Gather Sense of Our Data</h2>
+      <h3>데이터 개요</h3>
+      <ul>
+        <li>Kaggle의 Credit Card Fraud Detection 데이터(유럽 카드 거래)</li>
+        <li><code>V1..V28</code>은 PCA로 변환된 특성(원본 피처는 공개되지 않음)</li>
+        <li><code>Time</code>, <code>Amount</code>는 원본 스케일</li>
+        <li>타깃 <code>Class</code>: 0(정상) / 1(사기)</li>
+      </ul>
+
+      <h3>스케일링(Scaling)</h3>
+      <ul>
+        <li><code>Amount</code>는 분포가 크고 치우쳐서 스케일링이 필요(예: RobustScaler/StandardScaler 등)</li>
+        <li><code>Time</code>은 경우에 따라 변환/스케일링을 고려</li>
+      </ul>
+      <div class="note">
+        💬 주석: 트리 계열은 스케일링이 덜 중요하지만, 로지스틱 회귀/SVM/신경망은 스케일링이 안정성에 크게 영향을 준다.
+      </div>
+
+      <h3>데이터 분할(Splitting)</h3>
+      <ul>
+        <li>불균형 데이터는 보통 <strong>Stratified Split</strong> (라벨 비율 유지) 사용</li>
+        <li>이 노트북은 언더/오버샘플링 실험을 하더라도 <strong>테스트셋은 원본 분포로 유지</strong>하는 것을 강하게 강조</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s3">
+      <h2>3) Random Under-Sampling</h2>
+      <p>정상(다수 클래스)을 일부만 뽑아 사기(소수 클래스)와 비율을 맞추는 접근.</p>
+
+      <h3>NearMiss(언더샘플링 알고리즘)</h3>
+      <ul>
+        <li>단순 랜덤 언더샘플링보다 “경계 근처” 샘플을 남겨 학습을 돕는 방식이 존재</li>
+        <li>NearMiss는 대표적인 언더샘플링 기법 중 하나(버전에 따라 1/2/3 변형)</li>
+      </ul>
+
+      <div class="warn">
+        💬 주석: 언더샘플링의 근본 트레이드오프
+        <ul>
+          <li><strong>장점</strong>: 학습이 빠르고, 클래스 균형을 맞춰 모델이 양성을 무시하지 않게 함</li>
+          <li><strong>단점</strong>: 정상 데이터의 정보를 버림 → 일반화 성능/실제 분포 대응이 나빠질 수 있음</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s4">
+      <h2>4) Equally Distributing and Correlating</h2>
+      <h3>균형 데이터에서의 상관 분석</h3>
+      <ul>
+        <li>언더샘플링으로 만든 50:50 데이터에서 상관계수/히트맵을 통해 어떤 특성이 사기와 연관이 큰지 확인</li>
+        <li>다만, PCA 특성(V1..V28)은 해석이 제한적이므로 “상관이 높다”가 곧 인과/설명력은 아님</li>
+      </ul>
+
+      <div class="note">
+        💬 주석: 왜 원본 불균형 분포에서 바로 상관을 보면 위험한가?
+        <br/>라벨이 극소수면 상관이 대부분 0 근처로 눌릴 수 있고, 표본이 적어 불안정하다. 균형 샘플로 “신호”를 보는 건 도움이 되지만, 최종 평가는 원본 분포에서 해야 한다.
+      </div>
+
+      <h3>차원축소/시각화(t-SNE 등)</h3>
+      <ul>
+        <li>t-SNE로 정상/사기 분포를 2D에 투영해 분리 가능성을 직관적으로 확인</li>
+      </ul>
+      <div class="warn">
+        💬 주석: t-SNE는 “시각화 도구”이지 “분류 성능”을 보장하지 않는다. 파라미터/시드에 따라 모양이 달라지며, 거리 해석도 제한적이다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s5">
+      <h2>5) Anomaly Detection</h2>
+      <p>사기 탐지는 “소수 클래스” 문제이기도 하지만 “이상치(Anomaly)” 탐지 관점으로도 볼 수 있다.</p>
+      <ul>
+        <li>Isolation Forest, One-Class SVM 같은 이상치 탐지 모델을 비교 대상으로 다룰 수 있음</li>
+        <li>다만 라벨이 있는 상황에서는 보통 <strong>지도학습(분류)</strong>이 더 유리한 경우가 많음</li>
+      </ul>
+      <div class="note">
+        💬 주석: 이상치 탐지가 잘 되는 조건
+        <br/>양성이 정말 “분포 밖(out-of-distribution)”에 있고, 라벨이 극히 부족하거나, 운영 환경에서 라벨 획득이 어려울 때 강점이 있다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s6">
+      <h2>6) Summary</h2>
+      <ul>
+        <li>불균형 데이터에서 accuracy는 대부분 함정</li>
+        <li>언더샘플링/오버샘플링은 학습에는 도움 되지만, 평가/검증 절차를 잘못하면 과대평가</li>
+        <li>특히 CV에서 샘플링 위치(언제 적용하느냐)가 매우 중요</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s7">
+      <h2>7) Learning Curves</h2>
+      <p>원문은 여러 분류기(Logistic Regression, KNN, SVC, Decision Tree)의 학습 곡선을 비교하는 코드를 포함한다.</p>
+
+      <h3>핵심 의미</h3>
+      <ul>
+        <li>훈련 점수와 검증 점수 간 간격이 크면 과적합 가능성이 높다</li>
+        <li>데이터를 늘렸을 때 검증 점수가 올라가면 더 많은 데이터가 도움이 될 수 있다</li>
+      </ul>
+
+      <h3>원문 코드(대표)</h3>
+      <pre><code># (원문 코드 일부)
+from sklearn.model_selection import ShuffleSplit
+from sklearn.model_selection import learning_curve
+
+# plot_learning_curve(estimator1, estimator2, estimator3, estimator4, X, y, ...)
+# Logistic Regression / KNN / SVC / Decision Tree의 learning curve를 2x2 subplot으로 출력
+</code></pre>
+
+      <div class="note">
+        💬 주석: learning curve는 “모델 선택”에서 과소적합/과적합을 직관화하는 데 좋지만, 불균형 데이터에서는 <strong>어떤 score를 쓰는지</strong>(accuracy vs F1 등)도 같이 봐야 한다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s8">
+      <h2>8) A Deeper Look into LogisticRegression</h2>
+      <p>로지스틱 회귀는 불균형 데이터에서 강력한 베이스라인이 될 수 있다.</p>
+      <ul>
+        <li><code>class_weight</code> 또는 샘플링으로 양성에 더 큰 페널티/가중을 줄 수 있음</li>
+        <li>결정 임계값(threshold)을 0.5로 고정하면 recall이 낮아질 수 있어, 비용 구조에 맞춰 조정이 필요</li>
+      </ul>
+      <div class="note">
+        💬 주석: 로지스틱 회귀가 여전히 강한 이유
+        <br/>정형 데이터에서 선형 결정경계가 충분히 성능을 내는 경우가 많고, 확률 출력이 깔끔해 threshold 조정/캘리브레이션이 용이하다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s9">
+      <h2>9) Overfitting during Cross Validation</h2>
+      <p>노트북의 핵심 경고 파트 중 하나: <strong>CV 전에 샘플링을 해버리면 누설이 생긴다.</strong></p>
+      <div class="warn">
+        💬 주석(정확한 원리):
+        <ul>
+          <li>샘플링/SMOTE를 전체 데이터에 먼저 적용하면, fold 분할 후 검증 fold에 들어가야 할 정보가 학습 fold에 섞일 수 있다.</li>
+          <li>특히 SMOTE는 소수 클래스 샘플의 근접 이웃을 사용해 합성 데이터를 만들므로, 검증 데이터의 구조가 학습 데이터에 반영되는 효과가 발생할 수 있다.</li>
+          <li>정답 절차: <strong>Pipeline + CV</strong>에서, 샘플링을 <strong>매 fold의 training split에만</strong> 적용.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s10">
+      <h2>10) Test Data with Logistic Regression</h2>
+      <ul>
+        <li>최종 평가는 반드시 원본 테스트셋(불균형 유지)에서</li>
+        <li>precision/recall/F1, ROC-AUC/PR-AUC 등을 보고 모델 선택</li>
+      </ul>
+      <div class="note">
+        💬 주석: PR-AUC가 특히 중요한 이유
+        <br/>양성이 극소수이면 ROC-AUC는 높게 나와도 실제로 “양성을 얼마나 잘 건지냐”를 과대평가할 수 있다. PR 곡선은 양성 클래스 성능을 더 직접 반영한다.
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s11">
+      <h2>11) Confusion Matrix</h2>
+      <p>혼동행렬은 불균형 문제에서 “무슨 에러를 내고 있는지”를 가장 직관적으로 보여준다.</p>
+      <table>
+        <tr><th></th><th>예측: 정상</th><th>예측: 사기</th></tr>
+        <tr><td>실제: 정상</td><td>TN</td><td>FP</td></tr>
+        <tr><td>실제: 사기</td><td>FN</td><td>TP</td></tr>
+      </table>
+      <ul>
+        <li>사기 탐지에서는 보통 <strong>FN(사기를 놓침)</strong>과 <strong>FP(정상인데 사기로 경고)</strong>의 비용을 함께 고려</li>
+      </ul>
+    </section>
+
+    <section class="card" style="margin-top:14px" id="s12">
+      <h2>12) Neural Networks: UnderSampling vs SMOTE</h2>
+      <p>노트북의 마지막 주요 실험: 신경망을 사용해 언더샘플링 데이터와 SMOTE 오버샘플링 데이터를 비교한다.</p>
+      <h3>핵심 비교 포인트</h3>
+      <ul>
+        <li><strong>언더샘플링</strong>: 학습 데이터가 작아져 신경망이 오히려 불리해질 수 있음(데이터 부족)</li>
+        <li><strong>SMOTE</strong>: 데이터 양을 늘려 학습 안정성을 줄 수 있지만, 잘못 쓰면 누설/과적합 위험</li>
+        <li>결론은 데이터/설정에 따라 달라서, 반드시 동일한 테스트셋에서 비교해야 함</li>
+      </ul>
+
+      <div class="warn">
+        💬 주석: 신경망을 불균형 데이터에 쓸 때 자주 놓치는 것
+        <ul>
+          <li>threshold tuning(0.5 고정 금지)</li>
+          <li>class weighting / focal loss 등 손실 설계</li>
+          <li>캘리브레이션(확률이 의사결정에 쓰이면 중요)</li>
+          <li>검증 분할 전략(시간/그룹/사용자 단위 누설)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:14px">
+      <h2>마무리: 이 노트북을 “실무에 가져갈 때” 핵심 7개</h2>
+      <ol>
+        <li>accuracy 대신 F1/Recall/Precision/PR-AUC 중심으로 설계</li>
+        <li>테스트셋은 원본 분포 유지(샘플링 데이터로 테스트 금지)</li>
+        <li>샘플링/SMOTE는 CV fold 내부 training에만 적용(Pipeline)</li>
+        <li>데이터 누설(특히 시간/집계/스케일링 위치) 점검</li>
+        <li>threshold를 비용 구조에 맞춰 최적화</li>
+        <li>모델 비교는 지표 + 혼동행렬 + 비용 관점으로</li>
+        <li>가장 강한 모델보다 “올바른 검증”이 먼저다</li>
+      </ol>
+    </section>
+
+    <footer class="card" style="margin-top:14px">
+      <div>Project: OpenClaw Pages</div>
+      <div>Repo: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">https://github.com/samdasuu/openclaw-pages</a></div>
+      <div class="meta" style="margin-top:8px">참고: Kaggle 노트북의 렌더링 결과(HTML) 기반으로 섹션 순서대로 재구성. 일부 코드/그래프는 길이상 ‘대표 코드/핵심 의미’ 중심으로 재서술함.</div>
+    </footer>
+  </main>
+</body>
+</html>
