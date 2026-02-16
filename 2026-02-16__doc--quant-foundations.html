@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quant Foundations (Google Doc) — GitHub Pages</title>
+  <meta name="description" content="Quant Foundations: quantitative trading/research 준비 로드맵(확률/면접문제/Python/프로젝트 중심)" />
+  <style>
+    :root{
+      --bg:#f8fafc;          /* slate-50 */
+      --card:#ffffff;
+      --text:#1f2937;        /* slate-800 */
+      --muted:#64748b;       /* slate-500 */
+      --link:#2563eb;        /* blue-600 */
+      --border:#e2e8f0;      /* slate-200 */
+      --accent-bg:#eff6ff;   /* blue-50 */
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:900px;margin:0 auto;padding:24px 16px 56px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 1px 2px rgba(15,23,42,.04);padding:22px;}
+    .header{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+    .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .back{display:inline-block;padding:8px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text)}
+    .title{font-size:22px;font-weight:750;line-height:1.25;margin:0}
+    .meta{color:var(--muted);font-size:13px;display:flex;gap:10px;flex-wrap:wrap}
+    .tags{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{font-size:12px;color:#0f172a;background:#f1f5f9;border:1px solid var(--border);padding:4px 8px;border-radius:999px}
+    .summary{background:var(--accent-bg);border:1px solid #dbeafe;border-radius:12px;padding:14px 14px;margin:16px 0 6px;}
+    .summary b{display:block;margin-bottom:6px}
+    h2{font-size:17px;margin:22px 0 10px}
+    h3{font-size:15px;margin:16px 0 8px}
+    p,li{font-size:14px;line-height:1.65}
+    ul{margin:8px 0 8px 20px}
+    .codebox{margin-top:20px;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;background:#fbfdff}
+    .codebox pre{margin:0;white-space:pre-wrap;word-break:break-word;font-size:12.5px;line-height:1.55;color:#0f172a}
+    .footer{margin-top:22px;color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="toprow">
+          <a class="back" href="./index.html">← Back</a>
+          <div class="meta">
+            <span>Date: 2026-02-16</span>
+            <span>Source: Google Docs (mobilebasic)</span>
+          </div>
+        </div>
+        <h1 class="title">Quant Foundations (Google Doc)</h1>
+        <div class="tags">
+          <span class="tag">quant</span>
+          <span class="tag">interview-prep</span>
+          <span class="tag">probability</span>
+          <span class="tag">python</span>
+        </div>
+      </div>
+
+      <div class="summary">
+        <b>Summary (3 lines)</b>
+        <p style="margin:0">
+          제로(또는 초급)에서 출발해 <b>퀀트 트레이딩/리서치</b> 준비를 할 때, 기업이 실제로 보는 것(확률적 사고·문제해결·코딩 모델링·프로젝트)을 중심으로 정리한 로드맵.
+          핵심은 “고급 수학 먼저”가 아니라 <b>확률/기댓값/면접형 문제 구조화</b>를 우선순위로 두는 것.
+        </p>
+      </div>
+
+      <h2>Document gist</h2>
+      <p>
+        이 문서는 Jane Street, SIG, Optiver, IMC, Jump Trading, Citadel Securities, DRW 등 상위 퀀트 트레이딩/리서치 조직의 인터뷰/평가 방식에 맞춰
+        <b>수학(확률) → 면접 문제풀이 구조 → Python 모델링 → 인터뷰용 프로젝트</b> 순으로 준비를 안내한다.
+      </p>
+
+      <h2>PART I — What “Quant Foundations” means</h2>
+      <ul>
+        <li>랜덤성에 대한 명확한 추론</li>
+        <li>불확실한 시스템 모델링</li>
+        <li>불완전한 정보 하 의사결정</li>
+        <li>압박 상황에서 구조화된 커뮤니케이션</li>
+      </ul>
+      <p>많은 지원자가 실패하는 이유는 능력 부족이 아니라, 준비 순서가 틀려 “핵심 사고 패턴” 전에 고급 토픽으로 뛰어들기 때문이다.</p>
+
+      <h2>PART II — Mathematical foundations (interview-focused)</h2>
+      <h3>1) Probability fundamentals</h3>
+      <ul>
+        <li>표본공간/사건, 조건부확률, 베이즈, 독립/종속</li>
+        <li>전체확률, 기댓값/분산/공분산</li>
+      </ul>
+      <p><b>계산</b>뿐 아니라, 개념을 <b>말로 설명</b>하고, 모호한 문제를 “깔끔한 확률 모델”로 번역할 수 있어야 한다.</p>
+
+      <h3>2) Random variables & distributions</h3>
+      <ul>
+        <li>Bernoulli, Binomial, Geometric, Poisson, Uniform, Normal, Exponential</li>
+        <li>각 분포의 “생성 스토리”, 직관적 평균/분산, 자연스럽게 등장하는 상황</li>
+      </ul>
+
+      <h3>3) Expectation as a tool</h3>
+      <ul>
+        <li>기댓값 선형성</li>
+        <li>정지시간(stopping time) 기대값</li>
+        <li>리스크와 기대수익의 구분</li>
+        <li>조건부 기댓값</li>
+      </ul>
+      <p>퍼즐/게임/트레이딩형 질문에서 기댓값은 사실상 “최우선 무기”로 반복 출현한다.</p>
+
+      <h2>PART III — Quant interview questions (highest ROI)</h2>
+      <h3>어떤 문제든 접근하는 규율(Structure)</h3>
+      <ol style="margin:8px 0 8px 20px; font-size:14px; line-height:1.65">
+        <li>문제 재진술(명확화)</li>
+        <li>미지수/가정 정리</li>
+        <li>표본공간 정의</li>
+        <li>단순화 버전 해결</li>
+        <li>일반화</li>
+        <li>결과 sanity-check</li>
+      </ol>
+      <p>인터뷰어는 최종 숫자보다 1–4단계의 “사고 전개”를 더 본다.</p>
+
+      <h3>핵심 카테고리</h3>
+      <ul>
+        <li>동전/주사위/카드 확률</li>
+        <li>기댓값 게임</li>
+        <li>최적 정지(Optimal stopping)</li>
+        <li>논리 퍼즐</li>
+        <li>시장 직관(Market intuition)</li>
+      </ul>
+      <p><b>깊이 &gt; 넓이</b>: 비슷한 구조의 변형을 많이 보는 것이 암기보다 가치가 크다.</p>
+
+      <h3>타임프레셔 훈련</h3>
+      <ul>
+        <li>생각하면서 말하기</li>
+        <li>침묵 계산 줄이기</li>
+        <li>틀려도 소리내어 수정하기</li>
+      </ul>
+
+      <h2>PART IV — Python as a modelling tool</h2>
+      <ul>
+        <li>자료구조, 루프/벡터화, 함수/모듈화, 기초 OOP</li>
+        <li>NumPy / pandas 등 수치 라이브러리</li>
+      </ul>
+      <p>Python은 문법 미화가 아니라, <b>시뮬레이션·검증·가정 스트레스테스트·분포 시각화</b>로 사고를 증폭시키는 도구로 평가된다.</p>
+
+      <h2>PART V — High-impact Python projects</h2>
+      <ul>
+        <li><b>Market microstructure simulator</b>: 단순 LOB(호가창) 구현, 스프레드/불균형/임팩트/레이턴시 분석</li>
+        <li><b>Volatility surface</b>: IV 계산, 스마일/서피스 구축, 스큐 동학</li>
+        <li><b>Backtesting engine</b>: 비용/슬리피지/레짐 분석 포함한 현실적 백테스트</li>
+        <li><b>Monte Carlo pricing</b>: 경로 시뮬레이션 vs 해석해 비교, 수렴 분석</li>
+        <li><b>Optimal stopping simulation</b>: secretary problem, 진입/청산, ruin risk</li>
+      </ul>
+
+      <h2>PART VI–VIII — What firms look for / CV alignment / final advice</h2>
+      <ul>
+        <li>일관된 신호: 확률적 추론, 추상화, 커뮤니케이션, 독립적 사고</li>
+        <li>기대하지 않는 것: 거래 경험/금융 전공/완벽한 정답</li>
+        <li>기대하는 것: 압박 하 침착함, 구조화, 지적 정직함</li>
+      </ul>
+
+      <h2>PART IX — Roadmap & waitlist</h2>
+      <p>문서 말미에 관련 리소스 대기자 링크가 포함됨: <a href="https://waitlister.me/p/quanttradingio" target="_blank" rel="noreferrer">https://waitlister.me/p/quanttradingio</a></p>
+
+      <div class="codebox">
+        <div style="font-weight:700; margin-bottom:8px;">Raw extract (for reference)</div>
+        <pre>Source URL:
+https://docs.google.com/document/d/1BPi7j4q_hmdtDfcyDDDeJ2-jO1ns7LzBzkc2hy3-8Qc/mobilebasic
+
+Title:
+Quant Foundations</pre>
+      </div>
+
+      <div class="footer">
+        <span>Published to GitHub Pages: samdasuu/openclaw-pages</span>
+        <span><a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">repo link</a></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

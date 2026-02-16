@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260216-05",
+      "title": "Quant Foundations (Google Doc)",
+      "description": "퀀트 트레이딩/리서치 준비 로드맵: 확률·면접문제·Python 모델링·프로젝트 중심 요약",
+      "category": "분석",
+      "date": "2026-02-16",
+      "href": "2026-02-16__doc--quant-foundations.html"
+    },
+    {
       "id": "20260216-04",
       "title": "Kaggle Credit Card Fraud(불균형 데이터) 노트북 완전 정리 + 주석",
       "description": "불균형 데이터에서 샘플링/지표/교차검증 누설을 다루는 유명 노트북을 섹션 순서대로 요약하고 어려운 부분을 주석으로 설명.",
