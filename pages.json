@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260217-02",
+      "title": "OAuth 2.0 — 배경→제1원리→비교→적용→용어 사전",
+      "description": "OAuth 2.0를 배경→제1원리→비교→실무 적용→용어 사전 구조로 정리. GitHub Pages/배포 자동화 맥락까지 연결.",
+      "category": "개발",
+      "date": "2026-02-17",
+      "href": "2026-02-17__concept-explain--oauth.html"
+    },
+    {
       "id": "20260217-01",
       "title": "Math Foundations for Machine Learning (Notion) 정리",
       "description": "확률·통계·선형대수·미적분으로 구성된 ML 수학 기초 커리큘럼 링크 모음(Notion 페이지) 핵심 정리.",

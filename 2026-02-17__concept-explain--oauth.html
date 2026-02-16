@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OAuth 2.0 — 배경→제1원리→비교→적용→용어 사전</title>
+  <meta name="description" content="OAuth 2.0를 배경→제1원리→비교→실무 적용→용어 사전 구조로 정리. GitHub Pages/배포 자동화 맥락까지 연결." />
+  <style>
+    :root{
+      --bg:#f8fafc;          /* slate-50 */
+      --card:#ffffff;
+      --text:#1f2937;        /* slate-800 */
+      --muted:#64748b;       /* slate-500 */
+      --line:#e2e8f0;        /* slate-200 */
+      --accent:#2563eb;      /* blue-600 */
+      --accent-weak:#dbeafe; /* blue-100 */
+      --codebg:#0b1020;
+      --codefg:#e5e7eb;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height:1.65;
+    }
+    .wrap{max-width:900px;margin:0 auto;padding:28px 16px 60px;}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 22px;box-shadow:0 1px 0 rgba(2,6,23,.04)}
+    header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .back{display:inline-block;color:var(--accent);text-decoration:none;font-weight:600}
+    .title{margin:8px 0 4px;font-size:26px;letter-spacing:-.2px}
+    .meta{color:var(--muted);font-size:14px}
+    .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}
+    .tag{font-size:12px;color:#1d4ed8;background:var(--accent-weak);border:1px solid #bfdbfe;padding:4px 10px;border-radius:999px}
+    .summary{margin:18px 0 18px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:12px;padding:14px 14px}
+    .summary strong{color:#1d4ed8}
+    h2{margin:26px 0 10px;font-size:18px}
+    h3{margin:16px 0 6px;font-size:15px}
+    hr{border:none;border-top:1px solid var(--line);margin:22px 0}
+    ul{margin:8px 0 8px 20px}
+    li{margin:4px 0}
+    a{color:var(--accent)}
+    .codebox{margin:16px 0;border-radius:12px;overflow:hidden;border:1px solid #111827}
+    .codebox .label{background:#111827;color:#cbd5e1;font-size:12px;padding:10px 12px}
+    pre{margin:0;background:var(--codebg);color:var(--codefg);padding:14px 14px;overflow:auto;font-size:12.5px;line-height:1.6}
+    footer{margin-top:26px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <!-- 1) Header -->
+      <header>
+        <div>
+          <a class="back" href="index.html">← Back</a>
+          <div class="title">OAuth 2.0 — 배경→제1원리→비교→적용→용어 사전</div>
+          <div class="meta">Date: 2026-02-17</div>
+          <div class="tags">
+            <span class="tag">concept_explain</span>
+            <span class="tag">OAuth 2.0</span>
+            <span class="tag">Authorization</span>
+            <span class="tag">GitHub Pages 맥락</span>
+            <span class="tag">OpenClaw</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- 2) Summary -->
+      <div class="summary">
+        <div><strong>핵심 요약</strong></div>
+        <ul>
+          <li>OAuth는 <b>비밀번호를 공유하지 않고</b>도 제3자 앱이 <b>제한된 권한</b>으로 API에 접근하게 하는 <b>권한 위임(authorization) 프레임워크</b>다.</li>
+          <li>권한은 <b>토큰</b>으로 표현되며, 토큰은 <b>스코프(scope)</b>로 범위를 제한하고 <b>만료/회수</b>가 가능하다.</li>
+          <li>GitHub Pages 배포는 보통 “Pages에 직접 publish”라기보다, <b>리포지토리 푸시/워크플로 트리거</b>를 안전하게 자동화하는 문제로 귀결된다.</li>
+        </ul>
+      </div>
+
+      <!-- 3) Content -->
+      <h2>1) 배경과 문제의식</h2>
+      <p>
+        “OAuth로 GitHub.io에 publish” 같은 요구는 대개 <b>인증(Authentication)</b>과 <b>권한 부여(Authorization)</b>가 섞여 나온 표현이다.
+        자동 배포(CI/CD)나 외부 서비스 연동에서는 결국 GitHub API 또는 리포지토리 접근이 필요한데,
+        그 접근을 <b>비밀번호 공유 없이</b>, <b>필요 최소 권한</b>으로, <b>만료·회수 가능</b>하게 다루는 게 핵심 과제다.
+      </p>
+      <p>
+        OAuth는 이 과제를 해결하기 위해 “권한을 토큰으로 쪼개서 전달”하는 방식으로 표준화되었다.
+      </p>
+
+      <h2>2) 제1원리 (First Principles)</h2>
+      <h3>정의(Definition)</h3>
+      <p>
+        <b>OAuth 2.0</b>은 <i>Resource Owner(사용자)</i>가 <i>Client(앱)</i>에게
+        <i>Authorization Server</i>를 통해 <i>Resource Server(API)</i> 접근 권한을 <b>토큰</b>으로 위임하는 프레임워크다.
+      </p>
+      <h3>직관(Intuition)</h3>
+      <ul>
+        <li>비밀번호는 “만능키”라서 공유하는 순간 위험이 폭발한다.</li>
+        <li>대신 “문 하나만 열 수 있는, 시간 제한이 있는 열쇠(Access Token)”를 주면 피해 범위를 통제할 수 있다.</li>
+      </ul>
+      <h3>결과(Implication)</h3>
+      <ul>
+        <li>토큰은 <b>scope</b>로 권한 범위를 제한할 수 있다.</li>
+        <li>토큰은 <b>expiration</b>으로 자동 만료될 수 있다.</li>
+        <li>토큰은 <b>revocation</b>으로 회수 가능하다.</li>
+      </ul>
+
+      <h2>3) 대조와 비교</h2>
+      <p>
+        실무에서 OAuth와 함께 자주 비교되는 접근 방식들은 다음과 같다.
+      </p>
+      <ul>
+        <li><b>PAT(Personal Access Token)</b>: 설정은 쉽지만 “내 계정 장기 키”에 가까워 유출 시 파급이 크다.</li>
+        <li><b>GitHub App</b>: 설치(installation) 기반 최소권한·감사에 유리하지만 초기 설계가 더 필요하다.</li>
+        <li><b>GitHub Actions의 GITHUB_TOKEN</b>: 워크플로 실행 중에만 유효한 단기 토큰. Pages 배포에 표준적으로 많이 쓰인다.</li>
+        <li><b>Deploy key(SSH)</b>: 리포 단위로 격리 가능하지만, API 스코프 모델과는 결이 다르다.</li>
+      </ul>
+
+      <h2>4) 맥락적 연결 (GitHub Pages/배포 자동화 관점)</h2>
+      <h3>상황 A: GitHub Actions로 GitHub Pages 배포</h3>
+      <p>
+        이 경우 OAuth를 직접 구현하기보다, Actions에서 제공하는 <b>GITHUB_TOKEN</b>을 활용하는 게 일반적으로 더 안전하고 단순하다.
+        핵심은 워크플로가 Pages에 배포할 수 있도록 권한을 명시하는 것이다.
+      </p>
+
+      <div class="codebox">
+        <div class="label">Example (concept): GitHub Actions permissions for Pages</div>
+        <pre><code>permissions:
+  contents: read
+  pages: write
+  id-token: write
+</code></pre>
+      </div>
+
+      <h3>상황 B: 외부 서비스/로컬 툴이 GitHub에 접근해 배포를 유도</h3>
+      <p>
+        이때 “OAuth publish”라는 표현이 흔하지만, 실체는 보통 아래 중 하나로 귀결된다.
+      </p>
+      <ul>
+        <li>리포지토리에 커밋/푸시(배포 트리거)</li>
+        <li>GitHub API로 워크플로(예: pages deploy)를 트리거</li>
+      </ul>
+      <p>
+        즉, Pages 자체에 직접 ‘업로드’한다기보다, GitHub가 신뢰하는 경로(리포/워크플로)를 통해 배포가 진행된다.
+      </p>
+
+      <hr />
+
+      <h2>5) 용어 사전</h2>
+      <ul>
+        <li><b>OAuth 2.0</b>: 비밀번호 공유 없이 토큰으로 권한을 위임하는 표준 프레임워크.</li>
+        <li><b>Authentication(인증)</b>: “너 누구냐?”를 확인하는 것(로그인).</li>
+        <li><b>Authorization(권한 부여)</b>: “이 작업을 해도 되냐?”를 결정하는 것.</li>
+        <li><b>Access Token</b>: API 호출에 쓰는 제한 권한·단기 열쇠.</li>
+        <li><b>Scope</b>: 토큰이 허용하는 행위의 범위(예: repo 읽기/쓰기).</li>
+        <li><b>Expiration</b>: 토큰이 자동으로 만료되는 속성.</li>
+        <li><b>Revocation</b>: 발급된 토큰을 강제로 회수하는 것.</li>
+        <li><b>OAuth App</b>: 사용자 동의로 토큰을 받아 GitHub API에 접근하는 앱 형태.</li>
+        <li><b>GitHub App</b>: 설치 기반 최소권한 모델(리포/조직 단위 제어가 강점).</li>
+        <li><b>GITHUB_TOKEN</b>: GitHub Actions 실행 중 자동 발급되는 임시 토큰.</li>
+        <li><b>GitHub Pages</b>: 정적 사이트 호스팅 기능. 보통 빌드 산출물을 배포해 서비스한다.</li>
+        <li><b>CI/CD</b>: 빌드·테스트·배포를 자동화하는 파이프라인.</li>
+        <li><b>PAT</b>: 개인 계정에 귀속되는 액세스 토큰(운영/보안 주의 필요).</li>
+        <li><b>Deploy key</b>: 특정 리포에 연결된 SSH 키(배포·푸시 등에 사용).</li>
+      </ul>
+
+      <!-- 5) Footer -->
+      <footer>
+        <div>Project: OpenClaw Pages · Repo: <a href="https://github.com/samdasuu/openclaw-pages">samdasuu/openclaw-pages</a></div>
+        <div>Generated for Seho (Asia/Seoul) · Document type: Concept explain</div>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
