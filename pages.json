@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260216-06",
+      "title": "OpenClaw를 VM에서 쓰는 것 vs 로컬 머신에서 쓰는 것",
+      "description": "브라우저 자동화/로그인 세션/캡챠/보안/운영(24/7·스케줄러·스케일) 관점에서 VM과 로컬의 장단점과 추천 사용 시나리오를 비교.",
+      "category": "분석",
+      "date": "2026-02-16",
+      "href": "2026-02-16__openclaw--vm-vs-local.html"
+    },
+    {
       "id": "20260216-05",
       "title": "Quant Foundations (Google Doc)",
       "description": "퀀트 트레이딩/리서치 준비 로드맵: 확률·면접문제·Python 모델링·프로젝트 중심 요약",
