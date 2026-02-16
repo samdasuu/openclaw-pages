@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260217-01",
+      "title": "Math Foundations for Machine Learning (Notion) 정리",
+      "description": "확률·통계·선형대수·미적분으로 구성된 ML 수학 기초 커리큘럼 링크 모음(Notion 페이지) 핵심 정리.",
+      "category": "분석",
+      "date": "2026-02-17",
+      "href": "2026-02-17__notion--math-foundations-for-ml.html"
+    },
+    {
       "id": "20260216-06",
       "title": "OpenClaw를 VM에서 쓰는 것 vs 로컬 머신에서 쓰는 것",
       "description": "브라우저 자동화/로그인 세션/캡챠/보안/운영(24/7·스케줄러·스케일) 관점에서 VM과 로컬의 장단점과 추천 사용 시나리오를 비교.",

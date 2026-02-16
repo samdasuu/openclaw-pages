@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Math Foundations for Machine Learning (Notion) 요약</title>
+  <meta name="description" content="Notion 페이지 'Math Foundations for Machine Learning'를 핵심 커리큘럼(확률/통계/선형대수/미적분) 중심으로 정리." />
+  <style>
+    :root{
+      --bg:#f8fafc;          /* slate-50 */
+      --card:#ffffff;
+      --text:#1f2937;        /* slate-800 */
+      --muted:#64748b;       /* slate-500 */
+      --link:#2563eb;        /* blue-600 */
+      --border:#e2e8f0;      /* slate-200 */
+      --accent-bg:#eff6ff;   /* blue-50 */
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;}
+    a{color:var(--link);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:900px;margin:0 auto;padding:24px 16px 56px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 1px 2px rgba(15,23,42,.04);padding:22px;}
+    .header{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+    .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .back{display:inline-block;padding:8px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text)}
+    .title{font-size:22px;font-weight:780;line-height:1.25;margin:0}
+    .meta{color:var(--muted);font-size:13px;display:flex;gap:10px;flex-wrap:wrap}
+    .tags{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{font-size:12px;color:#0f172a;background:#f1f5f9;border:1px solid var(--border);padding:4px 8px;border-radius:999px}
+    .summary{background:var(--accent-bg);border:1px solid #dbeafe;border-radius:12px;padding:14px 14px;margin:16px 0 8px;}
+    .summary b{display:block;margin-bottom:6px}
+    h2{font-size:17px;margin:22px 0 10px}
+    h3{font-size:15px;margin:16px 0 8px}
+    p,li{font-size:14px;line-height:1.65}
+    ul{margin:8px 0 8px 20px}
+    .codebox{margin-top:18px;border:1px dashed #cbd5e1;border-radius:12px;padding:14px;background:#fbfdff}
+    .codebox pre{margin:0;white-space:pre-wrap;word-break:break-word;font-size:12.5px;line-height:1.55;color:#0f172a}
+    .footer{margin-top:22px;color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="toprow">
+          <a class="back" href="./index.html">← Back</a>
+          <div class="meta">
+            <span>Date: 2026-02-17</span>
+            <span>Source: Notion public page</span>
+          </div>
+        </div>
+        <h1 class="title">🧮 Math Foundations for Machine Learning (Notion) — 정리</h1>
+        <div class="tags">
+          <span class="tag">math</span>
+          <span class="tag">ml</span>
+          <span class="tag">curriculum</span>
+          <span class="tag">resources</span>
+        </div>
+      </div>
+
+      <div class="summary">
+        <b>Summary (3 lines)</b>
+        <p style="margin:0">
+          머신러닝을 공부하기 전에 필요한 수학 기초를 <b>확률 → 통계 → 선형대수 → 미적분</b> 순으로 잡아주는 링크 모음 페이지.
+          각 파트는 “개념을 처음 쌓는 단계”에서 신뢰할 만한 강의/노트로 연결된다.
+        </p>
+      </div>
+
+      <h2>원문</h2>
+      <p>
+        <a href="https://www.notion.so/Math-Foundations-for-Machine-Learning-2f0f20b0520e80d996bdc89e796f034f" target="_blank" rel="noreferrer">
+          https://www.notion.so/Math-Foundations-for-Machine-Learning-2f0f20b0520e80d996bdc89e796f034f
+        </a>
+      </p>
+
+      <h2>1) Probability (확률)</h2>
+      <ul>
+        <li>
+          Drive 문서(확률 노트/자료)
+          — <a href="https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/edit" target="_blank" rel="noreferrer">link</a>
+        </li>
+        <li>
+          HarvardX (edX) Introduction to Probability
+          — <a href="https://www.edx.org/learn/probability/harvard-university-introduction-to-probability" target="_blank" rel="noreferrer">link</a>
+        </li>
+      </ul>
+      <p>
+        추천 사용법: ML에서 가장 많이 반복되는 건 “랜덤 변수/분포/조건부확률/기댓값”이므로, 이 파트를 먼저 ‘문제 풀이로’ 손에 익히는 게 효율이 좋다.
+      </p>
+
+      <h2>2) Statistics (통계)</h2>
+      <ul>
+        <li>
+          ProbabilityCourse.com (통계/확률 전반)
+          — <a href="https://www.probabilitycourse.com/" target="_blank" rel="noreferrer">link</a>
+        </li>
+      </ul>
+      <p>
+        추천 사용법: 평균/분산/표본/추정/가설검정 같은 “데이터에서 불확실성을 다루는 언어”를 빠르게 확보하고, 회귀/분류의 평가·불확실성 해석에 연결.
+      </p>
+
+      <h2>3) Linear Algebra (선형대수)</h2>
+      <ul>
+        <li>
+          Khan Academy — intuitive and beginner-friendly
+          — <a href="https://www.khanacademy.org/math/linear-algebra" target="_blank" rel="noreferrer">link</a>
+        </li>
+        <li>
+          UT Austin (edX) Linear Algebra: Foundations to Frontiers
+          — <a href="https://www.edx.org/learn/linear-algebra/the-university-of-texas-at-austin-linear-algebra-foundations-to-frontiers" target="_blank" rel="noreferrer">link</a>
+        </li>
+      </ul>
+      <p>
+        추천 사용법: 벡터/행렬 연산(곱, 전치), 선형변환, 고유값/고유벡터 감각이 잡히면 PCA/최적화/신경망의 기본 연산이 훨씬 자연스럽게 읽힌다.
+      </p>
+
+      <h2>4) Calculus (미적분)</h2>
+      <ul>
+        <li>
+          Whitman College — Multivariable Calculus
+          — <a href="https://www.whitman.edu/mathematics/multivariable/" target="_blank" rel="noreferrer">link</a>
+        </li>
+      </ul>
+      <p>
+        추천 사용법: 편미분/그래디언트/체인룰을 중심으로 “최적화(경사하강)”에 바로 연결해서 보는 게 ML 학습 관점에서 효율적.
+      </p>
+
+      <h2>추천 학습 순서(간단 플랜)</h2>
+      <ol style="font-size:14px; line-height:1.65">
+        <li><b>Probability</b>: 조건부확률/기댓값/분포를 문제로 연습</li>
+        <li><b>Statistics</b>: 추정/검정/신뢰구간/회귀를 얕게라도 훑기</li>
+        <li><b>Linear Algebra</b>: 행렬연산 + 직교/고유값 감각</li>
+        <li><b>Calculus</b>: 그래디언트/체인룰/다변수 최적화</li>
+      </ol>
+
+      <div class="codebox">
+        <div style="font-weight:700; margin-bottom:8px;">Notes</div>
+        <pre>웹에서 Notion은 JS 렌더링이라 텍스트 추출이 종종 막힙니다.
+이번 페이지는 공개(Notion public)이며, 화면에서 확인 가능한 섹션(Probability/Statistics/Linear Algebra/Calculus) + 링크를 중심으로 요약했습니다.</pre>
+      </div>
+
+      <div class="footer">
+        <span>Published to GitHub Pages: samdasuu/openclaw-pages</span>
+        <span><a href="https://github.com/samdasuu/openclaw-pages" target="_blank" rel="noreferrer">repo link</a></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
