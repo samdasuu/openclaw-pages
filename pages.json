@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260216-07",
+      "title": "Jacobian — 배경→제1원리→비교→적용→용어 사전",
+      "description": "Jacobian(야코비안)을 국소 선형 근사, 연쇄법칙, 뉴턴법, 변수치환까지 연결해서 배경→제1원리→비교→실무 적용→용어 사전 구조로 정리.",
+      "category": "개발",
+      "date": "2026-02-16",
+      "href": "2026-02-16__concept-explain--jacobian.html"
+    },
+    {
       "id": "20260217-02",
       "title": "OAuth 2.0 — 배경→제1원리→비교→적용→용어 사전",
       "description": "OAuth 2.0를 배경→제1원리→비교→실무 적용→용어 사전 구조로 정리. GitHub Pages/배포 자동화 맥락까지 연결.",

@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jacobian — 배경→제1원리→비교→적용→용어 사전</title>
+  <meta name="description" content="Jacobian(야코비안)을 배경→제1원리→비교→실무 적용→용어 사전 구조로 정리. 국소 선형 근사, 연쇄법칙, 뉴턴법, 변수치환까지 연결." />
+  <style>
+    :root{
+      --bg:#f8fafc;          /* slate-50 */
+      --card:#ffffff;
+      --text:#1f2937;        /* slate-800 */
+      --muted:#64748b;       /* slate-500 */
+      --border:#e2e8f0;      /* slate-200 */
+      --link:#2563eb;        /* blue-600 */
+      --codebg:#0b1220;
+      --codefg:#e5e7eb;
+      --accentbg:#eff6ff;    /* blue-50 */
+      --accentbd:#bfdbfe;    /* blue-200 */
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", Arial, "Helvetica Neue", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.7;
+    }
+    .wrap{max-width:900px;margin:32px auto;padding:0 16px;}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; box-shadow:0 1px 2px rgba(15,23,42,.04)}
+    header{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .back{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+    .meta{color:var(--muted); font-size:14px}
+    h1{font-size:26px; line-height:1.25; margin:6px 0 0 0}
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+    .tag{font-size:12px;color:#0f172a;background:#f1f5f9;border:1px solid var(--border);padding:4px 10px;border-radius:999px}
+    .summary{background:var(--accentbg); border:1px solid var(--accentbd); border-radius:14px; padding:14px 16px; margin:16px 0 22px 0}
+    .summary strong{display:block;margin-bottom:6px}
+    h2{font-size:18px;margin:26px 0 10px 0;padding-top:6px;border-top:1px solid var(--border)}
+    h2:first-of-type{border-top:none;padding-top:0}
+    h3{font-size:16px;margin:16px 0 6px 0}
+    ul{margin:8px 0 8px 18px}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 0.95em}
+    pre{
+      background:var(--codebg);
+      color:var(--codefg);
+      padding:14px 16px;
+      border-radius:14px;
+      overflow:auto;
+      border:1px solid rgba(148,163,184,.25);
+      margin:10px 0 0 0;
+    }
+    .footer{margin-top:22px;padding-top:14px;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+    .hr{height:1px;background:var(--border);margin:18px 0}
+    /* MathJax output spacing tweaks */
+    mjx-container[jax="CHTML"]{ font-size: 1em; }
+  </style>
+
+  <!-- MathJax (LaTeX in \( \), \[ \]) -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(','\\)']],
+        displayMath: [['\\[','\\]']],
+        processEscapes: true
+      },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="topline">
+          <a class="back" href="index.html">← Back</a>
+          <div class="meta">2026-02-16</div>
+        </div>
+        <h1>Jacobian — 배경→제1원리→비교→적용→용어 사전</h1>
+        <div class="tags">
+          <span class="tag">concept_explain</span>
+          <span class="tag">math</span>
+          <span class="tag">calculus</span>
+          <span class="tag">optimization</span>
+        </div>
+      </header>
+
+      <div class="summary">
+        <strong>요약 (3줄)</strong>
+        Jacobian은 \(f: \mathbb{R}^n \to \mathbb{R}^m\)의 “다변수 미분”을 행렬로 표현한 것이다. <br/>
+        핵심은 \(f(x+\Delta x) \approx f(x)+J_f(x)\Delta x\)라는 국소 선형 근사이며, 연쇄법칙이 행렬곱으로 바뀐다. <br/>
+        뉴턴법, 좌표변환/변수치환, 오차 전파 같은 실무 계산에서 직접 등장한다.
+      </div>
+
+      <h2>1) 배경과 문제의식</h2>
+      <p>
+        미분은 원래 “1변수 함수의 순간 변화율(기울기)”로 시작했지만, 현실 문제는 대부분 <b>여러 입력 → 여러 출력</b>입니다.
+        예를 들어 로봇 팔의 관절각(여러 개) → 끝단 위치(3차원), 이미지 좌표 변환(2D→2D), 신경망의 파라미터(거대 차원) → 손실값(1개) 같은 형태죠.
+      </p>
+      <p>여기서 핵심 한계는 다음입니다.</p>
+      <ul>
+        <li>1변수 미분의 “기울기”만으로는, 다변수/벡터값 함수의 <b>국소적 선형 근사</b>를 한 번에 표현하기 어렵다.</li>
+        <li>최적화(뉴턴법), 좌표변환(변수 치환), 오차 전파 등에서 “각 입력이 각 출력에 주는 영향”을 <b>구조적으로</b> 담는 객체가 필요하다.</li>
+      </ul>
+      <p>이 요구를 가장 깔끔하게 해결하는 표현이 <b>Jacobian(야코비안)</b>입니다.</p>
+
+      <h2>2) 제1원리 (First Principles)</h2>
+
+      <h3>정의 (Definition)</h3>
+      <p>
+        함수 \(f: \mathbb{R}^n \to \mathbb{R}^m\)가 있고,
+        \[
+          f(x)=\begin{bmatrix}f_1(x)\\\vdots\\f_m(x)\end{bmatrix},\quad
+          x=\begin{bmatrix}x_1\\\vdots\\x_n\end{bmatrix}
+        \]
+        일 때, \(f\)의 Jacobian 행렬 \(J_f(x)\)는
+        \[
+          J_f(x)=
+          \begin{bmatrix}
+            \frac{\partial f_1}{\partial x_1} & \cdots & \frac{\partial f_1}{\partial x_n}\\
+            \vdots & \ddots & \vdots\\
+            \frac{\partial f_m}{\partial x_1} & \cdots & \frac{\partial f_m}{\partial x_n}
+          \end{bmatrix}
+          \in \mathbb{R}^{m\times n}
+        \]
+        입니다.
+      </p>
+
+      <h3>직관 (Intuition)</h3>
+      <p>
+        Jacobian은 “다변수 함수의 미분”을 <b>행렬</b>로 표현한 것입니다. 핵심은 다음 선형 근사입니다:
+        \[
+          f(x+\Delta x) \approx f(x) + J_f(x)\,\Delta x.
+        \]
+        즉, \(J_f(x)\)는 점 \(x\) 근처에서 \(f\)가 어떻게 변하는지에 대한 <b>최고의 1차(선형) 설명서</b>입니다.
+      </p>
+
+      <h3>결과 (Implication)</h3>
+      <ul>
+        <li>
+          <b>연쇄법칙</b>이 행렬 곱으로 바뀝니다.
+          \(g: \mathbb{R}^p\to\mathbb{R}^n\), \(f: \mathbb{R}^n\to\mathbb{R}^m\)이면
+          \[
+            J_{f\circ g}(u)=J_f(g(u))\,J_g(u).
+          \]
+        </li>
+        <li>
+          좌표 변환에서 <b>면적/부피 스케일</b> 정보를 제공합니다(특히 \(m=n\)일 때).
+        </li>
+      </ul>
+
+      <h2>3) 대조와 비교</h2>
+      <ul>
+        <li>
+          <b>Gradient(그래디언트) vs Jacobian</b><br/>
+          그래디언트는 \(f: \mathbb{R}^n\to\mathbb{R}\) (스칼라 출력)에서 \(\nabla f\in\mathbb{R}^n\)로 정의되는 1차 미분입니다.
+          Jacobian은 \(f: \mathbb{R}^n\to\mathbb{R}^m\) (벡터 출력)까지 일반화한 것입니다.
+          단, \(m=1\)일 때 Jacobian이 행벡터/열벡터로 어떻게 쓰이는지는 <i>관례</i>(전치 포함)에 따라 달라질 수 있습니다.
+        </li>
+        <li>
+          <b>Hessian(헤시안) vs Jacobian</b><br/>
+          Jacobian은 1차 미분(선형 근사), Hessian은 2차 미분(곡률)입니다. \(f: \mathbb{R}^n\to\mathbb{R}\)이면 \(H\in\mathbb{R}^{n\times n}\).
+        </li>
+        <li>
+          <b>Jacobian determinant(야코비안 행렬식)</b><br/>
+          Jacobian(행렬)은 국소 선형 변환 자체이고, \(\det(J)\)는 \(n\to n\) 변환에서 부피 스케일 팩터입니다. 변수 치환 적분에서 \(|\det J|\)가 등장합니다.
+        </li>
+        <li>
+          <b>Fréchet derivative(프레셰 미분) vs Jacobian</b><br/>
+          프레셰 미분은 “가장 좋은 선형 연산자”라는 관점의 본질적 정의이고, Jacobian은 이를 표준 기저에서 <b>행렬로 좌표화</b>한 것입니다.
+        </li>
+      </ul>
+
+      <h2>4) 맥락적 연결 (실무에서 자주 마주치는 2가지)</h2>
+
+      <h3>상황 A: 비선형 방정식 풀기 (뉴턴법)</h3>
+      <p>
+        \(f(x)=0\)을 풀고 싶을 때(\(f: \mathbb{R}^n\to\mathbb{R}^n\)), 뉴턴법은
+        \[
+          x_{k+1} = x_k - J_f(x_k)^{-1} f(x_k)
+        \]
+        로 주어집니다. “현재 점에서 선형화한 뒤, 선형 시스템을 풀어 업데이트”하는 방식이며, Jacobian이 업데이트의 핵심입니다.
+      </p>
+
+      <h3>상황 B: 좌표변환/변수치환 적분</h3>
+      <p>
+        \((u,v)\mapsto(x,y)\) 같은 좌표변환에서 면적 요소가
+        \[
+          dx\,dy = |\det J|\,du\,dv
+        \]
+        로 바뀝니다. 컴퓨터 비전의 warping, 물리 시뮬레이션의 좌표계 변환, 확률분포의 normalizing flow에서도 동일한 구조가 반복됩니다.
+      </p>
+
+      <h3>간단한 코드: 수치 Jacobian (유한차분)</h3>
+      <p>해석적 미분이 어렵다면 유한차분으로 Jacobian을 근사할 수 있습니다(정확도/수치 안정성은 조건에 따라 달라짐).</p>
+      <pre><code># f: R^n -&gt; R^m, x: (n,)
+# returns J: (m, n)
+def numerical_jacobian(f, x, eps=1e-6):
+    y0 = f(x)
+    m = len(y0); n = len(x)
+    J = [[0.0]*n for _ in range(m)]
+    for j in range(n):
+        x2 = x.copy()
+        x2[j] += eps
+        y2 = f(x2)
+        for i in range(m):
+            J[i][j] = (y2[i] - y0[i]) / eps
+    return J
+</code></pre>
+
+      <h2>5) 용어 사전</h2>
+      <ul>
+        <li><b>Partial derivative(편미분)</b>: 여러 변수 중 한 변수만 변화시킬 때의 변화율(다른 변수는 고정).</li>
+        <li><b>Vector-valued function(벡터값 함수)</b>: 출력이 스칼라가 아니라 벡터(\(\mathbb{R}^m\))인 함수.</li>
+        <li><b>Local linear approximation(국소 선형 근사)</b>: 점 근처에서 비선형 함수를 1차(선형)로 근사하는 것.</li>
+        <li><b>Jacobian matrix(야코비안 행렬)</b>: 모든 출력 성분의 모든 입력 성분에 대한 편미분을 모은 \(m\times n\) 행렬.</li>
+        <li><b>Chain rule(연쇄법칙)</b>: 합성함수 미분 규칙. 다변수에서는 Jacobian의 행렬 곱으로 표현된다.</li>
+        <li><b>Gradient(그래디언트)</b>: 스칼라 함수의 미분을 벡터로 모은 것(가장 가파르게 증가하는 방향).</li>
+        <li><b>Hessian(헤시안)</b>: 2차 편미분을 모은 행렬. 곡률(2차 변화)을 나타낸다.</li>
+        <li><b>Determinant(행렬식)</b>: 정사각행렬이 만드는 부피 스케일(및 방향)을 나타내는 값.</li>
+        <li><b>Change of variables(변수 치환)</b>: 적분/확률/변환에서 좌표계를 바꿔 계산을 단순화하는 기법.</li>
+        <li><b>Fréchet derivative(프레셰 미분)</b>: “미분 = 최적의 선형 연산자”라는 관점의 엄밀한 정의.</li>
+        <li><b>Newton’s method(뉴턴법)</b>: 비선형 방정식의 근을 반복적으로 찾는 방법.</li>
+        <li><b>Autodiff(자동미분)</b>: 프로그램을 따라 미분을 정확히 계산하는 기법(수치미분보다 정확/효율적인 경우가 많음).</li>
+      </ul>
+
+      <div class="footer">
+        <div>Project: <a href="https://github.com/samdasuu/openclaw-pages">samdasuu/openclaw-pages</a></div>
+        <div class="meta">Note: GitHub Pages 반영까지 1–3분 정도 걸릴 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
