@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260217-03",
+      "title": "VM vs Docker — /concept_explain + 유튜브 영상 주석(타임스탬프)",
+      "description": "VM과 Docker를 /concept_explain 구조로 각각 정리하고, 'Docker와 VM. 실무에서는 이렇게 나눠씁니다' 영상 내용을 타임스탬프 기반으로 주석/해설을 달아 재구성.",
+      "category": "개발",
+      "date": "2026-02-17",
+      "href": "2026-02-17__infra--vm-docker--video-annotated.html"
+    },
+    {
       "id": "20260216-07",
       "title": "Jacobian — 배경→제1원리→비교→적용→용어 사전",
       "description": "Jacobian(야코비안)을 국소 선형 근사, 연쇄법칙, 뉴턴법, 변수치환까지 연결해서 배경→제1원리→비교→실무 적용→용어 사전 구조로 정리.",

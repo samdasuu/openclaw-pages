@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VM vs Docker — /concept_explain + 유튜브 영상 주석(타임스탬프)</title>
+  <meta name="description" content="/concept_explain 구조로 VM, Docker를 각각 설명하고, 'Docker와 VM. 실무에서는 이렇게 나눠씁니다'(YouTube) 내용을 타임스탬프 기반으로 주석/해설을 붙여 가독성 좋게 정리." />
+  <style>
+    :root{
+      --bg:#f8fafc;          /* slate-50 */
+      --card:#ffffff;
+      --text:#1f2937;        /* slate-800 */
+      --muted:#64748b;       /* slate-500 */
+      --border:#e2e8f0;      /* slate-200 */
+      --link:#2563eb;        /* blue-600 */
+      --codebg:#0b1220;
+      --codefg:#e5e7eb;
+      --calloutbg:#eff6ff;   /* blue-50 */
+      --calloutbd:#bfdbfe;   /* blue-200 */
+      --warnbg:#fff7ed;      /* orange-50 */
+      --warnbd:#fed7aa;      /* orange-200 */
+      --kbd:#0f172a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", Arial, "Helvetica Neue", sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.7;
+    }
+    .wrap{max-width:920px;margin:32px auto;padding:0 16px;}
+    .card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; box-shadow:0 1px 2px rgba(15,23,42,.04)}
+    header{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+    .back{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+    .meta{color:var(--muted); font-size:14px}
+    h1{font-size:26px; line-height:1.25; margin:6px 0 0 0}
+    .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:2px}
+    .tag{font-size:12px;color:#0f172a;background:#f1f5f9;border:1px solid var(--border);padding:4px 10px;border-radius:999px}
+
+    .summary{background:var(--calloutbg); border:1px solid var(--calloutbd); border-radius:14px; padding:14px 16px; margin:16px 0 22px 0}
+    .summary strong{display:block;margin-bottom:6px}
+
+    .warn{background:var(--warnbg); border:1px solid var(--warnbd); border-radius:14px; padding:12px 14px; margin:16px 0}
+
+    h2{font-size:18px;margin:26px 0 10px 0;padding-top:6px;border-top:1px solid var(--border)}
+    h2:first-of-type{border-top:none;padding-top:0}
+    h3{font-size:16px;margin:16px 0 6px 0}
+    ul{margin:8px 0 8px 18px}
+
+    pre{
+      background:var(--codebg);
+      color:var(--codefg);
+      padding:14px 16px;
+      border-radius:14px;
+      overflow:auto;
+      border:1px solid rgba(148,163,184,.25);
+      margin:10px 0 0 0;
+    }
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 0.95em}
+
+    details{border:1px solid var(--border); border-radius:12px; padding:10px 12px; margin:12px 0; background:#fff}
+    summary{cursor:pointer; font-weight:700}
+
+    .tx{
+      display:grid;
+      grid-template-columns: 84px 1fr;
+      gap:10px;
+      padding:10px 0;
+      border-top:1px dashed var(--border);
+    }
+    .tx:first-child{border-top:none}
+    .t{color:var(--muted); font-variant-numeric: tabular-nums;}
+    .anno{margin-top:6px; font-size:14px; color:#0f172a; background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:8px 10px}
+    .anno b{color:#0f172a}
+
+    .footer{margin-top:22px;padding-top:14px;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+    kbd{background:#f1f5f9;border:1px solid var(--border);border-bottom:2px solid #cbd5e1;border-radius:6px;padding:1px 6px;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: var(--kbd)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="topline">
+          <a class="back" href="index.html">← Back</a>
+          <div class="meta">2026-02-17</div>
+        </div>
+        <h1>VM vs Docker — /concept_explain + 유튜브 영상 주석(타임스탬프)</h1>
+        <div class="tags">
+          <span class="tag">infra</span>
+          <span class="tag">virtualization</span>
+          <span class="tag">containers</span>
+          <span class="tag">concept_explain</span>
+          <span class="tag">annotated-video</span>
+        </div>
+      </header>
+
+      <div class="summary">
+        <strong>요약 (3줄)</strong>
+        VM은 <b>하드웨어 가상화</b>(게스트 OS 포함)로 강한 격리/이질 OS를 제공하고, Docker(컨테이너)는 <b>커널 공유</b> 기반 프로세스 격리로 배포·밀도·속도에 강하다. <br/>
+        실무 설계의 포인트는 “무엇을 <b>격리해야</b> 하는가(장애 반경, 보안, noisy neighbor)”와 “무엇을 <b>빨리 배포/스케일</b> 해야 하는가”를 분리하는 것이다. <br/>
+        아래는 VM/Docker를 /concept_explain 구조로 각각 정리하고, 유튜브 영상 내용을 타임스탬프별로 <b>주석</b>을 달아 읽기 쉽게 재구성했다.
+      </div>
+
+      <div class="warn">
+        <b>주의</b>: 아래 ‘영상 원문’은 YouTube의 자동 스크립트(자동 자막) 기반이라 문장이 다소 거칠 수 있습니다. 이해를 돕기 위해 의미 단위로 묶고 주석을 추가했습니다.
+      </div>
+
+      <h2>Part A. /concept_explain: VM (Virtual Machine)</h2>
+
+      <h3>1) 배경과 문제의식</h3>
+      <p>
+        데이터센터/클라우드에서는 하나의 물리 서버를 여러 팀·서비스가 함께 쓰고 싶습니다. 그런데 프로세스 수준 격리만으로는
+        커널 취약점·드라이버·라이브러리 충돌·커널 패닉 같은 문제가 “같은 OS 위의 모두”에게 전파될 수 있습니다.
+        또한 Windows 위에 Linux 같은 <b>이질적인 OS</b>를 같이 운영하려면, OS 자체를 분리해 띄울 수 있어야 합니다.
+      </p>
+
+      <h3>2) 제1원리 (First Principles)</h3>
+      <p>
+        <b>정의</b>: VM은 <b>하이퍼바이저(hypervisor)</b>가 제공하는 가상 하드웨어 위에, <b>게스트 OS</b>를 통째로 올려 실행하는 격리 단위입니다.
+      </p>
+      <p>
+        <b>직관</b>: “한 건물(물리 서버) 안에 여러 ‘완전한 집(각각의 OS)’을 만든 것”입니다. 집마다 현관문/화장실/부엌(=커널+유저랜드)이 따로 있습니다.
+      </p>
+      <p>
+        <b>결과</b>:
+      </p>
+      <ul>
+        <li><b>강한 격리</b>: 커널이 분리되어 커널 버그/패닉의 전파 가능성이 상대적으로 낮음(하이퍼바이저 경계가 1차 방어선).</li>
+        <li><b>이질 OS</b>: 서로 다른 커널/OS를 같은 물리 머신에서 운영 가능.</li>
+        <li><b>오버헤드</b>: 게스트 OS 부팅/메모리/스토리지 비용 → 상대적으로 무겁고 느릴 수 있음.</li>
+      </ul>
+
+      <h3>3) 대조와 비교</h3>
+      <ul>
+        <li><b>VM vs 컨테이너</b>: VM은 게스트 OS 포함(무거움/강한 격리), 컨테이너는 커널 공유(가벼움/격리 경계가 상대적으로 얇음).</li>
+        <li><b>VM vs 베어메탈</b>: 베어메탈은 가상화 없이 OS가 하드웨어를 직접 사용(성능/일관성), VM은 멀티테넌시·유연성·격리를 얻음.</li>
+      </ul>
+
+      <h3>4) 맥락적 연결 (실무 2가지)</h3>
+      <ul>
+        <li><b>DB/상태ful 워크로드</b>: 장애 반경과 성능 안정성이 중요하면 “전용 VM(또는 관리형 DB)”로 분리해 noisy neighbor를 최소화.</li>
+        <li><b>보안 경계</b>: 서로 신뢰 수준이 다른 서비스/팀을 같은 호스트에서 돌려야 하면 VM 단위 분리가 안전한 출발점.</li>
+      </ul>
+
+      <h3>5) 용어 사전</h3>
+      <ul>
+        <li><b>Hypervisor</b>: VM을 실행하기 위한 가상화 계층(예: KVM, ESXi 등).</li>
+        <li><b>Guest OS</b>: VM 안에서 동작하는 운영체제.</li>
+        <li><b>Host OS</b>: (타입2 가상화에서) 하이퍼바이저가 동작하는 기반 OS.</li>
+        <li><b>Isolation boundary</b>: 실패/침해가 전파되지 않도록 하는 경계.</li>
+      </ul>
+
+      <h2>Part B. /concept_explain: Docker (Container)</h2>
+
+      <h3>1) 배경과 문제의식</h3>
+      <p>
+        애플리케이션 배포에서 가장 흔한 고통은 “내 PC에서는 되는데 서버에서 안 됨”입니다.
+        라이브러리 버전/의존성/런타임 설정이 환경마다 조금만 달라도 장애가 납니다.
+        동시에 서비스가 많아질수록, 같은 서버에서 <b>더 높은 밀도</b>로 빠르게 띄우고 내리고 싶습니다.
+      </p>
+
+      <h3>2) 제1원리 (First Principles)</h3>
+      <p>
+        <b>정의</b>: 컨테이너는 <b>하나의 커널을 공유</b>하면서, 프로세스/파일시스템/네트워크를 <b>네임스페이스(namespace)</b>로 분리하고,
+        CPU/메모리/IO를 <b>cgroups</b>로 제한하는 형태의 격리 실행 단위입니다.
+      </p>
+      <p>
+        <b>직관</b>: “쉐어하우스”에 가깝습니다. 방(프로세스/파일시스템)은 분리하지만, 화장실/부엌(커널)은 공유합니다.
+      </p>
+      <p>
+        <b>결과</b>:
+      </p>
+      <ul>
+        <li><b>가볍고 빠름</b>: 게스트 OS 부팅이 없고, 이미지 기반으로 빠르게 배포/롤백 가능.</li>
+        <li><b>일관된 배포 단위</b>: Dockerfile/이미지로 “환경+코드”를 패키징.</li>
+        <li><b>격리 한계</b>: 커널을 공유하므로 커널 취약점/오작동의 영향이 VM 대비 클 수 있음(보안 모델 설계가 중요).</li>
+      </ul>
+
+      <h3>3) 대조와 비교</h3>
+      <ul>
+        <li><b>컨테이너 vs 프로세스</b>: 컨테이너는 ‘프로세스 + 격리된 관점(namespace) + 자원 제한(cgroups)’을 묶은 운영 단위.</li>
+        <li><b>Docker vs containerd</b>: Docker는 사용자 경험(빌드/배포 UX) 포함, containerd는 런타임 계층(쿠버네티스는 보통 containerd 등 사용).</li>
+      </ul>
+
+      <h3>4) 맥락적 연결 (실무 2가지)</h3>
+      <ul>
+        <li><b>Stateless 웹/API</b>: 언제든 죽었다 살아나도 되는 워크로드는 컨테이너가 압도적으로 편함(오토스케일/롤링배포).</li>
+        <li><b>표준화된 배포 파이프라인</b>: CI에서 이미지를 만들고, 동일 이미지를 dev/stage/prod에 올려 차이를 최소화.</li>
+      </ul>
+
+      <h3>5) 용어 사전</h3>
+      <ul>
+        <li><b>Namespace</b>: 프로세스가 보는 리소스의 “뷰(view)”를 분리하는 커널 기능.</li>
+        <li><b>cgroups</b>: CPU/메모리/IO 같은 자원 사용량을 제한·계측하는 커널 기능.</li>
+        <li><b>Image</b>: 컨테이너 실행에 필요한 파일시스템 스냅샷(레이어 기반).</li>
+        <li><b>Stateless/Stateful</b>: 상태를 외부(DB/캐시)에 두는지, 로컬 디스크/메모리에 갖는지에 따른 운영 특성.</li>
+      </ul>
+
+      <h2>Part C. 영상 주석: “Docker와 VM. 실무에서는 이렇게 나눠씁니다”</h2>
+      <p>
+        원본: <a href="https://youtu.be/0ToqmwZ-n3M" target="_blank" rel="noreferrer">https://youtu.be/0ToqmwZ-n3M</a>
+      </p>
+
+      <details open>
+        <summary>핵심만 먼저: 영상의 결론(요지)</summary>
+        <ul>
+          <li><b>Docker는 배포의 도구</b>: 앱을 패키징/배포/스케일하기 좋다.</li>
+          <li><b>VM은 격리의 도구</b>: 보안·장애 반경·자원 안정성을 위해 역할/목적별로 VM을 나누는 게 안전하다.</li>
+          <li><b>실무는 하이브리드</b>: “목적별로 VM 분리 → 그 안에서 Docker로 앱 격리/배포”가 흔하다(특히 DB는 전용 VM/관리형 권장).</li>
+        </ul>
+      </details>
+
+      <details>
+        <summary>타임스탬프별 스크립트 + 주석 (펼치기)</summary>
+
+        <div class="tx"><div class="t">0:00</div><div>
+          안녕하세요. 코딩하는 기술사입니다.
+        </div></div>
+
+        <div class="tx"><div class="t">0:01–0:31</div><div>
+          오늘은 도커와 VM에 대해서 알아보겠습니다…(구독자 댓글 소개)… 랜선 사수가 되어서 개념을 간단히 정리…
+          <div class="anno"><b>주석</b>: 문제 설정이 좋음. “도커는 익숙해졌는데, 왜 목적별로 VM을 나누라고 하지?”는 실무에서 흔한 지점.</div>
+        </div></div>
+
+        <div class="tx"><div class="t">0:36–1:31</div><div>
+          단독주택(물리 서버) → 아파트(VM) → 쉐어하우스(컨테이너) 비유… 방=앱 코드, 화장실/부엌=커널…
+          <div class="anno"><b>주석</b>: 비유의 핵심은 “<b>커널 공유 여부</b>”. 컨테이너는 커널을 공유하므로 가볍지만, 커널 수준 사건이 ‘집 전체’에 영향을 줄 수 있음.</div>
+        </div></div>
+
+        <div class="tx"><div class="t">1:32–2:20</div><div>
+          VM은 게스트 OS를 통째로 설치… 컨테이너는 게스트 OS가 없고 호스트 커널 공유… cgroups/namespace…
+          <div class="anno"><b>주석</b>: 정확. 다만 컨테이너도 “완전히 가볍다”기보단 <b>부팅/유저랜드 전체</b>를 안 올린다는 점이 본질적인 차이.</div>
+        </div></div>
+
+        <div class="tx"><div class="t">2:22–3:15</div><div>
+          왜 굳이 VM으로 나누나? noisy neighbor(시끄러운 이웃)… 한 컨테이너가 CPU를 먹으면 옆이 굶음… 커널 공유 한계… 커널 버그로 OS 셧다운이면 같이 죽음… DB는 전용 VM/분리…
+          <div class="anno"><b>주석</b>: 여기서 ‘VM 분리’의 실무적 이유가 압축됨.
+            <ul>
+              <li><b>자원 경합</b>: 컨테이너도 limit로 완화 가능하지만, 완벽한 격리는 아님(특히 IO/커널 경로).</li>
+              <li><b>장애 반경</b>: 커널 패닉/호스트 장애는 동일 호스트 컨테이너를 한 번에 날릴 수 있음.</li>
+              <li><b>DB</b>: 성능/지연/데이터 무결성/복구 관점에서 “예측 가능성”이 중요 → 전용 VM 또는 관리형이 흔함.</li>
+            </ul>
+          </div>
+        </div></div>
+
+        <div class="tx"><div class="t">3:16–3:58</div><div>
+          실무는 하이브리드: 목적별로 VM을 나누고 그 안에서 도커로 앱 격리… 웹 VM/워커 VM/데이터 노드 VM… Nginx도 도커… DB는 VM 직접 설치나 RDS…
+          <div class="anno"><b>주석</b>: 실무 패턴을 “역할(=blast radius) 기준으로 VM 분리”로 잡은 게 포인트.
+            컨테이너는 배포 단위로 강하고, VM은 보안/운영 경계로 강함.</div>
+        </div></div>
+
+        <div class="tx"><div class="t">4:03–4:35</div><div>
+          언제 무엇을 쓰나 정리… stateless(웹/API)=도커 권장, stateful(DB)=VM/베어메탈 권장…
+          <div class="anno"><b>주석</b>: ‘stateful은 무조건 컨테이너 금지’가 아니라, 운영 난이도/장애 반경/성능 요구가 높으면 VM/관리형으로 가는 게 보통 더 경제적이라는 뜻으로 이해하면 정확.</div>
+        </div></div>
+
+        <div class="tx"><div class="t">4:38–5:08</div><div>
+          쿠버네티스: 많은 VM을 묶어 자원 풀로 만들고 컨테이너 배치… 도커 대신 containerd 같은 런타임…
+          <div class="anno"><b>주석</b>: Kubernetes는 ‘컨테이너 오케스트레이션’. 현실적으로 <b>VM(노드)</b> 위에 <b>컨테이너(파드)</b>가 올라가는 구조가 가장 흔함.</div>
+        </div></div>
+
+        <div class="tx"><div class="t">5:09–5:48</div><div>
+          결론: 배포 편의성 위해 앱은 도커로 패키징, 보안/자원격리/안정성 위해 목적에 따라 VM 분리… 도커=배포 도구, VM=격리 도구.
+          <div class="anno"><b>주석</b>: 한 문장으로 요약하면 “<b>컨테이너는 개발/배포 생산성, VM은 운영 경계</b>”.</div>
+        </div></div>
+
+      </details>
+
+      <h2>Part D. 실무 체크리스트 (내가 이걸로 결정을 내려야 한다면)</h2>
+      <ul>
+        <li><b>보안/신뢰 경계가 필요?</b> (팀/서비스 간 권한이 다름, 공격 모델 고려) → VM 경계를 기본으로.</li>
+        <li><b>장애 반경을 줄여야 함?</b> (DB, 큐, 핵심 인프라) → 역할별 VM 분리 + 관리형 서비스 검토.</li>
+        <li><b>배포를 자주/빠르게?</b> (웹/API, 워커) → 컨테이너로 패키징하고 오케스트레이션(K8s 등)로 운영.</li>
+        <li><b>성능 예측 가능성/IO 패턴이 민감?</b> → 전용 VM/베어메탈/관리형이 유리한 경우가 많음.</li>
+      </ul>
+
+      <div class="footer">
+        <div>Project: <a href="https://github.com/samdasuu/openclaw-pages">samdasuu/openclaw-pages</a></div>
+        <div class="meta">Note: GitHub Pages 반영까지 1–3분 정도 걸릴 수 있습니다.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
