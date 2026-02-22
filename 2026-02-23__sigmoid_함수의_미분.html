@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sigmoid 함수의 미분 개념 설명</title>
+    <meta name="description" content="Sigmoid 함수의 미분은 머신러닝에서 역전파 알고리즘의 핵심 요소입니다.">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f8fafc; color: #1e293b; line-height: 1.6; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background-color: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 40px; }
+        .header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0; }
+        .back-button { display: inline-block; margin-bottom: 15px; color: #2563eb; text-decoration: none; font-size: 14px; }
+        .back-button:hover { text-decoration: underline; }
+        h1 { font-size: 32px; color: #0f172a; margin-bottom: 10px; }
+        .meta { color: #64748b; font-size: 14px; margin-bottom: 5px; }
+        .tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .tag { background-color: #e0f2fe; color: #0369a1; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 500; }
+        .summary-box { background-color: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 20px; margin: 30px 0; border-radius: 8px; }
+        .summary-box h3 { color: #0369a1; margin-bottom: 10px; }
+        h2 { font-size: 24px; color: #1e40af; margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; }
+        h3 { font-size: 20px; color: #334155; margin: 25px 0 15px; }
+        p { margin-bottom: 16px; color: #475569; }
+        ul, ol { margin-left: 24px; margin-bottom: 20px; }
+        li { margin-bottom: 8px; color: #475569; }
+        .code-box { background-color: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; margin: 20px 0; font-family: 'Courier New', monospace; font-size: 15px; overflow-x: auto; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; background-color: white; border: 1px solid #e2e8f0; }
+        .comparison-table th { background-color: #f8fafc; padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0; font-weight: 600; color: #334155; }
+        .comparison-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #475569; }
+        .comparison-table tr:hover { background-color: #f8fafc; }
+        .glossary { background-color: #fefce8; border: 1px solid #fde047; border-radius: 8px; padding: 25px; margin: 40px 0; }
+        .glossary h2 { color: #854d0e; border-bottom-color: #fde047; }
+        .glossary-item { margin-bottom: 15px; }
+        .glossary-term { font-weight: 600; color: #854d0e; margin-bottom: 4px; }
+        .footer { margin-top: 50px; padding-top: 20px; border-top: 2px solid #e2e8f0; color: #64748b; font-size: 14px; text-align: center; }
+        .footer a { color: #2563eb; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            h1 { font-size: 28px; }
+            h2 { font-size: 22px; }
+            h3 { font-size: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="https://samdasuu.github.io/openclaw-pages/" class="back-button">← Back to Reports</a>
+            <h1>Sigmoid 함수의 미분 개념 설명</h1>
+            <div class="meta">생성일: 2026-02-23 | 카테고리: 수학/머신러닝</div>
+            <div class="tags">
+                <span class="tag">머신러닝</span>
+                <span class="tag">딥러닝</span>
+                <span class="tag">활성화 함수</span>
+                <span class="tag">미분</span>
+            </div>
+        </div>
+        
+        <div class="summary-box">
+            <h3>요약</h3>
+            <p>Sigmoid 함수의 미분은 σ'(x) = σ(x)(1 - σ(x))라는 우아한 형태를 가지며, 이는 역전파(backpropagation) 알고리즘에서 핵심적인 역할을 합니다. Sigmoid 함수 자체의 값만으로 미분값을 계산할 수 있다는 점에서 효율적이지만, 기울기 소실 문제로 인해 현대 딥러닝에서는 ReLU 등의 대안이 선호됩니다.</p>
+        </div>
+        
+        <h2>1) 배경과 문제의식</h2>
+        <p>인공신경망을 학습시킬 때 가장 중요한 것은 <strong>역전파(backpropagation)</strong> 알고리즘입니다. 이 알고리즘은 각 층의 활성화 함수의 <strong>미분값</strong>을 필요로 합니다.</p>
+        <p><strong>Sigmoid 함수</strong>는 초기 신경망 연구에서 가장 널리 사용된 활성화 함수였습니다. 실수 전체를 (0, 1) 구간으로 부드럽게 압축하여 확률 해석이 가능하고, 생물학적 뉴런의 발화 특성과 유사하다는 장점이 있었습니다.</p>
+        <p>그런데 신경망을 학습시키려면 이 함수의 <strong>미분</strong>을 계산해야 합니다. 복잡한 지수함수 형태인데, 미분을 효율적으로 계산할 수 있을까요?</p>
+        <p><strong>핵심 문제의식</strong>: "Sigmoid의 미분을 빠르게 계산할 수 있는 방법이 있을까? 그리고 이 미분값의 특성이 학습에 어떤 영향을 미칠까?"</p>
+        
+        <h2>2) 제1원리(First Principles)</h2>
+        <h3>Sigmoid 함수의 정의</h3>
+        <div class="code-box">σ(x) = 1 / (1 + e^(-x))</div>
+        <p>이 함수는:</p>
+        <ul>
+            <li>x → -∞ 일 때 σ(x) → 0</li>
+            <li>x → +∞ 일 때 σ(x) → 1</li>
+            <li>x = 0 일 때 σ(0) = 0.5</li>
+            <li>항상 0 &lt; σ(x) &lt; 1</li>
+        </ul>
+        
+        <h3>미분 유도 과정</h3>
+        <p><strong>방법 1: 직접 미분</strong></p>
+        <p>σ(x) = (1 + e^(-x))^(-1) 형태로 보고 연쇄 법칙 적용:</p>
+        <div class="code-box">σ'(x) = -1 · (1 + e^(-x))^(-2) · (-e^(-x))
+     = e^(-x) / (1 + e^(-x))^2</div>
+        
+        <p><strong>방법 2: 우아한 형태로 변환</strong></p>
+        <p>위 결과를 σ(x)로 표현하면:</p>
+        <div class="code-box">σ'(x) = σ(x) · (1 - σ(x))</div>
+        
+        <p><strong>증명:</strong></p>
+        <div class="code-box">σ(x) · (1 - σ(x)) 
+= [1/(1 + e^(-x))] · [1 - 1/(1 + e^(-x))]
+= [1/(1 + e^(-x))] · [e^(-x)/(1 + e^(-x))]
+= e^(-x) / (1 + e^(-x))^2
+= σ'(x) ✓</div>
+        
+        <h3>핵심 성질</h3>
+        <ul>
+            <li><strong>자기 참조적</strong>: 미분값을 계산할 때 원함수 값만 있으면 됨 (지수함수 재계산 불필요)</li>
+            <li><strong>계산 효율성</strong>: 순전파에서 σ(x)를 이미 계산했다면, 역전파에서 σ'(x) = σ(x)(1-σ(x))만 계산하면 됨</li>
+            <li><strong>최댓값</strong>: x=0에서 σ'(0) = 0.25 (최대 기울기)</li>
+            <li><strong>대칭성</strong>: σ(x)(1-σ(x)) = σ(-x)(1-σ(-x))</li>
+        </ul>
+        
+        <h2>3) 대조와 비교</h2>
+        <h3>다른 활성화 함수와의 비교</h3>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>활성화 함수</th>
+                    <th>함수식</th>
+                    <th>미분식</th>
+                    <th>장점</th>
+                    <th>단점</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Sigmoid</td>
+                    <td>1/(1+e^(-x))</td>
+                    <td>σ(x)(1-σ(x))</td>
+                    <td>부드러움, 확률 해석</td>
+                    <td>기울기 소실</td>
+                </tr>
+                <tr>
+                    <td>Tanh</td>
+                    <td>(e^x - e^(-x))/(e^x + e^(-x))</td>
+                    <td>1 - tanh²(x)</td>
+                    <td>0 중심, 더 큰 기울기</td>
+                    <td>기울기 소실</td>
+                </tr>
+                <tr>
+                    <td>ReLU</td>
+                    <td>max(0, x)</td>
+                    <td>1 if x&gt;0 else 0</td>
+                    <td>계산 빠름, 기울기 소실 없음</td>
+                    <td>음수에서 학습 안됨</td>
+                </tr>
+                <tr>
+                    <td>Leaky ReLU</td>
+                    <td>max(0.01x, x)</td>
+                    <td>1 if x&gt;0 else 0.01</td>
+                    <td>ReLU 개선</td>
+                    <td>하이퍼파라미터</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Sigmoid vs Tanh</h3>
+        <ul>
+            <li><strong>Tanh</strong>는 Sigmoid를 변형한 것: tanh(x) = 2σ(2x) - 1</li>
+            <li>범위: Sigmoid (0,1) vs Tanh (-1,1)</li>
+            <li>Tanh는 0 중심이라 학습이 더 안정적 (평균 활성화가 0에 가까움)</li>
+            <li>Tanh의 미분 최댓값: 1 (Sigmoid의 4배)</li>
+        </ul>
+        
+        <h3>기울기 소실 문제 (Vanishing Gradient Problem)</h3>
+        <p>Sigmoid의 가장 큰 문제:</p>
+        <ul>
+            <li>|x| &gt; 5 정도면 σ'(x) ≈ 0 (거의 평평)</li>
+            <li>깊은 신경망에서 역전파 시 기울기가 계속 곱해짐</li>
+            <li>여러 층을 거치면서 기울기가 지수적으로 작아짐</li>
+            <li>결과: 초기 층은 거의 학습이 안됨</li>
+        </ul>
+        <p><strong>이것이 현대 딥러닝에서 ReLU를 선호하는 주된 이유입니다.</strong></p>
+        
+        <h2>4) 맥락적 연결</h2>
+        <h3>역전파 알고리즘에서의 역할</h3>
+        <p>신경망 학습 과정:</p>
+        <ol>
+            <li><strong>순전파(Forward pass)</strong>: 입력 → 각 층에서 σ(x) 계산</li>
+            <li><strong>손실 계산</strong>: 예측값과 실제값의 차이</li>
+            <li><strong>역전파(Backward pass)</strong>: 손실을 각 가중치에 대해 미분<ul>
+                <li>이때 σ'(x) = σ(x)(1-σ(x)) 사용</li>
+                <li>이미 계산한 σ(x)를 재사용하므로 효율적</li>
+            </ul></li>
+            <li><strong>가중치 업데이트</strong>: 경사하강법</li>
+        </ol>
+        
+        <h3>로지스틱 회귀(Logistic Regression)</h3>
+        <p>머신러닝에서 가장 기본적인 분류 알고리즘:</p>
+        <ul>
+            <li>선형 결합 z = w^T x + b</li>
+            <li>확률로 변환: P(y=1|x) = σ(z)</li>
+            <li>손실 함수(Cross-entropy): L = -[y log σ(z) + (1-y) log(1-σ(z))]</li>
+            <li>미분: ∂L/∂w = (σ(z) - y) · x ← σ'(z)가 간접적으로 포함됨</li>
+        </ul>
+        
+        <h3>실제 응용 사례</h3>
+        <ul>
+            <li><strong>이진 분류 출력층</strong>: 여전히 sigmoid 사용 (확률 해석 필요)</li>
+            <li><strong>LSTM의 게이트</strong>: Forget gate, Input gate 등에서 sigmoid 사용</li>
+            <li><strong>Attention mechanism</strong>: 일부 어텐션 메커니즘에서 가중치 정규화</li>
+            <li><strong>생성 모델</strong>: VAE 등에서 확률 파라미터화</li>
+        </ul>
+        
+        <h3>현대적 대안과 발전</h3>
+        <ol>
+            <li><strong>ReLU 계열</strong> (2010년대 이후 주류)<ul>
+                <li>기울기 소실 문제 해결</li>
+                <li>계산이 훨씬 빠름 (지수함수 없음)</li>
+            </ul></li>
+            <li><strong>Swish/SiLU</strong>: x · σ(x) (Google 2017)<ul>
+                <li>Sigmoid의 부드러움 + ReLU의 성능</li>
+            </ul></li>
+            <li><strong>GELU</strong> (Gaussian Error Linear Unit)<ul>
+                <li>Transformer 모델에서 인기</li>
+            </ul></li>
+        </ol>
+        
+        <h3>수학적 깊이: 왜 이 형태인가?</h3>
+        <p>Sigmoid는 <strong>로지스틱 방정식(Logistic equation)</strong>의 해:</p>
+        <div class="code-box">dy/dx = y(1 - y)</div>
+        <p>이것이 바로 σ'(x) = σ(x)(1 - σ(x)) 형태가 나오는 이유!</p>
+        <p>의미:</p>
+        <ul>
+            <li>y가 0이나 1에 가까우면 변화율이 작음 (포화)</li>
+            <li>y = 0.5 근처에서 변화율 최대</li>
+            <li>생물 개체군 성장, S자 확산 곡선 등 자연 현상을 모델링</li>
+        </ul>
+        
+        <div class="glossary">
+            <h2>5) [용어 사전]</h2>
+            <div class="glossary-item">
+                <div class="glossary-term">Sigmoid 함수</div>
+                <p>S자 모양의 곡선을 그리며 실수 전체를 (0, 1) 구간으로 매핑하는 함수. σ(x) = 1/(1 + e^(-x))</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">활성화 함수 (Activation Function)</div>
+                <p>신경망에서 뉴런의 출력을 결정하는 비선형 함수. 네트워크에 비선형성을 부여함.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">역전파 (Backpropagation)</div>
+                <p>신경망 학습의 핵심 알고리즘. 출력층의 오차를 입력층까지 거슬러 올라가며 각 가중치의 기울기를 계산.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">기울기 소실 (Vanishing Gradient)</div>
+                <p>깊은 신경망에서 역전파 시 기울기가 점점 작아져서 초기 층이 학습되지 않는 현상. Sigmoid의 주요 문제점.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">ReLU (Rectified Linear Unit)</div>
+                <p>ReLU(x) = max(0, x). 현대 딥러닝에서 가장 많이 쓰이는 활성화 함수. 기울기 소실 문제 해결.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Tanh (Hyperbolic Tangent)</div>
+                <p>tanh(x) = (e^x - e^(-x))/(e^x + e^(-x)). Sigmoid의 변형으로 (-1, 1) 범위. 0 중심이라 학습이 더 안정적.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">연쇄 법칙 (Chain Rule)</div>
+                <p>합성함수의 미분 공식. 역전파의 수학적 기반. (f∘g)'(x) = f'(g(x)) · g'(x)</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">로지스틱 회귀 (Logistic Regression)</div>
+                <p>이진 분류를 위한 기본 머신러닝 알고리즘. 선형 결합을 sigmoid로 확률로 변환.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">경사하강법 (Gradient Descent)</div>
+                <p>손실 함수의 기울기 반대 방향으로 파라미터를 업데이트하여 최적값을 찾는 최적화 알고리즘.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">순전파 (Forward Pass)</div>
+                <p>신경망에서 입력이 각 층을 거쳐 출력으로 전달되는 과정. 예측값 계산.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">LSTM (Long Short-Term Memory)</div>
+                <p>순환 신경망의 일종. 게이트 메커니즘에서 sigmoid 함수를 사용하여 정보 흐름 제어.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Cross-entropy</div>
+                <p>분류 문제에서 사용하는 손실 함수. 예측 확률 분포와 실제 분포의 차이를 측정.</p>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">포화 (Saturation)</div>
+                <p>활성화 함수의 출력이 극값에 가까워져 기울기가 거의 0이 되는 현상. Sigmoid의 |x| &gt; 5 영역.</p>
+            </div>
+        </div>
+        
+        <div class="summary-box">
+            <h3>결론</h3>
+            <p>Sigmoid 함수의 미분 σ'(x) = σ(x)(1 - σ(x))는 수학적으로 우아하고 계산적으로 효율적이지만, 기울기 소실 문제라는 치명적 약점을 가집니다. 이로 인해 현대 딥러닝에서는 은닉층에서 ReLU 계열이 선호되지만, 이진 분류 출력층이나 LSTM 게이트처럼 확률 해석이 필요한 경우에는 여전히 중요하게 사용됩니다. 딥러닝의 역사에서 가장 중요한 함수 중 하나이며, 그 미분 공식은 역전파 알고리즘의 핵심입니다.</p>
+        </div>
+        
+        <div class="footer">
+            <p>이 문서는 OpenClaw AI 어시스턴트가 생성했습니다.</p>
+            <p>저장소: <a href="https://github.com/samdasuu/openclaw-pages" target="_blank">samdasuu/openclaw-pages</a></p>
+            <p>생성일: 2026-02-23</p>
+        </div>
+    </div>
+</body>
+</html>

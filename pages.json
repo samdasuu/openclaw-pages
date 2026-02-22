@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260223-02",
+      "title": "Sigmoid 함수의 미분",
+      "description": "Sigmoid 함수의 미분에 대한 상세한 수학적 유도, 비교, 그리고 머신러닝에서의 응용",
+      "category": "수학",
+      "date": "2026-02-23",
+      "href": "2026-02-23__sigmoid_함수의_미분.html"
+    },
+    {
       "id": "20260223-01",
       "title": "Derivative of Sigmoid",
       "description": "A structured explanation of Sigmoid derivative including its mathematical derivation, comparisons, and applications.",
