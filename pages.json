@@ -7,7 +7,7 @@
   },
   "pages": [
     {
-      "id": "20260223-02",
+      "id": "20260223-01",
       "title": "Sigmoid 함수의 미분",
       "description": "Sigmoid 함수의 미분에 대한 상세한 수학적 유도, 비교, 그리고 머신러닝에서의 응용",
       "category": "수학",
@@ -15,7 +15,7 @@
       "href": "2026-02-23__sigmoid_함수의_미분.html"
     },
     {
-      "id": "20260223-01",
+      "id": "20260223-02",
       "title": "Derivative of Sigmoid",
       "description": "A structured explanation of Sigmoid derivative including its mathematical derivation, comparisons, and applications.",
       "category": "수학",
@@ -31,20 +31,12 @@
       "href": "2026-02-22__newton-method-concept-explain.html"
     },
     {
-      "id": "20260217-03",
+      "id": "20260217-01",
       "title": "VM vs Docker — /concept_explain + 유튜브 영상 주석(타임스탬프)",
       "description": "VM과 Docker를 /concept_explain 구조로 각각 정리하고, 'Docker와 VM. 실무에서는 이렇게 나눠씁니다' 영상 내용을 타임스탬프 기반으로 주석/해설을 달아 재구성.",
       "category": "개발",
       "date": "2026-02-17",
       "href": "2026-02-17__infra--vm-docker--video-annotated.html"
-    },
-    {
-      "id": "20260216-07",
-      "title": "Jacobian — 배경→제1원리→비교→적용→용어 사전",
-      "description": "Jacobian(야코비안)을 국소 선형 근사, 연쇄법칙, 뉴턴법, 변수치환까지 연결해서 배경→제1원리→비교→실무 적용→용어 사전 구조로 정리.",
-      "category": "개발",
-      "date": "2026-02-16",
-      "href": "2026-02-16__concept-explain--jacobian.html"
     },
     {
       "id": "20260217-02",
@@ -55,7 +47,7 @@
       "href": "2026-02-17__concept-explain--oauth.html"
     },
     {
-      "id": "20260217-01",
+      "id": "20260217-03",
       "title": "Math Foundations for Machine Learning (Notion) 정리",
       "description": "확률·통계·선형대수·미적분으로 구성된 ML 수학 기초 커리큘럼 링크 모음(Notion 페이지) 핵심 정리.",
       "category": "분석",
@@ -63,7 +55,15 @@
       "href": "2026-02-17__notion--math-foundations-for-ml.html"
     },
     {
-      "id": "20260216-06",
+      "id": "20260216-01",
+      "title": "Jacobian — 배경→제1원리→비교→적용→용어 사전",
+      "description": "Jacobian(야코비안)을 국소 선형 근사, 연쇄법칙, 뉴턴법, 변수치환까지 연결해서 배경→제1원리→비교→실무 적용→용어 사전 구조로 정리.",
+      "category": "개발",
+      "date": "2026-02-16",
+      "href": "2026-02-16__concept-explain--jacobian.html"
+    },
+    {
+      "id": "20260216-02",
       "title": "OpenClaw를 VM에서 쓰는 것 vs 로컬 머신에서 쓰는 것",
       "description": "브라우저 자동화/로그인 세션/캡챠/보안/운영(24/7·스케줄러·스케일) 관점에서 VM과 로컬의 장단점과 추천 사용 시나리오를 비교.",
       "category": "분석",
@@ -71,7 +71,7 @@
       "href": "2026-02-16__openclaw--vm-vs-local.html"
     },
     {
-      "id": "20260216-05",
+      "id": "20260216-03",
       "title": "Quant Foundations (Google Doc)",
       "description": "퀀트 트레이딩/리서치 준비 로드맵: 확률·면접문제·Python 모델링·프로젝트 중심 요약",
       "category": "분석",
@@ -87,7 +87,7 @@
       "href": "2026-02-16__kaggle--credit-fraud-imbalanced-notebook-explained.html"
     },
     {
-      "id": "20260216-04",
+      "id": "20260216-05",
       "title": "PR-AUC vs ROC-AUC — 언제 무엇을 써야 하는가",
       "description": "불균형 데이터에서 PR-AUC와 ROC-AUC가 무엇을 측정하는지(정의/직관/함정), 언제 어떤 지표를 써야 하는지(사기탐지 맥락)까지 배경→제1원리→비교→적용→용어사전으로 정리.",
       "category": "개발",
@@ -95,7 +95,7 @@
       "href": "2026-02-16__ml--pr-auc-vs-roc-auc.html"
     },
     {
-      "id": "20260216-03",
+      "id": "20260216-06",
       "title": "XGBoost 완전 정리 (원리·튜닝·실무 체크리스트)",
       "description": "XGBoost를 배경→제1원리→비교→실무(코드/튜닝/평가)→오해→용어 사전으로 빠짐없이 정리.",
       "category": "개발",
@@ -103,7 +103,7 @@
       "href": "2026-02-16__ml--xgboost-explained.html"
     },
     {
-      "id": "20260216-03",
+      "id": "20260216-07",
       "title": "사기 탐지 XGBoost 프로젝트 — 시작 전에 필요한 베이스 지식",
       "description": "사기 거래 탐지에서 XGBoost를 단순 사용이 아니라 원리 이해→실험 설계→성능 개선으로 연결하기 위한 베이스(불균형/누수/지표/비용/캘리브레이션/튜닝/오류분석/재현성) 체크리스트.",
       "category": "개발",
@@ -111,7 +111,7 @@
       "href": "2026-02-16__ml--fraud-xgboost-prereqs.html"
     },
     {
-      "id": "20260216-02",
+      "id": "20260216-08",
       "title": "일본은 왜 초저금리에도 인플레이션이 약했나 — 구조적 요인 해설",
       "description": "초저금리·QE에도 저물가가 지속된 일본의 거시 구조(총수요·임금·신용창출·기대)와 전달경로를 배경→제1원리→비교→적용으로 정리.",
       "category": "분석",
@@ -119,7 +119,7 @@
       "href": "2026-02-16__macro--japan-low-rate-low-inflation.html"
     },
     {
-      "id": "20260216-01",
+      "id": "20260216-09",
       "title": "동시성과 동기/비동기 — 구조 vs 제어흐름 (개발자용 정리)",
       "description": "동시성(Concurrency)과 동기/비동기(Sync/Async)를 배경→제1원리→비교→실무 맥락→용어 사전 구조로 정리.",
       "category": "개발",
@@ -127,7 +127,7 @@
       "href": "2026-02-16__concept--concurrency-sync-async.html"
     },
     {
-      "id": "20260215-06",
+      "id": "20260215-01",
       "title": "OpenClaw 슬래시 커맨드 레퍼런스 (역할/예시/주의점)",
       "description": "OpenClaw에서 사용 가능한 /커맨드들을 목적별로 정리하고, 각 커맨드의 역할/인자/예시/주의점을 한 페이지로 정리.",
       "category": "개발",
@@ -135,7 +135,7 @@
       "href": "2026-02-15__openclaw--slash-commands-reference.html"
     },
     {
-      "id": "20260215-04",
+      "id": "20260215-02",
       "title": "리포트: 코딩 에이전트가 프레임워크를 대체한다 (news.hada.io)",
       "description": "프레임워크가 제공하던 자동화(보일러플레이트 제거)를 코딩 에이전트가 대체하면서, 엔지니어가 설계로 복귀해야 한다는 주장 요약 + 해석.",
       "category": "분석",
@@ -151,12 +151,28 @@
       "href": "2026-02-15__youtube--antinatalism-dangerous-philosophy.html"
     },
     {
-      "id": "20260215-01",
+      "id": "20260215-04",
       "title": "요약: 배운 사람들이 창업하면 망하는 이유 (이오플래닛)",
       "description": "요약: 배운 사람들이 창업하면 망하는 이유 (이오플래닛)",
       "category": "분석",
       "date": "2026-02-15",
       "href": "2026-02-15__eopla--why-smart-founders-fail-summary.html"
+    },
+    {
+      "id": "20260215-05",
+      "title": "OpenClaw에서 대화(세션)가 섞이는 이유와 해결 설정",
+      "description": "텔레그램 봇 2개(accountId 2개) 쓸 때 세션이 섞이는 이유와 dmScope 설정으로 분리하는 방법.",
+      "category": "개발",
+      "date": "2026-02-15",
+      "href": "openclaw-session-explainer.html"
+    },
+    {
+      "id": "20260215-06",
+      "title": "동시성 vs 병렬성 완벽 정리",
+      "description": "면접에서 자주 나오는 동시성(Concurrency)과 병렬성(Parallelism)의 차이를 요리사/CPU 비유로 한 번에 정리.",
+      "category": "개발",
+      "date": "2026-02-15",
+      "href": "2026-02-15__infra--concurrency-vs-parallelism.html"
     },
     {
       "id": "20260208-01",
@@ -165,22 +181,6 @@
       "category": "분석",
       "date": "2026-02-08",
       "href": "2026-02-08__logs--singapore-itinerary.html"
-    },
-    {
-      "id": "20260215-02",
-      "title": "OpenClaw에서 대화(세션)가 섞이는 이유와 해결 설정",
-      "description": "텔레그램 봇 2개(accountId 2개) 쓸 때 세션이 섞이는 이유와 dmScope 설정으로 분리하는 방법.",
-      "category": "개발",
-      "date": "2026-02-15",
-      "href": "openclaw-session-explainer.html"
-    },
-    {
-      "id": "20260215-05",
-      "title": "동시성 vs 병렬성 완벽 정리",
-      "description": "면접에서 자주 나오는 동시성(Concurrency)과 병렬성(Parallelism)의 차이를 요리사/CPU 비유로 한 번에 정리.",
-      "category": "개발",
-      "date": "2026-02-15",
-      "href": "2026-02-15__infra--concurrency-vs-parallelism.html"
     }
   ]
 }
