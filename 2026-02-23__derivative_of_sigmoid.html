@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A detailed explanation of the derivative of the Sigmoid function.">
+    <title>The Derivative of Sigmoid</title>
+</head>
+<body>
+    <header>
+        <h1>The Derivative of Sigmoid</h1>
+    </header>
+    <main>
+        <section id="background">
+            <h2>1) Background and Problem Statement</h2>
+            <p>The Sigmoid function is a widely used activation function in machine learning, especially in logistic regression and neural networks. Its smooth, S-shaped curve maps any real-valued number into the range (0, 1), making it useful for probability estimation. However, to effectively train models, we need its derivative to optimize weights via gradient descent.</p>
+        </section>
+        <section id="first-principles">
+            <h2>2) First Principles</h2>
+            <p>The Sigmoid function is defined as:</p>
+            <p>\( \sigma(x) = \frac{1}{1 + e^{-x}} \)</p>
+            <p>Its derivative \( \sigma'(x) \) can be derived using the quotient rule:</p>
+            <p>\( \sigma'(x) = \sigma(x)(1 - \sigma(x)) \)</p>
+            <p>This elegant result highlights the connection between the value of the sigmoid and its rate of change.</p>
+        </section>
+        <section id="comparison">
+            <h2>3) Comparison</h2>
+            <p>Compared to other activation functions like ReLU and tanh, the sigmoid has a slower gradient when |x| is large, which can lead to vanishing gradient issues. ReLU, on the other hand, mitigates this with its linear growth beyond zero.</p>
+        </section>
+        <section id="applied-context">
+            <h2>4) Applied Context</h2>
+            <p>In logistic regression, the derivative of the sigmoid function directly drives gradient-based optimization. In neural networks, it helps compute errors during backpropagation. However, newer activation functions like ReLU and its variants are often preferred due to better gradient flow during training.</p>
+        </section>
+        <section id="glossary">
+            <h2>5) Glossary</h2>
+            <ul>
+                <li><strong>Sigmoid Function:</strong> A mathematical function that maps real numbers to a range of (0, 1).</li>
+                <li><strong>Gradient Descent:</strong> An optimization algorithm used to train models by minimizing a loss function.</li>
+                <li><strong>Vanishing Gradient:</strong> A problem where gradients become too small to effectively update weights during training.</li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>Published on GitHub Pages</p>
+    </footer>
+</body>
+</html>

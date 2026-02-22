@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260223-01",
+      "title": "Derivative of Sigmoid",
+      "description": "A structured explanation of Sigmoid derivative including its mathematical derivation, comparisons, and applications.",
+      "category": "수학",
+      "date": "2026-02-23",
+      "href": "2026-02-23__derivative_of_sigmoid.html"
+    },
+    {
       "id": "20260222-01",
       "title": "Newton Method(뉴턴법) 개념 설명",
       "description": "뉴턴법은 비선형 방정식 f(x)=0의 해를 구하는 강력한 수치해석 알고리즘입니다. '현재 위치에서 접선을 그어 x축과의 교점을 다음 추정값으로 삼는' 단순하지만 강력한 아이디어로, 2차 수렴 속도를 가지며 현대 과학/공학 계산의 핵심 도구로 사용됩니다.",
