@@ -8,11 +8,11 @@
   "pages": [
     {
       "id": "20260224-01",
-      "title": "선형대수학과 확률 통계 목차",
-      "description": "GitHub Pages markdown upload",
+      "title": "머신러닝을 위한 선형대수학과 확률 통계 목차",
+      "description": "이론부터 딥러닝 응용까지 체계적으로 정리한 완전 목차",
       "category": "수학",
       "date": "2026-02-24",
-      "href": "2026-02-24__선형대수학과_확률_통계_목차.html"
+      "href": "2026-02-24__ml-math-curriculum.html"
     },
     {
       "id": "20260223-01",

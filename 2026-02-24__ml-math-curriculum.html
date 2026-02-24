@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="머신러닝을 위한 선형대수학과 확률 및 통계 완전 목차 - 이론부터 딥러닝 응용까지">
+    <title>머신러닝을 위한 선형대수학과 확률 통계 목차</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        .back-btn {
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+        .meta {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+        .tag {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+        }
+        .summary {
+            background: #f1f5f9;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin-bottom: 40px;
+            border-radius: 4px;
+        }
+        .summary p {
+            color: #475569;
+            margin: 0;
+        }
+        .content {
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        h2:first-child {
+            margin-top: 0;
+        }
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #334155;
+            margin: 30px 0 15px 0;
+        }
+        h4 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #475569;
+            margin: 15px 0 10px 0;
+            line-height: 1.8;
+        }
+        .section-divider {
+            border: none;
+            border-top: 3px solid #e2e8f0;
+            margin: 50px 0;
+        }
+        .course-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 50px 0 30px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+        }
+        .course-title:first-of-type {
+            margin-top: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 15px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #e2e8f0;
+        }
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #334155;
+        }
+        tr:hover {
+            background: #f8fafc;
+        }
+        .footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .footer a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← 목록으로 돌아가기</a>
+        
+        <h1>머신러닝을 위한 선형대수학과 확률 통계 목차</h1>
+        <div class="meta">2026-02-24</div>
+        <div class="tags">
+            <span class="tag">선형대수학</span>
+            <span class="tag">확률통계</span>
+            <span class="tag">머신러닝</span>
+            <span class="tag">딥러닝</span>
+        </div>
+        
+        <div class="summary">
+            <p><strong>요약:</strong> 머신러닝과 딥러닝의 수학적 기초인 선형대수학과 확률 및 통계를 체계적으로 정리한 완전 목차입니다. 이론적 개념부터 실무 응용까지, 각 주제마다 ML/DL 활용 사례를 포함하여 학습 방향을 명확히 제시합니다.</p>
+        </div>
+        
+        <div class="content">
+            <div class="course-title">과목 1: 머신러닝을 위한 선형대수학</div>
+            
+            <h2>1부. 벡터와 벡터 공간</h2>
+            
+            <h3>1장. 벡터의 기초</h3>
+            <h4>1.1 스칼라, 벡터, 행렬, 텐서의 정의와 표기법<br><span style="color: #64748b; font-size: 14px;">(활용: 데이터 표현의 기본 단위 — 스칼라=손실값, 벡터=특성, 행렬=가중치, 텐서=미니배치)</span></h4>
+            <h4>1.2 벡터의 기하학적 해석: 화살표와 좌표<br><span style="color: #64748b; font-size: 14px;">(활용: 임베딩 공간에서의 데이터 시각화)</span></h4>
+            <h4>1.3 벡터 덧셈과 스칼라 곱<br><span style="color: #64748b; font-size: 14px;">(활용: 가중합 연산, 경사하강법의 파라미터 업데이트)</span></h4>
+            <h4>1.4 선형결합과 생성 공간(Span)<br><span style="color: #64748b; font-size: 14px;">(활용: 특성 공간의 표현력 이해)</span></h4>
+            <h4>1.5 선형독립과 선형종속<br><span style="color: #64748b; font-size: 14px;">(활용: 다중공선성 진단, 중복 특성 제거)</span></h4>
+            
+            <h3>2장. 벡터 공간과 부분공간</h3>
+            <h4>2.1 벡터 공간의 정의와 공리<br><span style="color: #64748b; font-size: 14px;">(활용: ML에서 다루는 공간의 수학적 기반)</span></h4>
+            <h4>2.2 부분공간: 열공간, 영공간, 행공간<br><span style="color: #64748b; font-size: 14px;">(활용: 선형 모델의 해 공간 구조 이해)</span></h4>
+            <h4>2.3 기저와 차원<br><span style="color: #64748b; font-size: 14px;">(활용: 데이터의 본질적 자유도, 차원 축소의 이론적 근거)</span></h4>
+            <h4>2.4 좌표계와 기저 변환<br><span style="color: #64748b; font-size: 14px;">(활용: 특성 변환, PCA에서의 좌표 재표현)</span></h4>
+            <h4>2.5 랭크의 정의와 의미<br><span style="color: #64748b; font-size: 14px;">(활용: 행렬의 정보량 판단, 저랭크 근사)</span></h4>
+            
+            <h3>3장. 내적과 노름</h3>
+            <h4>3.1 내적의 정의와 성질<br><span style="color: #64748b; font-size: 14px;">(활용: 유사도 측정, 어텐션 스코어 계산)</span></h4>
+            <h4>3.2 벡터의 노름: L1, L2, Lp, L∞<br><span style="color: #64748b; font-size: 14px;">(활용: 정규화 — L1=Lasso, L2=Ridge, 드롭아웃 분석)</span></h4>
+            <h4>3.3 코사인 유사도와 각도 해석<br><span style="color: #64748b; font-size: 14px;">(활용: 추천 시스템, 문서 유사도, 임베딩 비교)</span></h4>
+            <h4>3.4 직교성과 직교 보충 공간<br><span style="color: #64748b; font-size: 14px;">(활용: Gram-Schmidt 과정, 직교 초기화)</span></h4>
+            <h4>3.5 사영(Projection): 벡터를 부분공간에 투영<br><span style="color: #64748b; font-size: 14px;">(활용: 최소제곱법의 기하학적 의미, PCA)</span></h4>
+            
+            <h2>2부. 행렬과 선형 변환</h2>
+            
+            <h3>4장. 행렬 연산의 기초</h3>
+            <h4>4.1 행렬의 덧셈, 스칼라 곱, 전치<br><span style="color: #64748b; font-size: 14px;">(활용: 배치 데이터 조작, 대칭 행렬 구성)</span></h4>
+            <h4>4.2 행렬 곱셈과 그 해석: 행 관점, 열 관점, 외적 관점<br><span style="color: #64748b; font-size: 14px;">(활용: 신경망의 순전파 연산)</span></h4>
+            <h4>4.3 원소별 연산(Hadamard 곱)과 브로드캐스팅<br><span style="color: #64748b; font-size: 14px;">(활용: 게이팅 메커니즘 — LSTM, 어텐션 마스킹)</span></h4>
+            <h4>4.4 블록 행렬과 구조화된 행렬<br><span style="color: #64748b; font-size: 14px;">(활용: 대규모 모델의 효율적 연산 설계)</span></h4>
+            <h4>4.5 특수 행렬: 단위행렬, 대각행렬, 삼각행렬, 대칭행렬<br><span style="color: #64748b; font-size: 14px;">(활용: 가중치 초기화, 공분산 행렬)</span></h4>
+            
+            <h3>5장. 선형 변환으로서의 행렬</h3>
+            <h4>5.1 선형 변환의 정의와 행렬 표현<br><span style="color: #64748b; font-size: 14px;">(활용: 신경망의 각 층을 변환으로 이해)</span></h4>
+            <h4>5.2 변환의 기하학적 해석: 회전, 스케일링, 전단, 사영<br><span style="color: #64748b; font-size: 14px;">(활용: 데이터 변환 시각화, 특성 공간 변형 이해)</span></h4>
+            <h4>5.3 합성 변환과 행렬 곱의 관계<br><span style="color: #64748b; font-size: 14px;">(활용: 다층 신경망 = 변환의 합성)</span></h4>
+            <h4>5.4 가역 변환과 역행렬<br><span style="color: #64748b; font-size: 14px;">(활용: 정규방정식 풀이, Normalizing Flows)</span></h4>
+            <h4>5.5 변환의 상과 핵<br><span style="color: #64748b; font-size: 14px;">(활용: 모델의 표현력과 정보 손실 분석)</span></h4>
+            
+            <h3>6장. 연립방정식과 행렬 분해 기초</h3>
+            <h4>6.1 연립선형방정식의 행렬 표현<br><span style="color: #64748b; font-size: 14px;">(활용: 선형 회귀를 행렬 방정식으로 정식화)</span></h4>
+            <h4>6.2 가우스 소거법과 행 사다리꼴<br><span style="color: #64748b; font-size: 14px;">(활용: 수치적 해법의 기초)</span></h4>
+            <h4>6.3 LU 분해<br><span style="color: #64748b; font-size: 14px;">(활용: 효율적인 연립방정식 풀이, 수치 안정성)</span></h4>
+            <h4>6.4 역행렬의 계산과 존재 조건<br><span style="color: #64748b; font-size: 14px;">(활용: 정규방정식의 유일해 존재 판별)</span></h4>
+            <h4>6.5 행렬식(Determinant)의 정의와 기하학적 의미<br><span style="color: #64748b; font-size: 14px;">(활용: 부피 변화 해석, 가우시안 분포의 정규화 상수)</span></h4>
+            
+            <h2>3부. 고유값 분해와 스펙트럼 이론</h2>
+            
+            <h3>7장. 고유값과 고유벡터</h3>
+            <h4>7.1 고유값 문제의 정의: Av = λv<br><span style="color: #64748b; font-size: 14px;">(활용: 공분산 행렬의 주성분 방향 찾기)</span></h4>
+            <h4>7.2 특성 방정식과 고유값 계산<br><span style="color: #64748b; font-size: 14px;">(활용: 스펙트럼 분석의 수학적 기초)</span></h4>
+            <h4>7.3 고유공간과 기하학적 의미<br><span style="color: #64748b; font-size: 14px;">(활용: 데이터의 주요 변동 방향 해석)</span></h4>
+            <h4>7.4 대각화: 조건과 절차<br><span style="color: #64748b; font-size: 14px;">(활용: 행렬 거듭제곱의 효율적 계산, RNN 안정성 분석)</span></h4>
+            <h4>7.5 대칭 행렬의 스펙트럼 정리<br><span style="color: #64748b; font-size: 14px;">(활용: 공분산 행렬은 항상 직교 대각화 가능 — PCA의 이론적 보장)</span></h4>
+            
+            <h3>8장. 특이값 분해(SVD)</h3>
+            <h4>8.1 SVD의 정의: A = UΣV^T<br><span style="color: #64748b; font-size: 14px;">(활용: 차원 축소, 잠재 의미 분석, 추천 시스템)</span></h4>
+            <h4>8.2 SVD의 기하학적 해석: 회전-스케일링-회전<br><span style="color: #64748b; font-size: 14px;">(활용: 신경망 가중치의 변환 구조 이해)</span></h4>
+            <h4>8.3 절단된 SVD(Truncated SVD)와 저랭크 근사<br><span style="color: #64748b; font-size: 14px;">(활용: 행렬 압축, LoRA 기법의 이론적 기반)</span></h4>
+            <h4>8.4 Eckart-Young 정리: 최적 저랭크 근사<br><span style="color: #64748b; font-size: 14px;">(활용: 정보 손실 최소화의 수학적 보장)</span></h4>
+            <h4>8.5 의사역행렬(Pseudoinverse)과 최소노름 해<br><span style="color: #64748b; font-size: 14px;">(활용: 과결정/부족결정 시스템의 최소제곱 해)</span></h4>
+            <h4>8.6 SVD와 PCA의 관계<br><span style="color: #64748b; font-size: 14px;">(활용: 데이터 행렬로부터 직접 주성분 계산)</span></h4>
+            
+            <h2>4부. 행렬 미적분과 최적화</h2>
+            
+            <h3>9장. 다변수 미분의 행렬 표현</h3>
+            <h4>9.1 편미분 복습과 그래디언트 벡터<br><span style="color: #64748b; font-size: 14px;">(활용: 손실 함수의 파라미터별 변화율)</span></h4>
+            <h4>9.2 야코비 행렬(Jacobian)<br><span style="color: #64748b; font-size: 14px;">(활용: 다중 출력 함수의 미분, 역전파에서의 체인 룰)</span></h4>
+            <h4>9.3 헤시안 행렬(Hessian)<br><span style="color: #64748b; font-size: 14px;">(활용: 손실 곡면의 곡률 분석, 뉴턴법 최적화)</span></h4>
+            <h4>9.4 행렬 미분: 스칼라-벡터, 벡터-벡터, 스칼라-행렬<br><span style="color: #64748b; font-size: 14px;">(활용: 가중치 행렬에 대한 손실 함수 미분)</span></h4>
+            <h4>9.5 체인 룰의 행렬 형태<br><span style="color: #64748b; font-size: 14px;">(활용: 역전파 알고리즘의 수학적 유도)</span></h4>
+            <h4>9.6 자주 쓰이는 행렬 미분 공식 모음<br><span style="color: #64748b; font-size: 14px;">(활용: ∂(x^TAx)/∂x = 2Ax 등, 모델 유도 시 즉시 활용)</span></h4>
+            
+            <h3>10장. 최적화의 선형대수학적 기초</h3>
+            <h4>10.1 이차형식과 양정치/반양정치 행렬<br><span style="color: #64748b; font-size: 14px;">(활용: 볼록 손실 함수의 판별, 커널 행렬의 유효성)</span></h4>
+            <h4>10.2 최소제곱법의 정규방정식 유도<br><span style="color: #64748b; font-size: 14px;">(활용: 선형 회귀의 닫힌 해 — β = (X^TX)^{-1}X^Ty)</span></h4>
+            <h4>10.3 경사하강법과 그래디언트의 기하학<br><span style="color: #64748b; font-size: 14px;">(활용: SGD, 미니배치 GD의 수학적 기초)</span></h4>
+            <h4>10.4 조건수(Condition Number)와 수치 안정성<br><span style="color: #64748b; font-size: 14px;">(활용: 학습 속도 선택, 특성 스케일링의 필요성)</span></h4>
+            <h4>10.5 전처리: 센터링, 스케일링, 화이트닝<br><span style="color: #64748b; font-size: 14px;">(활용: 배치 정규화의 선형대수학적 해석)</span></h4>
+            
+            <h2>5부. 고급 주제: 딥러닝을 위한 선형대수학</h2>
+            
+            <h3>11장. 텐서와 다차원 배열 연산</h3>
+            <h4>11.1 텐서의 정의와 차수(order)<br><span style="color: #64748b; font-size: 14px;">(활용: CNN 입력(배치×채널×높이×너비), 어텐션 텐서)</span></h4>
+            <h4>11.2 텐서 곱과 크로네커 곱<br><span style="color: #64748b; font-size: 14px;">(활용: 다중 헤드 어텐션, 텐서 분해)</span></h4>
+            <h4>11.3 텐서 축약(Contraction)과 아인슈타인 표기법<br><span style="color: #64748b; font-size: 14px;">(활용: einsum을 이용한 효율적 텐서 연산 구현)</span></h4>
+            <h4>11.4 텐서 분해: CP 분해, Tucker 분해<br><span style="color: #64748b; font-size: 14px;">(활용: 모델 압축, 효율적 추론)</span></h4>
+            
+            <h3>12장. 딥러닝 구조의 선형대수학</h3>
+            <h4>12.1 완전연결층의 행렬 표현과 역전파<br><span style="color: #64748b; font-size: 14px;">(활용: Dense/Linear 층의 순전파·역전파 유도)</span></h4>
+            <h4>12.2 합성곱의 행렬 표현: Toeplitz 행렬과 im2col<br><span style="color: #64748b; font-size: 14px;">(활용: CNN 연산을 행렬 곱으로 변환)</span></h4>
+            <h4>12.3 어텐션 메커니즘의 선형대수학: QK^T/√d<br><span style="color: #64748b; font-size: 14px;">(활용: Transformer의 Self-Attention 유도)</span></h4>
+            <h4>12.4 정규화 기법의 선형대수학: 배치/레이어/그룹 정규화<br><span style="color: #64748b; font-size: 14px;">(활용: 학습 안정화의 수학적 메커니즘)</span></h4>
+            <h4>12.5 가중치 초기화와 스펙트럼 분석<br><span style="color: #64748b; font-size: 14px;">(활용: Xavier/He 초기화의 분산 전파 분석)</span></h4>
+            <h4>12.6 저랭크 적응(LoRA)과 행렬 근사<br><span style="color: #64748b; font-size: 14px;">(활용: 대규모 모델의 효율적 파인튜닝)</span></h4>
+            
+            <h3>13장. 수치선형대수학 실전</h3>
+            <h4>13.1 부동소수점 산술과 수치 오차<br><span style="color: #64748b; font-size: 14px;">(활용: 그래디언트 소실/폭발의 수치적 원인)</span></h4>
+            <h4>13.2 희소 행렬과 효율적 저장·연산<br><span style="color: #64748b; font-size: 14px;">(활용: 대규모 추천 시스템, 그래프 신경망의 인접 행렬)</span></h4>
+            <h4>13.3 근사 행렬 연산: 무작위 사영, 스케치<br><span style="color: #64748b; font-size: 14px;">(활용: 대규모 데이터의 근사 SVD, 차원 축소)</span></h4>
+            <h4>13.4 자동 미분(Autograd)의 선형대수학적 구조<br><span style="color: #64748b; font-size: 14px;">(활용: PyTorch/JAX의 역전파 엔진 내부 원리)</span></h4>
+            <h4>13.5 GPU 연산과 행렬 곱 최적화<br><span style="color: #64748b; font-size: 14px;">(활용: 배치 처리, 혼합 정밀도 학습의 수학적 기반)</span></h4>
+            
+            <hr class="section-divider">
+            
+            <div class="course-title">과목 2: 머신러닝을 위한 확률 및 통계</div>
+            
+            <h2>1부. 확률의 기초</h2>
+            
+            <h3>1장. 확률의 언어와 공리</h3>
+            <h4>1.1 표본 공간, 사건, 확률 측도<br><span style="color: #64748b; font-size: 14px;">(활용: 분류 문제의 확률적 정식화)</span></h4>
+            <h4>1.2 확률의 공리와 기본 성질<br><span style="color: #64748b; font-size: 14px;">(활용: 예측 확률이 유효한 확률인지 검증)</span></h4>
+            <h4>1.3 조건부 확률의 정의와 계산<br><span style="color: #64748b; font-size: 14px;">(활용: 필터링, 순차적 예측 모델)</span></h4>
+            <h4>1.4 베이즈 정리와 사전/사후 확률<br><span style="color: #64748b; font-size: 14px;">(활용: 나이브 베이즈 분류기, 베이지안 추론의 핵심)</span></h4>
+            <h4>1.5 독립과 조건부 독립<br><span style="color: #64748b; font-size: 14px;">(활용: 나이브 베이즈의 독립 가정, 그래프 모델에서의 d-분리)</span></h4>
+            <h4>1.6 전체 확률의 법칙<br><span style="color: #64748b; font-size: 14px;">(활용: 잠재 변수 모델에서의 주변화)</span></h4>
+            
+            <h3>2장. 이산 확률변수</h3>
+            <h4>2.1 확률변수의 정의와 확률질량함수(PMF)<br><span style="color: #64748b; font-size: 14px;">(활용: 분류 레이블의 확률 모델링)</span></h4>
+            <h4>2.2 기댓값과 분산<br><span style="color: #64748b; font-size: 14px;">(활용: 손실 함수의 기대 리스크, 추정량의 편향-분산)</span></h4>
+            <h4>2.3 결합분포, 주변분포, 조건부분포<br><span style="color: #64748b; font-size: 14px;">(활용: 다중 레이블 분류, 조건부 생성 모델)</span></h4>
+            <h4>2.4 공분산과 상관계수<br><span style="color: #64748b; font-size: 14px;">(활용: 특성 간 관계 파악, 다변량 분석의 기초)</span></h4>
+            <h4>2.5 주요 이산분포: 베르누이, 이항, 다항, 포아송, 기하<br><span style="color: #64748b; font-size: 14px;">(활용: 이진분류=베르누이, 다중분류=다항, 이벤트 카운팅=포아송)</span></h4>
+            
+            <h3>3장. 연속 확률변수</h3>
+            <h4>3.1 확률밀도함수(PDF)와 누적분포함수(CDF)<br><span style="color: #64748b; font-size: 14px;">(활용: 확률적 모델의 출력 해석)</span></h4>
+            <h4>3.2 연속 확률변수의 기댓값과 분산<br><span style="color: #64748b; font-size: 14px;">(활용: 연속 손실의 기대값 계산)</span></h4>
+            <h4>3.3 주요 연속분포: 균등, 정규(가우시안), 지수, 감마<br><span style="color: #64748b; font-size: 14px;">(활용: 가우시안=잡음 모델링·가중치 초기화, 지수=대기 시간 모델)</span></h4>
+            <h4>3.4 정규분포 심화: 표준화, 68-95-99.7 규칙, Q-Q 플롯<br><span style="color: #64748b; font-size: 14px;">(활용: 데이터 정규성 검정, 이상치 탐지)</span></h4>
+            <h4>3.5 확률변수의 함수와 변환<br><span style="color: #64748b; font-size: 14px;">(활용: 활성화 함수 통과 후 분포 변화 분석)</span></h4>
+            <h4>3.6 순서통계량과 분위수<br><span style="color: #64748b; font-size: 14px;">(활용: 분위수 회귀, 이상치 탐지의 기준값)</span></h4>
+            
+            <h3>4장. 다변량 분포</h3>
+            <h4>4.1 결합 확률밀도함수와 주변화<br><span style="color: #64748b; font-size: 14px;">(활용: 잠재 변수의 적분 소거 — EM 알고리즘의 E-step)</span></h4>
+            <h4>4.2 다변량 정규분포: 평균 벡터와 공분산 행렬<br><span style="color: #64748b; font-size: 14px;">(활용: 가우시안 혼합 모델, 가우시안 프로세스)</span></h4>
+            <h4>4.3 조건부 다변량 정규분포<br><span style="color: #64748b; font-size: 14px;">(활용: 가우시안 프로세스 예측, 칼만 필터)</span></h4>
+            <h4>4.4 마할라노비스 거리<br><span style="color: #64748b; font-size: 14px;">(활용: 이상치 탐지, 공분산을 고려한 거리 측정)</span></h4>
+            <h4>4.5 공분산 행렬의 고유값 분해와 주축<br><span style="color: #64748b; font-size: 14px;">(활용: PCA = 최대 분산 방향의 공분산 분석)</span></h4>
+            
+            <h2>2부. 수렴과 추정의 이론</h2>
+            
+            <h3>5장. 확률적 수렴과 극한 정리</h3>
+            <h4>5.1 확률 부등식: 마르코프, 체비셰프, 체르노프<br><span style="color: #64748b; font-size: 14px;">(활용: 일반화 오차의 상한 도출)</span></h4>
+            <h4>5.2 큰 수의 법칙<br><span style="color: #64748b; font-size: 14px;">(활용: 경험적 리스크가 참 리스크에 수렴하는 이론적 보장)</span></h4>
+            <h4>5.3 중심극한정리<br><span style="color: #64748b; font-size: 14px;">(활용: 미니배치 그래디언트의 정규 근사, 신뢰구간 구성)</span></h4>
+            <h4>5.4 몬테카를로 방법의 이론적 기초<br><span style="color: #64748b; font-size: 14px;">(활용: 기댓값의 샘플 근사, MCMC)</span></h4>
+            
+            <h3>6장. 점추정과 추정량의 성질</h3>
+            <h4>6.1 통계적 모델과 모수<br><span style="color: #64748b; font-size: 14px;">(활용: ML 모델 = 모수적 통계 모델)</span></h4>
+            <h4>6.2 추정량의 편향, 분산, 평균제곱오차<br><span style="color: #64748b; font-size: 14px;">(활용: 편향-분산 트레이드오프의 공식적 정의)</span></h4>
+            <h4>6.3 일치성과 점근 정규성<br><span style="color: #64748b; font-size: 14px;">(활용: 데이터가 충분히 많을 때 추정의 보장)</span></h4>
+            <h4>6.4 충분통계량<br><span style="color: #64748b; font-size: 14px;">(활용: 데이터 요약 시 정보 손실 없음의 조건)</span></h4>
+            <h4>6.5 크래머-라오 하한과 효율적 추정<br><span style="color: #64748b; font-size: 14px;">(활용: 추정량의 최적성 판별, 피셔 정보와의 관계)</span></h4>
+            
+            <h3>7장. 최대가능도추정(MLE)</h3>
+            <h4>7.1 가능도 함수의 정의와 직관<br><span style="color: #64748b; font-size: 14px;">(활용: 거의 모든 ML 모델 학습의 출발점)</span></h4>
+            <h4>7.2 로그가능도와 최적화<br><span style="color: #64748b; font-size: 14px;">(활용: 크로스엔트로피 손실 = 음의 로그가능도)</span></h4>
+            <h4>7.3 정규분포의 MLE: 평균과 분산 추정<br><span style="color: #64748b; font-size: 14px;">(활용: 가우시안 잡음 가정 하 선형 회귀)</span></h4>
+            <h4>7.4 지수족 분포와 MLE의 일반 이론<br><span style="color: #64748b; font-size: 14px;">(활용: GLM의 통합적 프레임워크)</span></h4>
+            <h4>7.5 MLE의 점근적 성질: 일치성, 정규성, 효율성<br><span style="color: #64748b; font-size: 14px;">(활용: 대표본에서의 MLE 신뢰도 보장)</span></h4>
+            <h4>7.6 수치적 MLE: 뉴턴법, Fisher Scoring<br><span style="color: #64748b; font-size: 14px;">(활용: 로지스틱 회귀의 반복 가중 최소제곱)</span></h4>
+            
+            <h3>8장. 베이지안 추정</h3>
+            <h4>8.1 사전분포, 가능도, 사후분포<br><span style="color: #64748b; font-size: 14px;">(활용: 베이지안 신경망, 불확실성 정량화)</span></h4>
+            <h4>8.2 켤레 사전분포<br><span style="color: #64748b; font-size: 14px;">(활용: 닫힌 형태의 사후분포 계산 — 베타-이항, 정규-정규)</span></h4>
+            <h4>8.3 MAP 추정과 정규화의 관계<br><span style="color: #64748b; font-size: 14px;">(활용: L2 정규화 = 가우시안 사전, L1 정규화 = 라플라스 사전)</span></h4>
+            <h4>8.4 사후 예측분포<br><span style="color: #64748b; font-size: 14px;">(활용: 불확실성을 반영한 예측, 모델 앙상블과의 연결)</span></h4>
+            <h4>8.5 베이지안 모델 비교와 주변가능도<br><span style="color: #64748b; font-size: 14px;">(활용: 모델 선택, 오컴의 면도날의 수학적 구현)</span></h4>
+            
+            <h2>3부. 정보이론과 확률 모델</h2>
+            
+            <h3>9장. 정보이론 기초</h3>
+            <h4>9.1 자기정보와 엔트로피<br><span style="color: #64748b; font-size: 14px;">(활용: 불확실성 정량화, 의사결정나무의 분할 기준)</span></h4>
+            <h4>9.2 교차 엔트로피(Cross-Entropy)<br><span style="color: #64748b; font-size: 14px;">(활용: 분류 모델의 표준 손실 함수)</span></h4>
+            <h4>9.3 KL 발산(Kullback-Leibler Divergence)<br><span style="color: #64748b; font-size: 14px;">(활용: VAE의 정규화 항, 분포 간 거리 측정)</span></h4>
+            <h4>9.4 상호정보량(Mutual Information)<br><span style="color: #64748b; font-size: 14px;">(활용: 특성 선택, 표현 학습의 목적함수)</span></h4>
+            <h4>9.5 젠슨 부등식과 ELBO 유도<br><span style="color: #64748b; font-size: 14px;">(활용: VAE의 손실 함수 유도, EM 알고리즘의 수렴 보장)</span></h4>
+            
+            <h3>10장. 확률적 그래프 모델 기초</h3>
+            <h4>10.1 결합분포의 인수분해<br><span style="color: #64748b; font-size: 14px;">(활용: 고차원 분포를 다루기 쉬운 형태로 분해)</span></h4>
+            <h4>10.2 베이지안 네트워크: 구조와 조건부 독립<br><span style="color: #64748b; font-size: 14px;">(활용: 인과 추론, 생성 모델의 구조 설계)</span></h4>
+            <h4>10.3 마르코프 확률장(MRF) 기초<br><span style="color: #64748b; font-size: 14px;">(활용: CRF를 이용한 시퀀스 라벨링, 이미지 분할)</span></h4>
+            <h4>10.4 잠재변수 모델과 EM 알고리즘<br><span style="color: #64748b; font-size: 14px;">(활용: GMM 학습, VAE의 학습 원리)</span></h4>
+            <h4>10.5 변분추론 기초: ELBO와 평균장 근사<br><span style="color: #64748b; font-size: 14px;">(활용: 대규모 베이지안 모델의 근사 추론)</span></h4>
+            
+            <h2>4부. 통계적 학습 이론</h2>
+            
+            <h3>11장. 통계적 의사결정 이론</h3>
+            <h4>11.1 손실 함수, 리스크, 경험적 리스크<br><span style="color: #64748b; font-size: 14px;">(활용: ML 학습 = 경험적 리스크 최소화(ERM))</span></h4>
+            <h4>11.2 베이즈 최적 분류기와 베이즈 오류율<br><span style="color: #64748b; font-size: 14px;">(활용: 분류 성능의 이론적 한계)</span></h4>
+            <h4>11.3 편향-분산 분해<br><span style="color: #64748b; font-size: 14px;">(활용: 과적합·과소적합 진단, 모델 복잡도 선택의 이론적 기초)</span></h4>
+            <h4>11.4 정규화와 편향-분산 트레이드오프<br><span style="color: #64748b; font-size: 14px;">(활용: 릿지·라쏘 회귀의 통계적 정당화)</span></h4>
+            
+            <h3>12장. 가설 검정과 모델 평가</h3>
+            <h4>12.1 귀무가설, 대립가설, 유의수준<br><span style="color: #64748b; font-size: 14px;">(활용: A/B 테스트, 모델 성능 비교의 통계적 검정)</span></h4>
+            <h4>12.2 p-값의 정의와 올바른 해석<br><span style="color: #64748b; font-size: 14px;">(활용: 특성 중요도의 통계적 유의성)</span></h4>
+            <h4>12.3 제1종 오류, 제2종 오류, 검정력<br><span style="color: #64748b; font-size: 14px;">(활용: 정밀도·재현율의 통계학적 대응)</span></h4>
+            <h4>12.4 다중 검정 보정: 본페로니, FDR<br><span style="color: #64748b; font-size: 14px;">(활용: 대규모 특성 선택 시 거짓 발견 제어)</span></h4>
+            <h4>12.5 교차 검증의 통계적 기반<br><span style="color: #64748b; font-size: 14px;">(활용: k-겹 CV의 분산 분석, 모델 선택의 신뢰도)</span></h4>
+            <h4>12.6 부트스트랩과 재표집 방법<br><span style="color: #64748b; font-size: 14px;">(활용: 신뢰구간 추정, 배깅의 이론적 기초)</span></h4>
+            
+            <h3>13장. 일반화 이론</h3>
+            <h4>13.1 경험적 리스크와 참 리스크의 격차<br><span style="color: #64748b; font-size: 14px;">(활용: 과적합의 정량적 이해)</span></h4>
+            <h4>13.2 유한 가설 공간의 일반화 경계<br><span style="color: #64748b; font-size: 14px;">(활용: 모델 복잡도와 필요 데이터량의 관계)</span></h4>
+            <h4>13.3 VC 차원과 성장 함수<br><span style="color: #64748b; font-size: 14px;">(활용: 모델의 복잡도 측정, 학습 가능성 판별)</span></h4>
+            <h4>13.4 라데마허 복잡도<br><span style="color: #64748b; font-size: 14px;">(활용: 더 촘촘한 일반화 경계 도출)</span></h4>
+            <h4>13.5 PAC 학습 프레임워크<br><span style="color: #64748b; font-size: 14px;">(활용: "아마 거의 정확한" 학습의 이론적 보장)</span></h4>
+            <h4>13.6 정규화의 일반화 이론적 해석<br><span style="color: #64748b; font-size: 14px;">(활용: 가설 공간 제약이 일반화에 미치는 효과)</span></h4>
+            
+            <h2>5부. 고급 주제: 딥러닝을 위한 확률·통계</h2>
+            
+            <h3>14장. 샘플링과 근사 추론</h3>
+            <h4>14.1 역변환 샘플링과 기각 샘플링<br><span style="color: #64748b; font-size: 14px;">(활용: 복잡한 분포에서의 데이터 생성)</span></h4>
+            <h4>14.2 마르코프 체인 몬테카를로(MCMC): 메트로폴리스-헤이스팅스<br><span style="color: #64748b; font-size: 14px;">(활용: 베이지안 사후분포 샘플링)</span></h4>
+            <h4>14.3 깁스 샘플링<br><span style="color: #64748b; font-size: 14px;">(활용: 볼츠만 머신, 토픽 모델(LDA) 학습)</span></h4>
+            <h4>14.4 해밀턴 몬테카를로(HMC)<br><span style="color: #64748b; font-size: 14px;">(활용: 고차원 베이지안 추론의 효율적 샘플링)</span></h4>
+            <h4>14.5 재매개변수화 트릭<br><span style="color: #64748b; font-size: 14px;">(활용: VAE에서 샘플링을 통한 역전파 가능하게 만들기)</span></h4>
+            <h4>14.6 중요도 샘플링과 분산 감소<br><span style="color: #64748b; font-size: 14px;">(활용: 오프-폴리시 강화학습, 가능도비 추정)</span></h4>
+            
+            <h3>15장. 생성 모델의 확률 이론</h3>
+            <h4>15.1 가능도 기반 모델: 자기회귀 모델<br><span style="color: #64748b; font-size: 14px;">(활용: GPT 계열의 다음 토큰 예측 확률)</span></h4>
+            <h4>15.2 잠재변수 생성 모델과 ELBO<br><span style="color: #64748b; font-size: 14px;">(활용: VAE의 학습 목적함수 유도)</span></h4>
+            <h4>15.3 GAN의 확률 이론: 암묵적 분포와 발산 최소화<br><span style="color: #64748b; font-size: 14px;">(활용: 생성자·판별자의 최적화 목표)</span></h4>
+            <h4>15.4 정규화 흐름(Normalizing Flows)<br><span style="color: #64748b; font-size: 14px;">(활용: 변수변환 공식을 이용한 정확한 가능도 계산)</span></h4>
+            <h4>15.5 확산 모델의 확률 이론: 점진적 잡음 추가와 역과정<br><span style="color: #64748b; font-size: 14px;">(활용: DDPM, Score-based 생성 모델)</span></h4>
+            <h4>15.6 스코어 함수와 스코어 매칭<br><span style="color: #64748b; font-size: 14px;">(활용: 에너지 기반 모델, 확산 모델의 학습)</span></h4>
+            
+            <h3>16장. 확률론적 딥러닝의 기초</h3>
+            <h4>16.1 드롭아웃의 베이지안 해석<br><span style="color: #64748b; font-size: 14px;">(활용: MC-Dropout을 통한 불확실성 추정)</span></h4>
+            <h4>16.2 확률적 경사하강법(SGD)의 수렴 이론<br><span style="color: #64748b; font-size: 14px;">(활용: 학습률 스케줄링의 이론적 근거)</span></h4>
+            <h4>16.3 라벨 스무딩과 온도 스케일링의 확률 해석<br><span style="color: #64748b; font-size: 14px;">(활용: 모델 캘리브레이션, 과신뢰 방지)</span></h4>
+            <h4>16.4 가우시안 프로세스와 신경망의 관계<br><span style="color: #64748b; font-size: 14px;">(활용: 무한 너비 신경망 = GP, Neural Tangent Kernel)</span></h4>
+            <h4>16.5 PAC-Bayes 경계<br><span style="color: #64748b; font-size: 14px;">(활용: 확률적 모델의 일반화 보장, 사전분포의 역할)</span></h4>
+            <h4>16.6 최적 수송과 와서슈타인 거리<br><span style="color: #64748b; font-size: 14px;">(활용: WGAN의 이론적 기반, 분포 비교의 기하학적 방법)</span></h4>
+            
+            <h2>부록: 두 과목의 연결 지도</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>선형대수학 개념</th>
+                        <th>확률·통계 개념</th>
+                        <th>ML에서의 교차점</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>고유값 분해</td>
+                        <td>공분산 행렬</td>
+                        <td>PCA: 공분산의 고유벡터 = 주성분</td>
+                    </tr>
+                    <tr>
+                        <td>행렬 미분·야코비안</td>
+                        <td>MLE·로그가능도</td>
+                        <td>손실 함수의 그래디언트 계산</td>
+                    </tr>
+                    <tr>
+                        <td>직교 사영</td>
+                        <td>조건부 기댓값</td>
+                        <td>최소제곱 회귀의 두 가지 해석</td>
+                    </tr>
+                    <tr>
+                        <td>양정치 행렬</td>
+                        <td>다변량 정규분포</td>
+                        <td>커널 함수·공분산 구조</td>
+                    </tr>
+                    <tr>
+                        <td>SVD·저랭크 근사</td>
+                        <td>EM 알고리즘</td>
+                        <td>잠재 인수 모델(행렬 분해 추천)</td>
+                    </tr>
+                    <tr>
+                        <td>텐서 연산</td>
+                        <td>결합분포·주변화</td>
+                        <td>다차원 데이터의 확률적 텐서 모델링</td>
+                    </tr>
+                    <tr>
+                        <td>행렬식</td>
+                        <td>가우시안 정규화 상수</td>
+                        <td>다변량 정규분포의 밀도 계산</td>
+                    </tr>
+                    <tr>
+                        <td>체인 룰(행렬)</td>
+                        <td>체인 룰(확률)</td>
+                        <td>역전파 = 행렬 체인룰, 베이즈 = 확률 체인룰</td>
+                    </tr>
+                    <tr>
+                        <td>조건수·수치 안정성</td>
+                        <td>분산 감소·부트스트랩</td>
+                        <td>안정적 학습을 위한 수치적·통계적 기법</td>
+                    </tr>
+                    <tr>
+                        <td>스펙트럼 분석</td>
+                        <td>일반화 이론</td>
+                        <td>가중치 행렬의 스펙트럼이 일반화에 미치는 영향</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p><strong>프로젝트:</strong> ML 수학 기초 완전 목차</p>
+            <p><strong>저장소:</strong> <a href="https://github.com/samdasuu/openclaw-pages" target="_blank">samdasuu/openclaw-pages</a></p>
+            <p>GitHub Pages를 통해 게시됨</p>
+        </div>
+    </div>
+</body>
+</html>
