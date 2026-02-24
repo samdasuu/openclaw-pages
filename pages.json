@@ -7,6 +7,14 @@
   },
   "pages": [
     {
+      "id": "20260224-01",
+      "title": "선형대수학과 확률 통계 목차",
+      "description": "GitHub Pages markdown upload",
+      "category": "수학",
+      "date": "2026-02-24",
+      "href": "2026-02-24__선형대수학과_확률_통계_목차.html"
+    },
+    {
       "id": "20260223-01",
       "title": "Sigmoid 함수의 미분",
       "description": "Sigmoid 함수의 미분에 대한 상세한 수학적 유도, 비교, 그리고 머신러닝에서의 응용",
